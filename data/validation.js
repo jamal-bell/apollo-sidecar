@@ -36,20 +36,6 @@ const helperFunctions = {
     return arr;
   },
 
-  checkStringObject(obj, varName) {
-    if (!obj || typeof obj !== "object")
-      throw `You must provide an object of ${varName}`;
-    if (Array.isArray(eventLocation))
-      throw `${varName} must be an object, but an array was supplied`;
-    for (let i in arr) {
-      if (typeof obj[i] !== "string" || obj[i].trim().length === 0) {
-        throw `One or more elements in ${varName} object is not a string or is an empty string`;
-      }
-      obj[i] = obj[i].trim();
-    }
-    return obj;
-  },
-
   checkIsPositiveNum(val, varName) {
     if (!val) throw `Error: You must supply a ${varName}!`;
     if (typeof val !== "number" || val < 0) {
