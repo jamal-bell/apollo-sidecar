@@ -14,3 +14,5 @@ const getCollectionFn = (collection) => {
 };
 
 export const events = getCollectionFn("users");
+export const qas = getCollectionFn("qas");
+export const lessons = getCollectionFn("lessons");
