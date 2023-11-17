@@ -46,6 +46,33 @@ const helperFunctions = {
     }
     return val;
   },
+
+  checkEmail(email) {
+    if (!email) throw "You must provide contactEmail.";
+    if (typeof email !== "string" || email.trim().length === 0)
+      throw "Contact email must be valid strings.";
+
+    email = email.trim();
+
+    const emailPrefixFormat = /^[a-zA-Z0-9_.-]+$/;
+    const emailDomainFormat = /^[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]{2,}$/;
+    if (!email.includes("@")) throw "Invalid email input.";
+    const emailCheck = email.split("@");
+    if (
+      emailCheck.length !== 2 ||
+      emailCheck[0].length === 0 ||
+      emailCheck[1].length === 0 ||
+      !emailCheck[1].includes(".")
+    )
+      throw "Invalid email input.";
+    if (
+      !emailPrefixFormat.test(emailCheck[0]) ||
+      !emailDomainFormat.test(emailCheck[1])
+    )
+      throw "Invalid email input.";
+
+    return email;
+  },
 };
 
 export default helperFunctions;
