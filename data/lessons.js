@@ -1,15 +1,14 @@
-import {lessons} from "../config/mongoCollections.js";
-import {ObjectId} from "mongodb";
-import validation from validation.js;
+import { lessons } from "../config/mongoCollections.js";
+import { ObjectId } from "mongodb";
+import validation from "./validation.js";
 
-let exportedLessonMethods = {
+let exportedLessonsMethods = {
   async createLesson(title, description, contents) {
-    title = validation.checkString(title, 'lesson title');
-    description = validation.checkString(description, 'lesson description');
-    contents = validation.checkString(contents, 'lesson contents');
+    title = validation.checkString(title, "lesson title");
+    description = validation.checkString(description, "lesson description");
+    contents = validation.checkString(contents, "lesson contents");
 
-    const newLessonInfo = 
-    [
+    const newLessonInfo = [
       {
         title: title, //string
         description: description, //string
@@ -19,7 +18,7 @@ let exportedLessonMethods = {
             contentId: ObjectId, // or it could be ordered numbers
             title: title, //string
             creatorId: ObjectId,
-            text: text,//string
+            text: text, //string
             videoLink: videoLink, // string - link to the lesson video
             votes: {
               votedUsers: [], // [{ userId: ObjectId, voteTime: "string" }] (timestamp from response header???)
@@ -28,41 +27,41 @@ let exportedLessonMethods = {
           },
         ],
       },
-    ]
-
-    const lessonCollection = await lessons();
-    const lessonInfoToInsert = await lessonCollection.insertOne(newLessonInfo);
-    if (!lessonInfoToInsert.acknowledged || !lessonInfoToInsert.insertedId) throw "Could not add lesson. Try again."
+    ];
+    const lessonsCollection = await lessons();
+    const lessonInfoToInsert = await lessonsCollection.insertOne(newLessonInfo);
+    if (!lessonInfoToInsert.acknowledged || !lessonInfoToInsert.insertedId)
+      throw "Could not add lesson. Try again.";
     //return new lesson
-    const newLesson = await get(lessonInfoToInsert.insertedId.toString())
+    const newLesson = await get(lessonInfoToInsert.insertedId.toString());
   },
-   async getAllLessons() {
+  async getAllLessons() {
     const lessonsCollection = await lessons();
     const lessonsList = await lessonsCollection.find({}).toArray();
     return lessonsList;
   },
   async getLessonById(id) {
     id = validation.checkId(id);
-    const lessonCollection = await lessons();
-    const lesson = await lessonCollection.findOne({_id: new ObjectId(id)});
-    if (!lesson) throw 'Error: Lesson not found';
+    const lessonsCollection = await lessons();
+    const lesson = await lessonsCollection.findOne({ _id: new ObjectId(id) });
+    if (!lesson) throw "Error: Lesson not found";
     return lesson;
   },
   async removeLesson(id) {
     id = validation.checkId(id);
-    const lessonCollection = await lessons();
+    const lessonsCollection = await lessons();
     const deletionInfo = await lessonsCollection.findOneAndDelete({
-      _id: new ObjectId(id)
+      _id: new ObjectId(id),
     });
     if (!deletionInfo) throw `Error: Could not delete lesson with id of ${id}`;
 
-    return {...deletionInfo, deleted: true};
+    return { ...deletionInfo, deleted: true };
   },
   async updateLessonPut(id, title, description, contents) {
     id = validation.checkId(id);
-    title = validation.checkString(title, 'lesson title');
-    description = validation.checkString(description, 'lesson description');
-    contents = validation.checkString(contents, 'lesson contents');
+    title = validation.checkString(title, "lesson title");
+    description = validation.checkString(description, "lesson description");
+    contents = validation.checkString(contents, "lesson contents");
 
     const lessonUpdateInfo = {
       title: title,
@@ -71,15 +70,15 @@ let exportedLessonMethods = {
     };
     const lessonsCollection = await lessons();
     const updateInfo = await lessonsCollection.findOneAndReplace(
-      {_id: new ObjectId(id)},
+      { _id: new ObjectId(id) },
       lessonUpdateInfo,
-      {returnDocument: 'after'}
+      { returnDocument: "after" }
     );
     if (!updateInfo)
       throw `Error: Update failed, could not find a lesson with id of ${id}`;
 
     return updateInfo;
   },
-}
+};
 
-export default exportedLessonMethods;
+export default exportedLessonsMethods;

@@ -13,6 +13,7 @@ const getCollectionFn = (collection) => {
   };
 };
 
-export const events = getCollectionFn("users");
-export const qas = getCollectionFn("qas");
+export const events = getCollectionFn("events");
+export const qa = getCollectionFn("qa");
 export const lessons = getCollectionFn("lessons");
+export const users = getCollectionFn("users");
