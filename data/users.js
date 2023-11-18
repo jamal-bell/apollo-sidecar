@@ -2,12 +2,18 @@ import { users } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import validation from "./validation.js";
 
-const createUser = async () => {
+let exportedLessonsMethods = {
   //TODO: add input validation
 
   //TODO: await users() to get all users to prevent creating duplicate users
 
-  const newUser = async (firstName, lastName, emailAddress, password, role) => {
+  async createUser(firstName, lastName, emailAddress, password, role) {
+    firstName = validation.checkString(firstName, "First Name");
+    lastName = validation.checkString(lastName, "Last Name");
+    emailAddress = validation.checkEmail(emailAddress);
+    password = validation.checkPassword(password);
+    if (role !== "admin" || role !== "user")
+      throw "Role can only be admin or user.";
     // "email": "string",
     // "firstName": "string",
     // "lastName": "string",
@@ -62,5 +68,36 @@ const createUser = async () => {
         },
       }
     );
-  }; //end newUser()
+  }, //end newUser()
+  async getAllUsers() {
+    const usersCollection = await users();
+    const usersList = await usersCollection.find({}).toArray();
+    if (!usersList) throw "Could not get all events.";
+    return usersList;
+  }, //end getAllUsers()
+  async getUserById(id) {
+    id = validation.checkId(id);
+    const usersCollection = await users();
+    const user = await usersCollection.findOne({ _id: new ObjectId(id) });
+    if (!user) throw "User not found";
+    return user;
+  }, //end getUserById()
+  async removeUser(id) {
+    id = validation.checkId(id);
+    const usersCollection = await users();
+    const deletionInfo = await usersCollection.findOneAndDelete({
+      _id: new ObjectId(id),
+    });
+    if (!deletionInfo) throw `Could not delete user with id of ${id}`;
+
+    return { emailAddress: deletionInfo.emailAddress, deleted: true };
+  }, //end removeUser()
+  async update(userId, firstName, lastName, emailAddress, password, role) {
+    userId = validation.checkId(userId);
+    lastName = validation.checkString(lastName, "Last Name");
+    emailAddress = validation.checkEmail(emailAddress);
+    password = validation.checkPassword(password);
+    if (role !== "admin" || role !== "user")
+      throw "Role can only be admin or user.";
+  },
 }; //end createUser()

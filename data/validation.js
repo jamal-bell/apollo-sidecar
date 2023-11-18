@@ -73,6 +73,22 @@ const helperFunctions = {
 
     return email;
   },
+  checkPassword(password) {
+    if (!password) throw "You must provide password.";
+    password = password.trim();
+    if (password.length === 0 || password !== "string")
+      throw "Passwrod must be a valid string.";
+    if (password.length < 8) throw "Password must be at least 8 characters.";
+    if (/\s/.test(password)) throw "Password can not have space in it.";
+    if (!/[A-Z]/.test(password))
+      throw "Password must have at least one uppercase character.";
+    if (!/[0-9]/.test(password))
+      throw "Password must have at least one number.";
+    if (!/W/.test(password))
+      throw "Password must have at least one special character.";
+
+    return password;
+  },
 };
 
 export default helperFunctions;
