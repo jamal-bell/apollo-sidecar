@@ -36,7 +36,7 @@ let exportedLessonMethods = {
     //return new lesson
     const newLesson = await get(lessonInfoToInsert.insertedId.toString())
   },
-  async getAllLessons() {
+   async getAllLessons() {
     const lessonsCollection = await lessons();
     const lessonsList = await lessonsCollection.find({}).toArray();
     return lessonsList;
