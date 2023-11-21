@@ -1,0 +1,20 @@
+<h1>{{title}}</h1>
+
+<form id="login-form" method="POST" action="/login" class="form">
+    <div>
+        <label for="emailAddressInput">Email Address:</label>
+        <input type="email" name="emailAddressInput" id="emailAddressInput" required>
+    </div>
+    <div>
+        <label for="passwordInput">Password:</label>
+        <input type="password" name="passwordInput" id="passwordInput" required>
+    </div>
+    <div>
+        <button type="submit">Login</button>
+    </div>
+</form>
+<ul id="errors" class="errors">
+</ul>
+<footer>
+    <a href="/user/register">Click here to register!</a>
+</footer>
