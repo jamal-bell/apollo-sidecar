@@ -69,6 +69,7 @@ const helpers = {
 
 let loginForm = document.getElementById("login-form");
 let registerForm = document.getElementById("registration-form");
+let updateForm = document.getElementById("update-form");
 
 if (loginForm) {
   const emailAddressInput = document.getElementById("emailAddressInput");
@@ -165,6 +166,68 @@ if (registerForm) {
     } else {
       errorContainer.hidden = true;
       registerForm.submit();
+    }
+  });
+}
+
+if (updateForm) {
+  const firstNameInput = document.getElementById("firstNameInput");
+  const lastNameInput = document.getElementById("lastNameInput");
+  const emailAddressInput = document.getElementById("emailAddressInput");
+  const passwordInput = document.getElementById("passwordInput");
+  const confirmPasswordInput = document.getElementById("confirmPasswordInput");
+  const roleInput = document.getElementById("roleInput");
+
+  updateForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    let firstName = firstNameInput.value.trim();
+    let lastName = lastNameInput.value.trim();
+    let emailAddress = emailAddressInput.value.trim();
+    let password = passwordInput.value.trim();
+    let confirmPassword = confirmPasswordInput.value.trim();
+    let role = roleInput.value.trim();
+
+    try {
+      firstName = helpers.checkString(firstName, "First Name");
+    } catch (e) {
+      errorList += `<li>${e}</li>`;
+    }
+
+    try {
+      lastName = helpers.checkString(lastName, "Last Name");
+    } catch (e) {
+      errorList += `<li>${e}</li>`;
+    }
+
+    try {
+      emailAddress = helpers.checkEmail(emailAddress);
+    } catch (e) {
+      errorList += `<li>${e}</li>`;
+    }
+
+    try {
+      password = helpers.checkPassword(password);
+    } catch (e) {
+      errorList += `<li>${e}</li>`;
+    }
+
+    if (password !== confirmPassword) {
+      errorList += `<li>Password and confirm password do not match.</li>`;
+    }
+
+    try {
+      role = helpers.checkRole(role);
+    } catch (e) {
+      errorList += `<li>${e}</li>`;
+    }
+
+    if (errorList !== "") {
+      errorContainer.innerHTML = errorList;
+      errorContainer.hidden = false;
+    } else {
+      errorContainer.hidden = true;
+      updateForm.submit();
     }
   });
 }
