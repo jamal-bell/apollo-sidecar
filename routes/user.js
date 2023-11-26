@@ -128,7 +128,7 @@ router
         if (user.role === "admin") {
           return res.redirect("/admin");
         } else if (user.role === "user") {
-          return res.redirect("/protected");
+          return res.redirect("/account");
         }
       } else {
         throw "Invalid username and/or password.";
@@ -138,10 +138,10 @@ router
     }
   });
 
-router.route("/protected").get(async (req, res) => {
+router.route("/account").get(async (req, res) => {
   //code here for GET
-  res.render("protected", {
-    title: "Protected",
+  res.render("account", {
+    title: "Overview",
     firstName: req.session.user.firstName,
     lastName: req.session.user.lastName,
     role: req.session.user.role,

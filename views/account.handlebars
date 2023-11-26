@@ -43,7 +43,7 @@
     <section id="lessons">
         <h2>Lessons</h2>
         <ul>
-            {{#each errors}}
+            {{#each lessons}}
                 <li>
                     <h3>{{this.lessonName}}</h3>
                     <p>Status: <span>Completed/In Progress</span></p>
@@ -61,12 +61,15 @@
         <h2>Q&A Contributions</h2>
         <ul>
             <!-- Repeat this list item for each Q&A contribution -->
-            <li>
-                <h3>Question Name</h3>
-                <p>Type: <span>Question Type</span></p>
-                <p>Answers: <span>Number of Answers</span></p>
-                <p>Upvotes: <span>Number of Upvotes</span></p>
-                <p>Date Posted: <span>Date</span></p>
-            </li>
+            {{#each qas}}
+                <li>
+                    <h3>{{qa.questionName}}</h3>
+                    <p>Type: <span>{{qa.questionType}}</span></p>
+                    <p>Ans: <span>{{qa.answers.sum}}</span></p>
+                    <p>Upvotes: <span>{{qa.votes.sum}}</span></p>
+                    <p><span>{{qa.createdAt}}</span></p>
+                    <button type="button" onclick="location.href='/lesson/details'">Review/Continue</button>
+                </li>
+            {{/each}}
         </ul>
     </section>
