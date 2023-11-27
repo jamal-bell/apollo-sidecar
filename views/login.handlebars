@@ -1,6 +1,6 @@
 <h1>{{title}}</h1>
 
-<form id="login-form" method="POST" action="/login" class="form">
+<form id="login-form" method="POST" action="/user/login" class="form">
     <div>
         <label for="emailAddressInput">Email Address:</label>
         <input type="email" name="emailAddressInput" id="emailAddressInput" required>
@@ -15,6 +15,7 @@
 </form>
 <ul id="errors" class="errors">
 </ul>
+<script src="/public/js/form.js"></script>
 <footer>
     <a href="/user/register">Click here to register!</a>
 </footer>

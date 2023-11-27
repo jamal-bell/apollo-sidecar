@@ -86,7 +86,7 @@ router
     }
 
     try {
-      userRegister = await users.userRegister(
+      userRegister = await users.registerUser(
         firstName,
         lastName,
         emailAddress,
@@ -95,7 +95,7 @@ router
       );
 
       if (userRegister && userRegister.insertedUser) {
-        return res.redirect("/login");
+        return res.redirect("/user/login");
       }
     } catch (e) {
       res
@@ -126,9 +126,9 @@ router
           role: user.role,
         };
         if (user.role === "admin") {
-          return res.redirect("/admin");
+          return res.render("admin", { user: user });
         } else if (user.role === "user") {
-          return res.redirect("/account");
+          return res.render("account", { user: user });
         }
       } else {
         throw "Invalid username and/or password.";
@@ -169,5 +169,89 @@ router.route("/logout").get(async (req, res) => {
     res.render("logout", { title: "Logout" });
   }
 });
+
+router
+  .route("/profile")
+  .get(async (req, res) => {
+    //code here for GET
+    res.render("profile", { title: "Profile" });
+  })
+  .post(async (req, res) => {
+    //code here for POST
+    let firstName = req.body.firstNameInput;
+    let lastName = req.body.lastNameInput;
+    let emailAddress = req.body.emailAddressInput;
+    let password = req.body.passwordInput;
+    let role = req.body.roleInput;
+    let errors = [];
+
+    try {
+      firstName = validation.checkString(firstName, "First Name");
+    } catch (e) {
+      errors.push(e);
+    }
+
+    try {
+      lastName = validation.checkString(lastName, "Last Name");
+    } catch (e) {
+      errors.push(e);
+    }
+
+    try {
+      emailAddress = validation.checkEmail(emailAddress);
+    } catch (e) {
+      errors.push(e);
+    }
+
+    try {
+      password = validation.checkPassword(password);
+    } catch (e) {
+      errors.push(e);
+    }
+
+    try {
+      role = checkRole(role);
+    } catch (e) {
+      errors.push(e);
+    }
+
+    try {
+      if (password !== req.body.confirmPasswordInput)
+        throw "Password and confirmed password do not match.";
+    } catch (e) {
+      errors.push(e);
+    }
+
+    let userRegister;
+
+    if (errors.length > 0) {
+      return res.status(400).render("register", {
+        title: "Register",
+        errors: errors,
+        hasErrors: true,
+        firstName: firstName,
+        lastName: lastName,
+        emailAddress: req.body.emailAddressInput,
+      });
+    }
+
+    try {
+      userRegister = await users.userRegister(
+        firstName,
+        lastName,
+        emailAddress,
+        password,
+        role
+      );
+
+      if (userRegister && userRegister.insertedUser) {
+        return res.redirect("/user/login");
+      }
+    } catch (e) {
+      res
+        .status(500)
+        .render("error", { error: "Internal Server Error", title: "Error" });
+    }
+  });
 
 export default router;

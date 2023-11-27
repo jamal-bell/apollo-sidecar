@@ -3,35 +3,35 @@
         <form>
             <div>
                 <label for="firstName">First Name:</label>
-                <input type="text" id="firstName" name="firstName" value="{{user.lastName}}" readonly>
+                <input type="text" id="firstName" name="firstName" value="{{user.firstName}}" disabled>
             </div>
             <div>
                 <label for="lastName">Last Name:</label>
-                <input type="text" id="lastName" name="lastName" value="{{user.lastName}}" readonly>
+                <input type="text" id="lastName" name="lastName" value="{{user.lastName}}" disabled>
             </div>
             <div>
                 <label for="email">Email:</label>
-                <input type="email" id="email" name="email" disabled>
+                <input type="email" id="email" name="email" value="{{user.emailAddress}}" disabled>
             </div>
             <div>
                 <label for="bio">Bio:</label>
-                <textarea id="bio" name="bio" disabled></textarea>
+                <textarea id="bio" name="bio" value="{{user.bio}}" disabled></textarea>
             </div>
             <div>
                 <label for="github">GitHub Link:</label>
-                <input type="url" id="github" name="github" disabled>
+                <input type="url" id="github" name="github" value="{{user.github}}" disabled>
             </div>
             <div>
                 <label for="userType">User Type:</label>
-                <input type="text" id="userType" name="userType" disabled>
+                <input type="text" id="userType" name="userType" value="{{user.role}}" disabled>
             </div>
             <div>
                 <label for="createdAt">Account Created At:</label>
-                <input type="text" id="createdAt" name="createdAt" disabled>
+                <input type="text" id="createdAt" name="createdAt" value="{{user.createdAt}}" disabled>
             </div>
             <div>
                 <label for="lastLogin">Last Login:</label>
-                <input type="text" id="lastLogin" name="lastLogin" disabled>
+                <input type="text" id="lastLogin" name="lastLogin" value="{{user.lastLogin}}" disabled>
             </div>
             <div class="buttons">
                 <button type="button" onclick="location.href='/user/profile'">Edit Profile</button>

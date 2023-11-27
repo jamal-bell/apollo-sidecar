@@ -1,49 +1,32 @@
-<h1>{{title}}</h1>
-<form id="profile-form" method="POST" action="/register" class="form">
-    <div>
-        <label for="firstNameInput">First Name:</label>
-        <input type="text" name="firstNameInput" id="firstNameInput" required value="{{firstName}}">
+<div class="container">
+    <!-- User photo and info -->
+    <div class="user-photo">
+        <img src="path-to-user-image.jpg" alt="User Photo" width="150" height="150">
+        <h3>{{user.firstName}} {{user.lastName}}</h3>
+        <p>{{user.emailAddress}}</p>
     </div>
-    <div>
-        <label for="lastNameInput">Last Name:</label>
-        <input type="text" name="lastNameInput" id="lastNameInput" required value="{{lastName}}">
-    </div>
-    <div>
-        <label for="emailAddressInput">Email Address:</label>
-        <input type="email" name="emailAddressInput" id="emailAddressInput" required value="{{emailAddress}}">
-    </div>
-    <div>
-        <label for="passwordInput">Password:</label>
-        <input type="password" name="passwordInput" id="passwordInput" required>
-    </div>
-    <div>
-        <label for="confirmPasswordInput">Confirm Password:</label>
-        <input type="password" name="confirmPasswordInput" id="confirmPasswordInput" required> 
-    </div>
-    <div>
-        <label for="roleInput">Role:</label>
-        <select name="roleInput" id="roleInput" required value="{{role}}">
-            <option value="" disabled selected>Select your option</option>
-            <option value="admin">Admin</option>
-            <option value="user">User</option>
-        </select>
-    </div>
-    <div>
-        <button type="submit">Register</button>
-    </div>
-</form>
 
-<ul id="errors" class="errors">
-    {{#if hasErrors}}
-        {{#each errors}}
-            <li>
-                {{this}}
-            </li>
-        {{/each}}
-    {{/if}}
-</ul>
-<ul id="errors" class="errors">
-</ul>
-<footer>
-    <a href="/login">Already have an account? Click here to log-in</a>
-</footer>
+    <!-- Profile Settings Section -->
+    <div class="profile-section">
+        <h2>{{titile}}</h2>
+        <form action="#" method="post">
+            <div class="left-column">
+                <div class="form-group">
+                    <label for="firstName">Name</label>
+                    <input type="text" id="firstName" name="firstName">
+                </div>
+                <!-- Additional form groups for other fields -->
+            </div>
+            <div class="right-column">
+                <div class="form-group">
+                    <label for="experience">Experience in Designing</label>
+                    <textarea id="experience" name="experience"></textarea>
+                </div>
+                <!-- Additional form groups for other fields -->
+            </div>
+            <div class="submit-container">
+                <button type="submit" class="button">Save Profile</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -76,7 +76,7 @@ const helperFunctions = {
   checkPassword(password) {
     if (!password) throw "You must provide password.";
     password = password;
-    if (password.length === 0 || password !== "string")
+    if (password.length === 0 || typeof password !== "string")
       throw "Passwrod must be a valid string.";
     if (password.length < 8) throw "Password must be at least 8 characters.";
     if (/\s/.test(password)) throw "Password can not have space in it.";

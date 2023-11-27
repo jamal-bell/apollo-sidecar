@@ -1,6 +1,7 @@
 import { users } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import validation from "../data/validation.js";
+import bcrypt from "bcryptjs";
 
 function checkRole(role) {
   if (!role) throw "You must provide the role.";
@@ -26,7 +27,7 @@ const exportedusersMethods = {
     role = checkRole(role);
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    const timestamp = new DataTransfer();
+    const timestamp = new Date();
 
     let newUser = {
       firstName: firstName,
@@ -37,6 +38,7 @@ const exportedusersMethods = {
       handle: "",
       github: "",
       lastIp: "",
+      bio: "",
       loggedInCount: 0,
       createdAt: timestamp,
       updatedAt: timestamp,
@@ -112,12 +114,7 @@ const exportedusersMethods = {
     );
     if (!updatedUser) throw "Could not update the information successfully.";
 
-    return {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      emailAddress: user.emailAddress,
-      role: user.role,
-    };
+    return this.getUserByEmail(emailAddress);
   }, //end loginUser
 
   async getAllUsers() {
