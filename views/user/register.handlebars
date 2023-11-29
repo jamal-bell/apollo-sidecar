@@ -31,19 +31,19 @@
     <div>
         <button type="submit">Register</button>
     </div>
-</form>
 
-<ul id="errors" class="errors">
-    {{#if hasErrors}}
-        {{#each errors}}
-            <li>
-                {{this}}
-            </li>
-        {{/each}}
-    {{/if}}
-</ul>
-<ul id="errors" class="errors">
-</ul>
-<footer>
-    <a href="/login">Already have an account? Click here to log-in</a>
-</footer>
+    <div class="form-errors">
+        <ul id="errors" class="errors">
+        {{#if hasErrors}}
+            {{#each errors}}
+                <li>
+                    {{this}}
+                </li>
+            {{/each}}
+        {{/if}}
+        </ul>
+    </div>
+    <div class="form-footer">
+        <a href="/login">Already have an account? Click here to log-in</a>
+    </div>
+</form>

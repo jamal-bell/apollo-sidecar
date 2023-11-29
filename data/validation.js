@@ -84,7 +84,7 @@ const helperFunctions = {
       throw "Password must have at least one uppercase character.";
     if (!/[0-9]/.test(password))
       throw "Password must have at least one number.";
-    if (!/W/.test(password))
+    if (!/[!@#$%^&*(),.?":{}|<>_]/.test(password))
       throw "Password must have at least one special character.";
 
     return password;

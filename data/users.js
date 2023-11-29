@@ -100,11 +100,12 @@ const exportedusersMethods = {
         console.log("Error:", error);
       });
 
+    let loggedCount = user.loggedInCount + 1;
+
     const updatedInfo = {
       lastLogin: new Date(),
       isLoggedin: true,
-      lastIp: ip,
-      loggedInCount: user.loggedInCount++,
+      loggedInCount: loggedCount,
     };
 
     const updatedUser = await usersCollection.findOneAndUpdate(
@@ -144,7 +145,7 @@ const exportedusersMethods = {
   }, //end getUserByEmail()
 
   async removeUser(emailAddress) {
-    emailAddress = validation.checkId(emailAddress);
+    emailAddress = validation.checkEmail(emailAddress);
     const usersCollection = await users();
     const deletionInfo = await usersCollection.findOneAndDelete({
       emailAddress: emailAddress,
@@ -203,6 +204,21 @@ const exportedusersMethods = {
 
     return { emailAddress: emailAddress, updated: true };
   }, //end updateUser
+
+  async comparePassword(emailAddress, password) {
+    password = validation.checkPassword(password);
+
+    const usersCollection = await users();
+    const user = await usersCollection.findOne({ emailAddress: emailAddress });
+    if (!user) throw "User not found in the system.";
+
+    const compareToMatch = await bcrypt.compare(password, user.password);
+
+    if (!compareToMatch) throw "Email address and the password do not match.";
+
+    return password;
+  },
+
   async updatePassword(emailAddress, newPassword) {
     newPassword = validation.checkPassword(newPassword);
     emailAddress = validation.checkEmail(emailAddress);

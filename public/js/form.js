@@ -41,7 +41,7 @@ const helpers = {
     return email;
   },
   checkPassword(password) {
-    if (!password) throw "You must provide password.";
+    if (!password) throw "Password is not provided.";
     password = password.trim();
     if (password.length === 0 || typeof password !== "string")
       throw "Passwrod must be a valid string.";
@@ -70,6 +70,7 @@ const helpers = {
 let loginForm = document.getElementById("login-form");
 let registerForm = document.getElementById("registration-form");
 let updateForm = document.getElementById("update-form");
+let passwordForm = document.getElementById("password-form");
 
 if (loginForm) {
   const emailAddressInput = document.getElementById("emailAddressInput");
@@ -82,6 +83,7 @@ if (loginForm) {
     let emailAddress = emailAddressInput.value.trim();
     let password = passwordInput.value.trim();
     let errorList = "";
+    errorContainer.hidden = true;
 
     try {
       emailAddress = helpers.checkEmail(emailAddress);
@@ -174,8 +176,8 @@ if (updateForm) {
   const firstNameInput = document.getElementById("firstNameInput");
   const lastNameInput = document.getElementById("lastNameInput");
   const emailAddressInput = document.getElementById("emailAddressInput");
-  const passwordInput = document.getElementById("passwordInput");
-  const confirmPasswordInput = document.getElementById("confirmPasswordInput");
+  const bioInput = document.getElementById("bioInput");
+  const gitHubInput = document.getElementById("gitHubInput");
   const roleInput = document.getElementById("roleInput");
 
   updateForm.addEventListener("submit", (event) => {
@@ -184,8 +186,8 @@ if (updateForm) {
     let firstName = firstNameInput.value.trim();
     let lastName = lastNameInput.value.trim();
     let emailAddress = emailAddressInput.value.trim();
-    let password = passwordInput.value.trim();
-    let confirmPassword = confirmPasswordInput.value.trim();
+    let bio = bioInput.value.trim();
+    let gitHub = gitHubInput.value.trim();
     let role = roleInput.value.trim();
 
     try {
@@ -207,19 +209,11 @@ if (updateForm) {
     }
 
     try {
-      password = helpers.checkPassword(password);
+      if (gitHub.trim().length !== 0) {
+        gitHub = new URL(gitHub);
+      }
     } catch (e) {
-      errorList += `<li>${e}</li>`;
-    }
-
-    if (password !== confirmPassword) {
-      errorList += `<li>Password and confirm password do not match.</li>`;
-    }
-
-    try {
-      role = helpers.checkRole(role);
-    } catch (e) {
-      errorList += `<li>${e}</li>`;
+      errorList += `<li>Invalid url for GitHub Link.</li>`;
     }
 
     if (errorList !== "") {
@@ -228,6 +222,51 @@ if (updateForm) {
     } else {
       errorContainer.hidden = true;
       updateForm.submit();
+    }
+  });
+}
+
+if (passwordForm) {
+  const currentPasswordInput = document.getElementById("currentPasswordInput");
+  const newPasswordInput = document.getElementById("newPasswordInput");
+  const confirmPasswordInput = document.getElementById("confirmPasswordInput");
+  const errorContainer = document.getElementById("errors");
+
+  passwordForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    let currentPassword = currentPasswordInput.value.trim();
+    let newPassword = newPasswordInput.value.trim();
+    let confirmPassword = confirmPasswordInput.value.trim();
+    let errorList = "";
+    errorContainer.hidden = true;
+
+    try {
+      currentPassword = helpers.checkPassword(currentPassword);
+    } catch (e) {
+      errorList += `<li>Current ${e}</li>`;
+    }
+
+    try {
+      newPassword = helpers.checkPassword(newPassword);
+    } catch (e) {
+      errorList += `<li>New ${e}</li>`;
+    }
+
+    try {
+      if (newPassword !== confirmPassword)
+        throw "New Password and confirm password do not match.";
+    } catch (e) {
+      errorList += `<li>${e}</li>`;
+    }
+
+    if (errorList !== "") {
+      errorContainer.innerHTML = errorList;
+      errorContainer.hidden = false;
+      passwordForm.reset();
+    } else {
+      errorContainer.hidden = true;
+      passwordForm.submit();
     }
   });
 }
