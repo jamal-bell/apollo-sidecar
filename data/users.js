@@ -51,6 +51,7 @@ const exportedusersMethods = {
           edit: role === "admin" ? true : false,
           Delete: role === "admin" ? true : false,
           Publish: role === "admin" ? true : false,
+          addVideo: true,
         },
         learningAuth: {
           edit: role === "admin" ? true : false,
