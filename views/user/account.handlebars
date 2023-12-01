@@ -1,0 +1,73 @@
+<section id="profile">
+        <h2>Profile</h2>
+        <form>
+            <div>
+                <label for="firstName">First Name:</label>
+                <input type="text" id="firstName" name="firstName" value="{{user.firstName}}" disabled>
+            </div>
+            <div>
+                <label for="lastName">Last Name:</label>
+                <input type="text" id="lastName" name="lastName" value="{{user.lastName}}" disabled>
+            </div>
+            <div>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="{{user.emailAddress}}" disabled>
+            </div>
+            <div>
+                <label for="bio">Bio:</label>
+                <textarea id="bio" name="bio" value="{{user.bio}}" disabled></textarea>
+            </div>
+            <div>
+                <label for="github">GitHub Link:</label>
+                <input type="url" id="github" name="github" value="{{user.github}}" disabled>
+            </div>
+            <div>
+                <label for="userType">User Type:</label>
+                <input type="text" id="userType" name="userType" value="{{user.role}}" disabled>
+            </div>
+            <div>
+                <label for="createdAt">Account Created At:</label>
+                <input type="text" id="createdAt" name="createdAt" value="{{user.createdAt}}" disabled>
+            </div>
+            <div>
+                <label for="lastLogin">Last Login:</label>
+                <input type="text" id="lastLogin" name="lastLogin" value="{{user.lastLogin}}" disabled>
+            </div>
+            <div class="buttons">
+                <button type="button" onclick="location.href='/user/profile'">Edit Profile</button>
+                <button type="button" onclick="location.href='/user/password'">Change Password</button>
+                <button type="button" onclick="location.href='/user/cancel'">Cancel Account</button>
+            </div>
+        </form>
+    </section>
+
+    <section id="lessons">
+        <h2>Lessons</h2>
+        <ul>
+            {{#each lessons}}
+                <li>
+                    <h3>{{this.lessonName}}</h3>
+                    <p>Status: <span>Completed/In Progress</span></p>
+                    <button type="button" onclick="location.href='/lesson/details'">Review/Continue</button>
+                </li>
+            {{/each}}
+        </ul>
+    </section>
+
+    <!-- Q&A Contributions Section -->
+    <section id="qas">
+        <h2>Q&A Contributions</h2>
+        <ul>
+            <!-- Repeat this list item for each Q&A contribution -->
+            {{#each qas}}
+                <li>
+                    <h3>{{qa.questionName}}</h3>
+                    <p>Type: <span>{{qa.questionType}}</span></p>
+                    <p>Ans: <span>{{qa.answers.sum}}</span></p>
+                    <p>Upvotes: <span>{{qa.votes.sum}}</span></p>
+                    <p><span>{{qa.createdAt}}</span></p>
+                    <button type="button" onclick="location.href='/lesson/details'">Review/Continue</button>
+                </li>
+            {{/each}}
+        </ul>
+    </section>
