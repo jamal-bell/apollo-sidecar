@@ -140,6 +140,7 @@ router
     try {
       const user = await users.loginUser(emailAddress, password);
       if (user) {
+        req.session.authenticated = true;
         req.session.user = {
           firstName: user.firstName,
           lastName: user.lastName,
@@ -149,7 +150,7 @@ router
         if (user.role === "admin") {
           return res.redirect("/user/admin");
         } else if (user.role === "user") {
-          return res.redirect("/user/account");
+          return res.redirect("/user/user");
         }
       } else {
         throw "Invalid username and/or password.";
@@ -164,30 +165,32 @@ router
     }
   });
 
-router.route("/account").get(async (req, res) => {
+router.route("/user").get(async (req, res) => {
   //code here for GET
-  if (!req.session.user) {
+  if (!req.session.authenticated) {
     return res.redirect("/user/login");
   }
 
   const user = await users.getUserByEmail(req.session.user.emailAddress);
 
-  res.render("user/account", {
+  res.render("user/user", {
     title: "Overview",
     user: user,
-    currentTime: new Date().toString(),
   });
 });
 
 router.route("/admin").get(async (req, res) => {
   //code here for GET
-  if (!req.session.user) {
+  if (!req.session.authenticated) {
     return res.redirect("/user/login");
   }
 
   const user = await users.getUserByEmail(req.session.user.emailAddress);
 
-  res.render("user/admin", { title: "Overview", user: user });
+  res.render("user/admin", {
+    title: "Overview",
+    user: user,
+  });
 });
 
 router.route("/error").get(async (req, res) => {
@@ -200,64 +203,94 @@ router.route("/error").get(async (req, res) => {
 
 router
   .route("/profile")
-  .get(async (req, res) => {
-    //code here for GET
-    if (!req.session.user) {
-      return res.redirect("/user/login");
-    }
+  // .get(async (req, res) => {
+  //   //code here for GET
+  //   if (!req.session.authenticated) {
+  //     return res.redirect("/user/login");
+  //   }
 
-    const user = await users.getUserByEmail(req.session.user.emailAddress);
+  //   const user = await users.getUserByEmail(req.session.user.emailAddress);
 
-    res.render("user/profile", { title: "Profile", user: user });
-  })
+  //   res.render("user/profile", { title: "Profile", user: user });
+  // })
   .post(async (req, res) => {
     //code here for POST
 
-    let firstName = req.body.firstNameInput;
-    let lastName = req.body.lastNameInput;
-    let emailAddress = req.body.emailAddressInput;
-    let bio = req.body.bioInput;
-    let gitHub = req.body.gitHubInput;
-    const role = req.body.roleInput;
+    // let firstName = req.body.firstNameInput;
+    // let lastName = req.body.lastNameInput;
+    // let emailAddress = req.body.emailAddressInput;
+    // let bio = req.body.bioInput;
+    // let github = req.body.githubInput;
+    // const role = req.body.roleInput;
+    let firstName = req.body.firstName;
+    let lastName = req.body.lastName;
+    let emailAddress = req.body.emailAddress;
+    let bio = req.body.bio;
+    let github = req.body.github;
     let errors = [];
 
     try {
-      firstName = validation.checkPassword(firstName);
+      firstName = validation.checkString(firstName, "First Name");
     } catch (e) {
-      errors.push(e);
+      errors.push(`<li>${e}</li>`);
     }
 
     try {
-      lastName = validation.checkPassword(lastName);
+      lastName = validation.checkString(lastName, "Last Name");
     } catch (e) {
-      errors.push(e);
+      errors.push(`<li>${e}</li>`);
     }
 
     try {
-      emailAddress = validation.checkPassword(emailAddress);
+      emailAddress = validation.checkEmail(emailAddress);
     } catch (e) {
-      errors.push(e);
+      errors.push(`<li>${e}</li>`);
     }
 
     try {
-      if (url.trim().length !== 0) {
-        url = new URL(url);
+      if (github.trim().length !== 0 && !new URL(github)) {
+        throw "Invalid Github Link.";
       }
     } catch (e) {
-      errors.push(e);
+      errors.push(`<li>${e}</li>`);
     }
 
-    let userUpdate;
+    let userUpdated;
 
     const user = {
       firstName: firstName,
       lastName: lastName,
       emailAddress: emailAddress,
       bio: bio,
-      gitHub: gitHub,
-      role: role,
+      github: github,
     };
+    if (errors.length > 0) {
+      return res.json({
+        errors: errors,
+        hasErrors: true,
+        user: user,
+      });
+    }
 
+    try {
+      userUpdated = await users.updateUser(emailAddress, user);
+
+      if (userUpdated) {
+        return res.json({
+          updated: true,
+          user: user,
+        });
+      }
+    } catch (e) {
+      errors.push(`<li>${e}</li>`);
+      return res.json({
+        errors: errors,
+        hasErrors: true,
+        user: user,
+      });
+    }
+
+    /* before using ajax request
     if (errors.length > 0) {
       return res.status(400).render("user/profile", {
         title: "Profile Settings",
@@ -268,13 +301,10 @@ router
     }
 
     try {
-      userUpdate = await users.updateUser(emailAddress, user);
+      userUpdated = await users.updateUser(emailAddress, user);
 
-      if (userUpdate && userUpdate.updated) {
-        return res.render("user/profile", {
-          title: "Profile Settings",
-          user: user,
-        });
+      if (userUpdated) {
+        return res.redirect("/user");
       }
     } catch (e) {
       return res.status(400).render("user/profile", {
@@ -283,7 +313,7 @@ router
         hasErrors: true,
         user: user,
       });
-    }
+    } */
     res
       .status(500)
       .render("user/error", { error: "Internal Server Error", title: "Error" });
@@ -293,7 +323,7 @@ router
   .route("/password")
   .get(async (req, res) => {
     //code here for GET
-    if (!req.session.user) {
+    if (!req.session.authenticated) {
       return res.redirect("/user/login");
     }
 
@@ -365,7 +395,7 @@ router
 
 router.route("/logout").get(async (req, res) => {
   //code here for GET
-  if (!req.session.user) {
+  if (!req.session.authenticated) {
     return res.redirect("/user/login");
   }
 
@@ -383,14 +413,14 @@ router.route("/logout").get(async (req, res) => {
 
 router.route("/cancel").get(async (req, res) => {
   //code here for GET
-  if (!req.session.user) {
+  if (!req.session.authenticated) {
     return res.redirect("/user/login");
   }
-  const emailAddress = req.session.user.emailAddress;
 
-  const cancel = await users.removeUser(emailAddress);
+  const cancel = await users.removeUser(req.session.user.emailAddress);
 
   if (cancel && cancel.deleted) {
+    req.session.destroy();
     return res.render("user/logout", {
       title: "Account canceled",
       message: "Your account have been canceled.",

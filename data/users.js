@@ -157,14 +157,17 @@ const exportedusersMethods = {
   }, //end removeUser()
 
   async updateUser(emailAddress, userObject) {
-    let firstName = userObject.firstName;
-    let lastName = userObject.lastName;
-    let role = userObject.role;
+    let firstName = userObject.firstName.trim();
+    let lastName = userObject.lastName.trim();
+    let bio = userObject.bio.trim();
+    let github = userObject.github.trim();
 
-    firstName = validation.checkFirstName(firstName, "First Name");
+    firstName = validation.checkString(firstName, "First Name");
     lastName = validation.checkString(lastName, "Last Name");
     emailAddress = validation.checkEmail(emailAddress);
-    role = checkRole(role);
+    if (github.trim().length !== 0 && !new URL(github)) {
+      throw "Invalid Github link.";
+    }
 
     const usersCollection = await users();
     const user = await usersCollection.findOne({ emailAddress: emailAddress });
@@ -175,35 +178,20 @@ const exportedusersMethods = {
       firstName: firstName,
       lastName: lastName,
       emailAddress: emailAddress,
-      role: role,
-      handle: "",
-      github: "",
-      lastIp: "",
+      github: github,
+      bio: bio,
       updatedAt: new Date(),
-      isAdmin: role === "admin" ? true : false,
-      isActive: true,
-      permissions: {
-        lessonAuth: {
-          edit: role === "admin" ? true : false,
-          Delete: role === "admin" ? true : false,
-          Publish: role === "admin" ? true : false,
-        },
-        learningAuth: {
-          edit: role === "admin" ? true : false,
-          publish: role === "admin" ? true : false,
-        },
-      },
     };
 
     const updatedUser = await usersCollection.findOneAndUpdate(
       { emailAddress: emailAddress },
       { $set: updatedInfo },
-      { returnNewDocument: true }
+      { returnDocument: "after" }
     );
 
     if (!updatedUser) throw "Could not update the information successfully.";
 
-    return { emailAddress: emailAddress, updated: true };
+    return updatedUser;
   }, //end updateUser
 
   async comparePassword(emailAddress, password) {

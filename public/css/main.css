@@ -43,3 +43,16 @@ a, p, footer, h1 {
     text-align: center; 
     margin-top: 5px;
 }
+
+.user-photo {
+    text-align: center;
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+img {
+    margin-bottom: 5px;
+}
