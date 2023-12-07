@@ -9,7 +9,7 @@ const middleware = {
         secret: "This is a secret.. shhh don't tell anyone",
         saveUninitialized: false,
         resave: false,
-        cookie: { maxAge: 60000 },
+        cookie: { maxAge: 6000000 },
       })
     );
   },
@@ -19,7 +19,7 @@ const middleware = {
     //user
     app.use("/user", async (req, res, next) => {
       if (req.originalUrl === "/user") {
-        if (req.session.user) {
+        if (req.session.authenticated) {
           if (req.session.user.role === "admin") {
             return res.redirect("/user/admin");
           } else if (req.session.user.role === "user") {
@@ -34,11 +34,11 @@ const middleware = {
 
     //login middleware
     app.use("/user/login", async (req, res, next) => {
-      if (req.method == "GET" && req.session.user) {
+      if (req.method == "GET" && req.session.authenticated) {
         if (req.session.user.role === "admin") {
           return res.redirect("/user/admin");
         } else if (req.session.user.role === "user") {
-          return res.redirect("/user/account");
+          return res.redirect("/user/user");
         }
       }
       next();
@@ -46,11 +46,11 @@ const middleware = {
 
     //register middleware
     app.use("/user/register", async (req, res, next) => {
-      if (req.method == "GET" && req.session.user) {
+      if (req.method == "GET" && req.session.authenticated) {
         if (req.session.user.role === "admin") {
           return res.redirect("/user/admin");
         } else if (req.session.user.role === "user") {
-          return res.redirect("/user/account");
+          return res.redirect("/user/user");
         }
       }
       next();
@@ -58,15 +58,19 @@ const middleware = {
 
     //profile
     app.use("/user/profile", async (req, res, next) => {
-      if (req.method == "GET" && !req.session.user) {
-        return res.redirect("/user/login");
+      if (req.method == "GET") {
+        if (!req.session.authenticated) {
+          return res.redirect("/user/login");
+        } else {
+          return res.redirect("/user");
+        }
       }
       next();
     });
 
-    //account
-    app.use("/user/account", async (req, res, next) => {
-      if (req.method == "GET" && req.session.user) {
+    //user
+    app.use("/user/user", async (req, res, next) => {
+      if (req.method == "GET" && req.session.authenticated) {
         if (req.session.user.role !== "user") {
           return res.redirect("/user/admin");
         }
@@ -78,7 +82,7 @@ const middleware = {
 
     //admin
     app.use("/user/admin", async (req, res, next) => {
-      if (req.method == "GET" && req.session.user) {
+      if (req.method == "GET" && req.session.authenticated) {
         if (req.session.user.role !== "admin") {
           return res.render("user/error", {
             error: "You don't have access to admin page.",
@@ -92,7 +96,7 @@ const middleware = {
 
     //logout
     app.use("/user/logout", async (req, res, next) => {
-      if (req.method == "GET" && !req.session.user) {
+      if (req.method == "GET" && !req.session.authenticated) {
         return res.redirect("/user/login");
       }
       next();

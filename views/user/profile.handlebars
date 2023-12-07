@@ -21,11 +21,11 @@
     </div>
     <div>
         <label for="bioInput">Bio:</label>
-        <textarea id="bioInput" name="bioInput" value="{{user.bio}}"></textarea>
+        <textarea id="bioInput" name="bioInput">{{user.bio}}</textarea>
     </div>
     <div>
-        <label for="gitHubInput">GitHub Link:</label>
-        <input type="url" id="gitHubInput" name="gitHubInput" value="{{user.github}}">
+        <label for="githubInput">Github Link:</label>
+        <input type="url" id="githubInput" name="githubInput" value="{{user.github}}">
     </div>
     <div>
         <label for="roleInput">User Type:</label>
@@ -46,4 +46,5 @@
         {{/if}}
         </ul>
     </div>
+    <a class="form-footer" href="/user/user">Go back to Overview</a>
 </form>
