@@ -57,14 +57,18 @@ footer {
     -o-background-size: cover;
     background-size: cover;
     background-repeat: no-repeat;
-    /* background-attachment: fixed; */
-    /* position: relative; */
     z-index: 3;
-
-    position: fixed;
-    bottom: 0;
+    /* position: fixed;
+    bottom: 0; */
     width: 67.33%;
-    margin-left: 16.33% !important;
+    margin-left: 16.33%;
+    height: 100%;
+    margin-top: 0
+}
+
+footer .row{
+    height: 200px;
+    margin:0
 }
 
 header span {
@@ -77,14 +81,18 @@ header span {
     margin-top: 45px;
 }
 
+.row {
+    min-height: 100%;
+}
+
 main {
     /* background-color: #FBF0D9; */
     background-color: #CCC;
     box-shadow: -10px 0 8px -8px black, 10px 0 8px -8px black;
 }
-a, p, footer, h1 {
+/* a, p, footer, h1 {
     margin: 0;
-}
+} */
 
 ul {
     list-style-type: none;
@@ -131,6 +139,8 @@ ul#top-menu li {
     position: absolute;
     width: 300px; 
     top: 20px;
+}
+.left-adj {
     left: 25px;
 }
 
@@ -201,11 +211,11 @@ transform: translate(-50%, -50%);
 }
 
 main {
-    padding: 20px;
+    padding: 20px 0;
     /* min-height: 100vh; */
-    position: fixed;
+    /* position: fixed;
     min-height: 100%;
-    width: 67.33%;
+    width: 67.33%; */
     /* overflow: hidden; */
   }
 
@@ -482,6 +492,9 @@ margin-left: 50px;
     width: 100%;
 }
 
+.half-width {
+    width: 50%;
+}
 
 .left-nav-closed-main {
     margin-left: 0;
@@ -628,308 +641,95 @@ margin-left: 50px;
 }
 
 .errors li, .errors, #error {
-    text-shadow: 0 0px #ff9494;
+    /* text-shadow: 0 0px #ff9494;
+    /* color: #ff0000; */
+    /* text-align: left; */
+    /* color: #c70000;  */
+
+    text-shadow: 0px 1px 2px #000000;
     color: #ff0000;
     text-align: left;
+    width: 100%;
+    font-weight: 400;
 }
 
 #registration-form {
     font-size: 1em;
     text-align: center;
-    /* color: #e00e0e;
-    width: 250px; */
     border-radius: 15px;
-    /* font-weight: 600; */
     box-shadow: inset rgb(0 0 0 / 46%) -1px 2px 5px 1px;
     padding: 5px;
     border: 1px solid #FFF;
     text-align: center;
     letter-spacing: 2px;
-    padding: 25px
+    padding: 25px;
+    background-color: #22313F;
+    width: 60%;
+    margin: 0 auto;
+}
+
+#registration-form div , #registration-form label{
+    display: block;
+}
+#registration-form div , #registration-form label{
+    display: block;
+}
+
+#registration-form label {
+    font-weight: 800;
+    margin-bottom: 5px;
+    color: #FFF;
+}
+#registration-form input{
+    width: 65%;
+    font-size: 1em;
+    text-align: center;
+    color: #2e3952;
+    border-radius: 15px;
+    box-shadow: inset rgb(0 0 0 / 46%) -1px 2px 5px 1px;
+    padding: 6.5px;
+    border: 1px solid #FFF;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+#registration-form button{
+    margin-top: 30px;
+}
+
+#registration-form .form-footer a {
+    text-decoration: none;
+    letter-spacing: 1px;
+    color: #FFF;
+}
+
+#registration-form .form-footer a:hover {
+    color: #00B4CC;
 }
 
 #registration-form .form-errors {
-
+    color: #c70000;
 }
 
-  /* .row::after {
-    content: "";
-    clear: both;
-    display: block;
-  }
-  
-  [class*="col-"] {
-    float: left;
-    padding: 15px;
-  }
-  
-  html {
-    font-family: "Lucida Sans", sans-serif;
-  }
-  
-  header {
-    background-color: #343335;
-    color: #ffffff;
-    padding: 15px;
-  }
-  
-  .menu ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .menu li {
-    padding: 8px;
-    margin-bottom: 7px;
-    background-color: #33b5e5;
-    color: #ffffff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-  }
-  
-  .menu li:hover {
-    background-color: #0099cc;
-  }
-  
-  .aside {
-    background-color: #33b5e5;
-    padding: 15px;
-    color: #ffffff;
-    text-align: center;
-    font-size: 14px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-  }
-  
-  footer {
-    background-color: #0099cc;
-    color: #ffffff;
-    text-align: center;
-    font-size: 12px;
-    padding: 15px;
-    position:fixed;
-    bottom:0;
+#registration-form .form-errors ul {
     width: 100%;
-  }
-  
-  /* For desktop: */
-  /* .col-1 {width: 8.33%;}
-  .col-2 {width: 16.66%;}
-  .col-3 {width: 25%;}
-  .col-4 {width: 33.33%;}
-  .col-5 {width: 41.66%;}
-  .col-6 {width: 50%;}
-  .col-7 {width: 58.33%;}
-  .col-8 {width: 66.66%;}
-  .col-9 {width: 75%;}
-  .col-10 {width: 83.33%;}
-  .col-11 {width: 91.66%;}
-  .col-12 {width: 100%;}
-  
-  @media only screen and (max-width: 768px) { */
-    /* For mobile phones: */
-    /* [class*="col-"] {
-      width: 100%;
-    }
-  }
-  /* navigation */
-  /* .navbar {
-    text-align: right;
-    margin-bottom: 0 !important;
-  }
-  
-  .navbar h1 {
-    display: inline;
-  }
-  
-  a.navbar-brand {
-    font-weight: 700;
-    line-height: 1.6;
-    color: #ccc;
-    text-align: center;
-    text-transform: uppercase;
-  }
-  a.navbar-brand:hover {
-    color: #ccc;
-  
-  }
-  
-  a.sign-in{
-    display: inline-block;
-    text-decoration: none;
-    padding: 0.45rem 0;
-    margin: 0 0 0 1.85rem;
-    color: #ccc;
-    font-weight: 700;
-    line-height: 1.6;
-    text-align: center;
-    text-transform: uppercase;
-    margin-right: 1.5em;
-  }
-  a.sign-in:hover {
-    text-decoration: underline;
-    color: #ccc;
-  } */ 
-  
-  /*===========================================*/
-  
-  /* .errors li, .errors, #error {
-  color: #ff0000;
-  text-align: center;
-  }
-  
-  .form{
-  background: #fff;
-    padding: 20px;
-    margin: 20px 0;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  form div {
-    margin-bottom: 10px;
-  justify-content: center;
-    display: flex; 
-    align-items: center;
-  }
-  
-  .form-errors {
-    margin-bottom: 0px;
-  justify-content: center;
-    display: flex; 
-    align-items: center;
-  }
-  
-  form label {
-    margin-right: 5px;
-  }
-  
-  a, p, footer, h1 {
-  text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10px;
-  }
-  
-  .form-footer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center; 
-    margin-top: 5px;
-  }
-  
-  .form-inline {
-    display: inline;
-  }
-  
-  .form-inline .btn {
-  
-  }
-  
-  
-  .user-photo {
-    text-align: center;
-    flex-direction: column;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  
-  img {
-    margin-bottom: 5px;
-  }
-  
-  button {
-    position: relative;
-    display: inline-block;
-    cursor: pointer;
-    outline: none;
-    border: 0;
-    vertical-align: middle;
-    text-decoration: none;
-    background: transparent;
-    padding: 0;
-    font-size: inherit;
-    font-family: inherit;
-   }
-   
-   button.learn-more {
-    width: 12rem;
-    height: auto;
-   }
-   
-   button.learn-more .circle {
-    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
-    position: relative;
-    display: block;
-    margin: 0;
-    width: 3rem;
-    height: 3rem;
-    background: #282936;
-    border-radius: 1.625rem;
-   }
-   
-   button.learn-more .circle .icon {
-    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    margin: auto;
-    background: #fff;
-   }
-   
-   button.learn-more .circle .icon.arrow {
-    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
-    left: 0.625rem;
-    width: 1.125rem;
-    height: 0.125rem;
-    background: none;
-   }
-   
-   button.learn-more .circle .icon.arrow::before {
-    position: absolute;
-    content: "";
-    top: -0.29rem;
-    right: 0.0625rem;
-    width: 0.625rem;
-    height: 0.625rem;
-    border-top: 0.125rem solid #fff;
-    border-right: 0.125rem solid #fff;
-    transform: rotate(45deg);
-   }
-   
-   button.learn-more .button-text {
-    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0; */
-    /* padding: 0.75rem 0; xxxxx*/
-    /* padding: 0.45rem 0;
-    margin: 0 0 0 1.85rem; */
-    /* color: #282936; xxxx*/
-    /* color: #ccc;
-    font-weight: 700;
-    line-height: 1.6;
-    text-align: center;
-    text-transform: uppercase;
-   }
-   
-   button:hover .circle {
-    width: 100%;
-   }
-   
-   button:hover .circle .icon.arrow {
-    background: #fff;
-    transform: translate(1rem, 0);
-   }
-   
-   button:hover .button-text {
-    color: #fff;
-   }  */
-  
-   /*==================================* side menu/
-  
-   
+}
+
+
+/* home page */
+
+.above-fold {
+    height: 50%;
+}
+
+.above-fold h1 {
+    font-size: 300%;
+    font-weight: 800;
+    text-align: left;
+    justify-content: left;
+    padding-left: 5%;
+}
+
+.border {
+    box-shadow: 0px 5px 5px 0px rgb(2 14 2 / 50%)
+}

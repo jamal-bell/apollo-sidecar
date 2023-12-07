@@ -1,14 +1,14 @@
-.errors li, .errors, #error {
+/* .errors li, .errors, #error {
 	color: #ff0000;
 	text-align: center;
-}
+} */
 
-.form{
+/* .form{
 	background: #fff;
     padding: 20px;
     margin: 20px 0;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
+} */
 
 form div {
     margin-bottom: 10px;

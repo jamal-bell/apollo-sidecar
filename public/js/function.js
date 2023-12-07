@@ -1,54 +1,78 @@
 (function ($) {
 
-    $( "#close-left-nav" ).on( "click", function() {
-        $("#left-nav").addClass("closed-nav");
-        $("#close-left-nav").addClass("hidden ");
-        $("#open-left-nav").removeClass("hidden ");
-     });
-     
-       $( "#close-right-nav" ).on( "click", function() {
-         $("#right-nav").addClass("closed-nav");
-         $("#close-right-nav").addClass("hidden ");
-         $("#open-right-nav").removeClass("hidden ");
-     });
-     
-     $( "#open-left-nav" ).on( "click", function() {
-         $("#left-nav").removeClass("closed-nav");
-         $("#open-left-nav").addClass("hidden ");
-         $("#close-left-nav").removeClass("hidden ");
-      });
-      
-        $( "#open-right-nav" ).on( "click", function() {
-          $("#right-nav").removeClass("closed-nav");
-          $("#open-right-nav").addClass("hidden ");
-          $("#close-right-nav").removeClass("hidden ");
-      });
-
  if($(window).width() <= 600) 
  {  
-    $(".menu-action-text").hide()
+    $(".menu-action-text").hide();
+    $("#logo").css("width", "225px");
+    $("#logo").removeClass("left-adj");
+    $("#top-menu-block").css("visibility", "hidden");
+    $(".searchTerm").css("width", "100%");
+    $("footer").css("width", "100%");
+    $("footer").css("margin-left", "0", "!important");
 
-    $("#main").removeClass("all-open-main")
-    $("#main").addClass("all-closed-main")
-    $("main").css("width", "100%")
+    $("#login-form").css("width","90%");
+    $("#registration-form").css({padding: "20px 0px",width: "100%"});
+    $("#registration-form input").css("width", "85%");
+    $("#registration-form .form-footer").css({width: "65%", margin: "0 auto" });
+    $("#registration-form .form-errors").css("padding", "0 10px");
+
+    $("#main").removeClass("all-open-main");
+    $("#main").addClass("all-closed-main");
+    $("main").css("width", "100%");
+    $("main").css("padding-top", "0");
+    $("main h1").css("margin", "0");
 
     $("#close-left-nav").addClass("hidden ");
     $("#open-left-nav").removeClass("hidden ");
     $("#close-right-nav").addClass("hidden ");
     $("#open-right-nav").removeClass("hidden ");
 
+    /* open and close side navigation menue*/
+
     $( "#open-left-nav" ).on( "click", function() {
         $("#left-nav").removeClass("col-s-2");
         $("#left-nav").addClass("full-width");
-        $("#open-left-nav").addClass("hidden ");
-        $("#close-left-nav").removeClass("hidden ");
      });
      
        $( "#open-right-nav" ).on( "click", function() {
          $("#right-nav").removeClass("col-s-2");
-         $("#left-nav").addClass("full-width");
-         $("#open-right-nav").addClass("hidden ");
-         $("#close-right-nav").removeClass("hidden ");
+         $("#right-nav").addClass("full-width");
+
+     });
+
+     $( "#close-left-nav" ).on( "click", function() {
+        $("#left-nav").addClass("closed-nav");
+        $("#left-nav").removeClass("full-width");
+
+     });
+     
+       $( "#close-right-nav" ).on( "click", function() {
+         $("#right-nav").addClass("closed-nav");
+         $("#right-nav").removeClass("full-width");
+     });
+} else if($(window).width() <= 600){
+
+    
+    $( "#open-left-nav" ).on( "click", function() {
+        // $("#left-nav").removeClass("col-s-2");
+        $("#left-nav").addClass("half-width");
+     });
+     
+       $( "#open-right-nav" ).on( "click", function() {
+        //  $("#right-nav").removeClass("col-s-2");
+         $("#right-nav").addClass("half-width");
+
+     });
+
+     $( "#close-left-nav" ).on( "click", function() {
+        // $("#left-nav").addClass("closed-nav");
+        $("#left-nav").removeClass("half-width");
+
+     });
+     
+       $( "#close-right-nav" ).on( "click", function() {
+        //  $("#right-nav").addClass("closed-nav");
+         $("#right-nav").removeClass("half-width");
      });
 } else if($(window).width() <= 768){
     $( "#close-left-nav" ).on( "click", function() {
@@ -74,7 +98,33 @@
           $("#open-right-nav").addClass("hidden ");
           $("#close-right-nav").removeClass("hidden ");
       });
-} else if($(window).width() <= 992){
+    }else if($(window).width() <= 1200){
+        $( "#close-left-nav" ).on( "click", function() {
+            $("#left-nav").addClass("closed-nav");
+            $("#close-left-nav").addClass("hidden ");
+            $("#open-left-nav").removeClass("hidden ");
+         });
+         
+           $( "#close-right-nav" ).on( "click", function() {
+             $("#right-nav").addClass("closed-nav");
+             $("#close-right-nav").addClass("hidden ");
+             $("#open-right-nav").removeClass("hidden ");
+         });
+         
+         $( "#open-left-nav" ).on( "click", function() {
+            $("#left-nav").removeClass("half-width");
+             $("#left-nav").removeClass("closed-nav");
+             $("#open-left-nav").addClass("hidden");
+             $("#close-left-nav").removeClass("hidden ");
+             
+          });
+          
+            $( "#open-right-nav" ).on( "click", function() {
+              $("#right-nav").removeClass("closed-nav");
+              $("#open-right-nav").addClass("hidden ");
+              $("#close-right-nav").removeClass("hidden ");
+          });
+} else {
     $( "#close-left-nav" ).on( "click", function() {
         $("#left-nav").addClass("closed-nav");
         $("#close-left-nav").addClass("hidden ");
@@ -98,30 +148,6 @@
           $("#open-right-nav").addClass("hidden ");
           $("#close-right-nav").removeClass("hidden ");
       });
-    }else if($(window).width() >= 1200){
-        $( "#close-left-nav" ).on( "click", function() {
-            $("#left-nav").addClass("closed-nav");
-            $("#close-left-nav").addClass("hidden ");
-            $("#open-left-nav").removeClass("hidden ");
-         });
-         
-           $( "#close-right-nav" ).on( "click", function() {
-             $("#right-nav").addClass("closed-nav");
-             $("#close-right-nav").addClass("hidden ");
-             $("#open-right-nav").removeClass("hidden ");
-         });
-         
-         $( "#open-left-nav" ).on( "click", function() {
-             $("#left-nav").removeClass("closed-nav");
-             $("#open-left-nav").addClass("hidden ");
-             $("#close-left-nav").removeClass("hidden ");
-          });
-          
-            $( "#open-right-nav" ).on( "click", function() {
-              $("#right-nav").removeClass("closed-nav");
-              $("#open-right-nav").addClass("hidden ");
-              $("#close-right-nav").removeClass("hidden ");
-          });
 }
 console.log($(window).width())
 })(window.jQuery);
