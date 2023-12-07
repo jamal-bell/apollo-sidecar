@@ -56,6 +56,18 @@ const middleware = {
       next();
     });
 
+    //profile
+    app.use("/user/profile", async (req, res, next) => {
+      if (req.method == "GET") {
+        if (!req.session.authenticated) {
+          return res.redirect("/user/login");
+        } else {
+          return res.redirect("/user");
+        }
+      }
+      next();
+    });
+
     //user
     app.use("/user/user", async (req, res, next) => {
       if (req.method == "GET" && req.session.authenticated) {
