@@ -288,6 +288,29 @@ if (cancelAccount) {
   });
 }
 
+// if (profileForm) {
+
+//   const userPhotoButton = document.getElementById("uploadPhotoButton");
+//   const userPhotoDisplay = document.getElementById("userPhotoDisplay");
+//   const photoInput = document.getElementById("photoInput");
+
+//   userPhotoButton.addEventListener("click", function() {
+//     photoInput.click();
+//   });
+
+//   photoInput.addEventListener("change", function(event) {
+//     if (event.target.files && event.target.files[0]) {
+//       var reader = new FileReader();
+
+//       reader.onload = function(e) {
+//           document.getElementById('userPhotoDisplay').src = e.target.result;
+//       };
+
+//       reader.readAsDataURL(event.target.files[0]);
+//     }
+//   });
+// }
+
 if (profileForm) {
   (function ($) {
     const editProfileButton = $("#editProfileButton");

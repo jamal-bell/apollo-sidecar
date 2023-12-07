@@ -13,7 +13,7 @@ function checkRole(role) {
   return role;
 }
 
-const saltRounds = 16;
+const saltRounds = 10;
 
 const exportedusersMethods = {
   //TODO: add input validation

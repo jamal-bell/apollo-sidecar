@@ -1,8 +1,9 @@
 <section id="profile">
     <h2>{{{title}}}</h2>
     <div class="user-photo">
-        <img src="/public/assets/no-photo.jpg" alt="User Photo" width="100" height="100">
+        <img id="userPhotoDisplay" src="/public/assets/no-photo.jpg" alt="User Photo" width="100" height="100">
         <br/>
+        <input type="file" id="photoInput" style="display: none;" accept="image/*"/>
         <button type="button" id="uploadPhotoButton">Upload Photo</button>
     </div>
     <form id="profile-form">

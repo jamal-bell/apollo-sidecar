@@ -17,7 +17,7 @@ function checkRole(role) {
 
 router.route("/").get(async (req, res) => {
   //code here for GET THIS ROUTE SHOULD NEVER FIRE BECAUSE OF MIDDLEWARE #1 IN SPECS.
-  return res.json({ error: "YOU SHOULD NOT BE HERE!" });
+  return res.render("user/error", { error: "Internal Error." });
 });
 
 router
@@ -214,14 +214,6 @@ router
   //   res.render("user/profile", { title: "Profile", user: user });
   // })
   .post(async (req, res) => {
-    //code here for POST
-
-    // let firstName = req.body.firstNameInput;
-    // let lastName = req.body.lastNameInput;
-    // let emailAddress = req.body.emailAddressInput;
-    // let bio = req.body.bioInput;
-    // let github = req.body.githubInput;
-    // const role = req.body.roleInput;
     let firstName = req.body.firstName;
     let lastName = req.body.lastName;
     let emailAddress = req.body.emailAddress;
@@ -290,30 +282,6 @@ router
       });
     }
 
-    /* before using ajax request
-    if (errors.length > 0) {
-      return res.status(400).render("user/profile", {
-        title: "Profile Settings",
-        errors: errors,
-        hasErrors: true,
-        user: user,
-      });
-    }
-
-    try {
-      userUpdated = await users.updateUser(emailAddress, user);
-
-      if (userUpdated) {
-        return res.redirect("/user");
-      }
-    } catch (e) {
-      return res.status(400).render("user/profile", {
-        title: "Profile Settings",
-        errors: errors,
-        hasErrors: true,
-        user: user,
-      });
-    } */
     res
       .status(500)
       .render("user/error", { error: "Internal Server Error", title: "Error" });
