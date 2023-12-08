@@ -1,5 +1,7 @@
 (function ($) {
 
+
+
  if($(window).width() <= 600) 
  {  
     $(".menu-action-text").hide();

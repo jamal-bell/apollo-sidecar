@@ -51,7 +51,7 @@ header {
 }
 
 footer {
-    background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi-HBlvJv36w6Mn2CQbyK--_pMp91FhLesm5L4Z1ryHcN-3eNr1LkWkuerz0fBqozvHXY&usqp=CAU");
+    background-image: url("https://png.pngtree.com/thumb_back/fh260/back_pic/03/83/26/7857c8e8de71d6a.jpg");
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -62,13 +62,36 @@ footer {
     bottom: 0; */
     width: 67.33%;
     margin-left: 16.33%;
-    height: 100%;
-    margin-top: 0
+    height: 200px;
+    margin-top: 0;
+    color: #FFF;
+    letter-spacing: 2px;
+    font-size: 1.5em;
+    text-shadow: 3px 8px 7px #000;
+    position: relative;
 }
 
 footer .row{
     height: 200px;
     margin:0
+}
+
+footer .col-s-2 {
+    border: none;
+}
+
+footer .base {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    /* bottom: 0; */
+    background-color: #1a1a1a;
+    height: 5vh;
+    bottom: 0;
+    font-size: .6em;
+    font-weight: 200;
+    letter-spacing: 3px;
+    padding-top: 15px;
 }
 
 header span {
@@ -86,7 +109,6 @@ header span {
 }
 
 main {
-    /* background-color: #FBF0D9; */
     background-color: #CCC;
     box-shadow: -10px 0 8px -8px black, 10px 0 8px -8px black;
 }
@@ -716,20 +738,3 @@ margin-left: 50px;
 }
 
 
-/* home page */
-
-.above-fold {
-    height: 50%;
-}
-
-.above-fold h1 {
-    font-size: 300%;
-    font-weight: 800;
-    text-align: left;
-    justify-content: left;
-    padding-left: 5%;
-}
-
-.border {
-    box-shadow: 0px 5px 5px 0px rgb(2 14 2 / 50%)
-}
