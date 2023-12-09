@@ -1,0 +1,18 @@
+<section id="lesson">
+    <h2>Upload New Lesson</h2>
+    <form id="lesson-form">
+        <div>
+            <label for="title">Lesson Title:</label>
+            <input type="text" id="title" name="title" value="{{lesson.title}}" disabled>
+        </div>
+        <div>
+            <label for="description">Lesson Description:</label>
+            <input type="text" id="description" name="description" value="{{lesson.description}}" disabled>
+        </div>
+
+        <div class="buttons">
+            <button type="button" onclick="location.href='/user/profile'">Preview Lesson</button>
+            <button type="button" onclick="location.href='/user/password'">Upload Lesson</button>
+        </div>
+    </form>
+</section>

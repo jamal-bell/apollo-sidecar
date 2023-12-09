@@ -1,8 +1,11 @@
 import { MongoExpiredSessionError } from "mongodb";
-import { dbConnection, closeConnection } from "./config/mongoConnection.js";
-import userData from "./data/users.js";
-import qaData from "./data/qa.js";
-import lessonData from "./lessons.js"
+import { dbConnection, closeConnection } from "../config/mongoConnection.js";
+import userData from "../data/users.js";
+import qaData from "../data/qa.js";
+import lessonData from "../data/lessons.js";
+
+const db = await dbConnection();
+//await db.dropDatabase();
 
 let newUser = undefined;
 let newlesson = undefined;
@@ -35,3 +38,89 @@ let newQaResponse = undefined;
 // ADD for a new QA post
 
 // Add for new QA responses
+
+//-----------------Create Lessons---------------------//
+
+try {
+  for (let i = 1; i < 4; i++) {
+    let newLesson = await lessonData.createLesson(
+      "JavaScript: Lesson " + i,
+      "Data Structures: " + i,
+      [
+        {
+          moduleTitle: i + " Intro to Data Structures",
+          text: "This is an intro to Data Structures.",
+          videoLink: "https://www.youtube.com/watch?v=yourVideoId"
+        },
+      ]
+    );
+  }
+  //console.log(newLesson);
+} catch (e) {
+  console.log("Caught an error creating lesson from seed!");
+  console.log(e);
+}
+
+// try {
+//   let firstLesson = await lessonData.getLessonById("65732a03793ff6fd82b82acf")
+//   console.log(firstLesson);
+// } catch (e) {
+//   console.log(e);
+// }
+
+// try {
+//   const newModule = await lessonData.createLessonModule(
+//     "6573d883b84928662c3441c6",
+//     "Arrays JS1",
+//     "Arrays are like lists...",
+//     "https://www.youtube.com/watch?v=yourVideoId"
+//   );
+// } catch (e) {
+//   console.log(e);
+// }
+
+// try {
+//   const newModule = await lessonData.createLessonModule(
+//     "6573d883b84928662c3441c6",
+//     "Arrays JS2",
+//     "Arrays are like lists...",
+//     "https://www.youtube.com/watch?v=yourVideoId"
+//   );
+// } catch (e) {
+//   console.log(e);
+// }
+
+// try {
+//   const alllessons = await lessonData.getAllLessons();
+//   console.log(alllessons);
+// } catch (e) {
+//   console.log(e);
+// }
+
+// try {
+//   let mistakeLesson = await lessonData.removeLesson("65732b57398f159e82a9b574")
+  
+// } catch (e) {
+//   console.log(e);
+// }
+
+try {
+  
+    let correctedLesson = await lessonData.updateLessonPut("6573d883b84928662c3441c6",
+      "UPDATED JavaScript: Lesson ",
+      "UPDATED Data Structures: ",
+      [
+        {
+          moduleTitle: "UPDATED Intro to Data Structures",
+          text: "UPDATED This is an intro to Data Structures.",
+          videoLink: "https://www.youtube.com/watch?v=yourVideoId"
+        },
+      ]
+    );
+  
+  console.log(correctedLesson);
+} catch (e) {
+  console.log("Caught an error updating lesson from seed!");
+  console.log(e);
+}
+await closeConnection();
