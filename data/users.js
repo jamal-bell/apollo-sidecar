@@ -92,14 +92,14 @@ const exportedusersMethods = {
 
     let ip = "";
 
-    fetch("https://api.ipify.org?format=json")
-      .then((response) => response.json())
-      .then((data) => {
-        ip = data.ip;
-      })
-      .catch((error) => {
-        console.log("Error:", error);
-      });
+    // fetch("https://api.ipify.org?format=json")
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     ip = data.ip;
+    //   })
+    //   .catch((error) => {
+    //     console.log("Error:", error);
+    //   });
 
     let loggedCount = user.loggedInCount + 1;
 
