@@ -3,7 +3,17 @@ import { ObjectId } from "mongodb";
 import validation from "./validation.js";
 
 let exportedLessonsMethods = {
-  async createLesson(title, description, contents, moduleTitle, text, videoLink) {
+  //Creates a lesson + 1 module
+  //Option to create additional modules via createModule()
+  async createLesson(
+    title,
+    description,
+    contents,
+    order = 1,
+    moduleTitle,
+    text,
+    videoLink
+  ) {
     title = validation.checkContent(title, "lesson title", 3, 250);
     description = validation.checkContent(
       description,
@@ -11,20 +21,20 @@ let exportedLessonsMethods = {
       10,
       2500
     );
-    //module creation is optional
+    //1st module creation is optional
     if (contents) {
       contents.forEach((c) => {
         if (c.moduleTitle)
           moduleTitle = validation.checkContent(
             c.moduleTitle,
-            "module title", 3, 250
+            "module title",
+            3,
+            250
           );
-        if (c.text) text = validation.checkContent(c.text, "module text", 10, 60000);
+        if (c.text)
+          text = validation.checkContent(c.text, "module text", 20, 60000);
         if (c.videoLink)
-          videoLink = validation.checkString(
-            c.videoLink,
-            "src/video link"
-          );
+          videoLink = validation.checkString(c.videoLink, "src/video link");
       });
     }
 
@@ -34,8 +44,8 @@ let exportedLessonsMethods = {
       creatorId: ObjectId, //from user ID
       contents: [
         {
-          //contentId: new ObjectId(), //mongodb object
-          _id: contents.length,
+          _id: new ObjectId(),
+          order: 1,
           moduleTitle: contents[0].moduleTitle, //string
           creatorId: new ObjectId(),
           text: contents[0].text, //string
@@ -69,18 +79,32 @@ let exportedLessonsMethods = {
     return lesson;
   },
 
-  async createLessonModule(id, moduleTitle, text, videoLink) {
-    //TODO: more input validation
-    if (id === undefined) throw "No id provided";
+  async getLessonByTitle(title) {
+    title = validation.checkContent(title, "lesson title", 3, 250);
+    const lessonsCollection = await lessons();
+    const lesson = await lessonsCollection.findOne({ title: title });
+    if (!lesson) throw "Error: Lesson not found";
+    return lesson;
+  },
+
+  async createModule(id, order, moduleTitle, text, videoLink) {
+    //TODO: finish input validation
+    const lesson = await this.getLessonById(id);
+
     id = validation.checkId(id);
-    validation.checkString(moduleTitle, "module title");
-    validation.checkContent(text, "module content", 20, 1500);
+    //order optional
+    if (!order) {
+      order = lesson.contents.length + 1;
+    } else {
+      order = validation.checkIsPositiveNum(order, "order");
+    }
+    validation.checkContent(moduleTitle, "module title", 3, 250);
+    validation.checkContent(text, "module content", 20, 60000);
 
     const lessonsCollection = await lessons();
     if (!lessonsCollection) throw "Could not get lessons. Try again";
 
     // Prevent duplicate entries
-    const lesson = await this.getLessonById(id);
     lesson.contents.forEach((c) => {
       const duplicate = c.moduleTitle == moduleTitle;
       if (duplicate) {
@@ -89,18 +113,23 @@ let exportedLessonsMethods = {
     });
 
     const newModule = {
-      _id: lesson.contents.length + 1,
+      _id: new ObjectId(),
+      order: order,
       moduleTitle: moduleTitle,
       text: text,
       videoLink: videoLink,
+      votes: {
+        votedUsers: [],
+        count: 0,
+      },
     };
-    const updatedModule = await lessonsCollection.updateOne(
+    const lessonWithNewModule = await lessonsCollection.updateOne(
       { _id: new ObjectId(id) },
       { $push: { contents: newModule } }
     );
-    if (!updatedModule.modifiedCount)
+    if (!lessonWithNewModule.modifiedCount)
       throw "attendee with that email address is already registered";
-    console.log(updatedModule.modifiedCount);
+    console.log(lessonWithNewModule.modifiedCount);
     console.log(newModule);
 
     const result = await this.getLessonById(id);
@@ -109,7 +138,10 @@ let exportedLessonsMethods = {
 
   async getAllLessons() {
     const lessonsCollection = await lessons();
-    const lessonsList = await lessonsCollection.find({}).toArray();
+    const lessonsList = await lessonsCollection
+      .find({})
+      .sort({ order: 1 })
+      .toArray();
     return lessonsList;
   },
 
@@ -123,8 +155,8 @@ let exportedLessonsMethods = {
     console.log("Lesson Removed");
     return { ...deletionInfo, deleted: true };
   },
-  //TOFIX split out update lesson and update module since this overwrites contents.length > 1
-  async updateLessonPut(id, title, description, contents, moduleTitle, text, videoLink) {
+  //Updates lesson headers, not modules
+  async updateLesson(id, title, description) {
     id = validation.checkId(id);
     title = validation.checkContent(title, "lesson title", 3, 100);
     description = validation.checkContent(
@@ -133,51 +165,59 @@ let exportedLessonsMethods = {
       3,
       2500
     );
-    // contents = validation.checkObjInArr(contents, "lesson contents");
-
-    contents.forEach((c) => {
-      if (c.moduleTitle)
-        moduleTitle = validation.checkContent(
-          c.moduleTitle,
-          "module title", 3, 250
-        );
-      if (c.text) text = validation.checkContent(c.text, "module text", 10, 60000);
-      if (c.videoLink)
-        videoLink = validation.checkString(
-          c.videoLink,
-          "src/video link"
-        );
-    });
 
     const lessonUpdateInfo = {
       title: title,
       description: description,
-      contents: contents,
       creatorId: ObjectId, //from user ID
-      contents: [
-        {
-          _id: contents.length,
-          moduleTitle: contents[0].moduleTitle, //string
-          creatorId: new ObjectId(),
-          text: contents[0].text, //string
-          videoLink: contents[0].videoLink, // array of string urls to the resource video
-          votes: {
-            votedUsers: [], // [{ userId: ObjectId, voteTime: "string" }] (timestamp from response header???)
-            count: 0, // total count for upVotes
-          },
-        },
-      ],
     };
+
     const lessonsCollection = await lessons();
-    const updateInfo = await lessonsCollection.findOneAndReplace(
+    const updateInfo = await lessonsCollection.findOneAndUpdate(
       { _id: new ObjectId(id) },
-      lessonUpdateInfo,
+      { $set: lessonUpdateInfo },
       { returnDocument: "after" }
     );
     if (!updateInfo)
       throw `Error: Update failed, could not find a lesson with id of ${id} or overwrite unsuccessful`;
 
     return updateInfo;
+  },
+
+  async updateModule(lessonId, id, order, moduleTitle, text, videoLink) {
+    lessonId = validation.checkId(lessonId);
+
+    const lessonsCollection = await lessons();
+    const lesson = await this.getLessonById(lessonId);
+
+    if (!order) {
+      order = lesson.contents.length + 1;
+    } else {
+      order = validation.checkIsPositiveNum(order, "order");
+    }
+    moduleTitle = validation.checkContent(moduleTitle, "lesson title", 3, 250);
+    text = validation.checkContent(text, "module content", 3, 2500);
+    //contents = validation.checkObjInArr(contents, "lesson contents");
+
+    const moduleUpdateInfo = {
+      order: order,
+      moduleTitle: moduleTitle,
+      text: text,
+      //creatorId: ObjectId,
+      videoLink: videoLink,
+      votes: lesson.votes, //obj
+    };
+
+    const updatedModule = await lessonsCollection.findOneAndUpdate(
+      { "contents._id": new ObjectId(id) },
+      { $set: { "contents.$": moduleUpdateInfo } },
+      { returnDocument: "after" }
+      //{arrayFilters: []}
+    );
+    if (!updatedModule)
+      throw `Error: Update failed, could not find a lesson with id of ${id} or overwrite unsuccessful`;
+
+    return updatedModule;
   },
 };
 
