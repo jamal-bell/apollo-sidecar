@@ -1,4 +1,5 @@
 // In this file, you must perform all client-side validation for every single form input (and the role dropdown) on your pages. The constraints for those fields are the same as they are for the data functions and routes. Using client-side JS, you will intercept the form's submit event when the form is submitted and If there is an error in the user's input or they are missing fields, you will not allow the form to submit to the server and will display an error on the page to the user informing them of what was incorrect or missing.  You must do this for ALL fields for the register form as well as the login form. If the form being submitted has all valid data, then you will allow it to submit to the server for processing. Don't forget to check that password and confirm password match on the registration form!
+
 const validation = {
   checkString(strVal, varName) {
     if (!strVal) throw `You must supply a ${varName}!`;
@@ -289,29 +290,6 @@ if (cancelAccount) {
 }
 
 if (profileForm) {
-
-  const userPhotoButton = document.getElementById("uploadPhotoButton");
-  const userPhotoDisplay = document.getElementById("userPhotoDisplay");
-  const photoInput = document.getElementById("photoInput");
-
-  userPhotoButton.addEventListener("click", function() {
-    photoInput.click();
-  });
-
-  photoInput.addEventListener("change", function(event) {
-    if (event.target.files && event.target.files[0]) {
-      var reader = new FileReader();
-
-      reader.onload = function(e) {
-          document.getElementById('userPhotoDisplay').src = e.target.result;
-      };
-
-      reader.readAsDataURL(event.target.files[0]);
-    }
-  });
-}
-
-if (profileForm) {
   (function ($) {
     const editProfileButton = $("#editProfileButton");
     const saveProfileButton = $("#saveProfileButton");
@@ -446,4 +424,45 @@ if (profileForm) {
       saveProfileClick.call(this, event);
     });
   })(jQuery);
+}
+
+let photoForm = document.getElementById("photo-form");
+if (photoForm) {
+  const api_key = "913344915682151";
+  const cloud_name = "dcl4odxgu";
+  const userPhotoDisplay = document.getElementById("userPhotoDisplay");
+
+  photoForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    const signatureResponse = await axios.get("/user/signature");
+
+    const data = new FormData();
+    data.append("file", document.querySelector("#photoInput").files[0]);
+    data.append("api_key", api_key);
+    data.append("signature", signatureResponse.data.signature);
+    data.append("timestamp", signatureResponse.data.timestamp);
+
+    const cloudinaryResponse = await axios.post(
+      `https://api.cloudinary.com/v1_1/${cloud_name}/auto/upload`,
+      data,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    );
+
+    const photoData = {
+      public_id: cloudinaryResponse.data.public_id,
+      version: cloudinaryResponse.data.version,
+      signature: cloudinaryResponse.data.signature,
+    };
+
+    const photoUpdated = await axios.post("/user/photo", photoData);
+
+    if (photoUpdated.data.updated) {
+      userPhotoDisplay.src = photoUpdated.data.user.photo;
+      alert("Photo Updated!");
+    } else {
+      alert("Error Updating Photo: " + photoUpdated.data.photoErrors);
+    }
+  });
 }

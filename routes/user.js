@@ -4,6 +4,15 @@ const router = Router();
 import express from "express";
 const app = express();
 import validation from "../data/validation.js";
+import cloudinary from "cloudinary";
+import dotenv from "dotenv";
+
+const cloudinaryConfig = cloudinary.config({
+  cloud_name: "dcl4odxgu",
+  api_key: "913344915682151",
+  api_secret: "m-sXkAU8THL0ky6meEXfy4DL0M4",
+  secure: true,
+});
 
 function checkRole(role) {
   if (!role) throw "You must provide the role.";
@@ -201,91 +210,79 @@ router.route("/error").get(async (req, res) => {
   });
 });
 
-router
-  .route("/profile")
-  // .get(async (req, res) => {
-  //   //code here for GET
-  //   if (!req.session.authenticated) {
-  //     return res.redirect("/user/login");
-  //   }
+router.route("/profile").post(async (req, res) => {
+  let firstName = req.body.firstName;
+  let lastName = req.body.lastName;
+  let emailAddress = req.body.emailAddress;
+  let bio = req.body.bio;
+  let github = req.body.github;
+  let errors = [];
 
-  //   const user = await users.getUserByEmail(req.session.user.emailAddress);
+  try {
+    firstName = validation.checkString(firstName, "First Name");
+  } catch (e) {
+    errors.push(`<li>${e}</li>`);
+  }
 
-  //   res.render("user/profile", { title: "Profile", user: user });
-  // })
-  .post(async (req, res) => {
-    let firstName = req.body.firstName;
-    let lastName = req.body.lastName;
-    let emailAddress = req.body.emailAddress;
-    let bio = req.body.bio;
-    let github = req.body.github;
-    let errors = [];
+  try {
+    lastName = validation.checkString(lastName, "Last Name");
+  } catch (e) {
+    errors.push(`<li>${e}</li>`);
+  }
 
-    try {
-      firstName = validation.checkString(firstName, "First Name");
-    } catch (e) {
-      errors.push(`<li>${e}</li>`);
+  try {
+    emailAddress = validation.checkEmail(emailAddress);
+  } catch (e) {
+    errors.push(`<li>${e}</li>`);
+  }
+
+  try {
+    if (github.trim().length !== 0 && !new URL(github)) {
+      throw "Invalid Github Link.";
     }
+  } catch (e) {
+    errors.push(`<li>${e}</li>`);
+  }
 
-    try {
-      lastName = validation.checkString(lastName, "Last Name");
-    } catch (e) {
-      errors.push(`<li>${e}</li>`);
-    }
+  let userUpdated;
 
-    try {
-      emailAddress = validation.checkEmail(emailAddress);
-    } catch (e) {
-      errors.push(`<li>${e}</li>`);
-    }
+  const user = {
+    firstName: firstName,
+    lastName: lastName,
+    emailAddress: emailAddress,
+    bio: bio,
+    github: github,
+  };
+  if (errors.length > 0) {
+    return res.json({
+      errors: errors,
+      hasErrors: true,
+      user: user,
+    });
+  }
 
-    try {
-      if (github.trim().length !== 0 && !new URL(github)) {
-        throw "Invalid Github Link.";
-      }
-    } catch (e) {
-      errors.push(`<li>${e}</li>`);
-    }
+  try {
+    userUpdated = await users.updateUser(emailAddress, user);
 
-    let userUpdated;
-
-    const user = {
-      firstName: firstName,
-      lastName: lastName,
-      emailAddress: emailAddress,
-      bio: bio,
-      github: github,
-    };
-    if (errors.length > 0) {
+    if (userUpdated) {
       return res.json({
-        errors: errors,
-        hasErrors: true,
+        updated: true,
         user: user,
       });
     }
+  } catch (e) {
+    errors.push(`<li>${e}</li>`);
+    return res.json({
+      errors: errors,
+      hasErrors: true,
+      user: user,
+    });
+  }
 
-    try {
-      userUpdated = await users.updateUser(emailAddress, user);
-
-      if (userUpdated) {
-        return res.json({
-          updated: true,
-          user: user,
-        });
-      }
-    } catch (e) {
-      errors.push(`<li>${e}</li>`);
-      return res.json({
-        errors: errors,
-        hasErrors: true,
-        user: user,
-      });
-    }
-
-    res
-      .status(500)
-      .render("user/error", { error: "Internal Server Error", title: "Error" });
-  });
+  res
+    .status(500)
+    .render("user/error", { error: "Internal Server Error", title: "Error" });
+});
 
 router
   .route("/password")
@@ -396,6 +393,62 @@ router.route("/cancel").get(async (req, res) => {
   } else {
     return res.render("user/error", { title: "Failed to delete account" });
   }
+});
+
+router.route("/signature").get(async (req, res) => {
+  //code here for GET
+  if (!req.session.authenticated) {
+    return res.redirect("/user/login");
+  }
+
+  const timestamp = Math.round(new Date().getTime() / 1000);
+  const signature = cloudinary.utils.api_sign_request(
+    {
+      timestamp: timestamp,
+    },
+    cloudinaryConfig.api_secret
+  );
+  res.json({ timestamp, signature });
+});
+
+router.route("/photo").post(async (req, res) => {
+  if (!req.session.authenticated) {
+    return res.redirect("/user/login");
+  }
+
+  const role = req.session.user.role;
+
+  const expectedSignature = cloudinary.utils.api_sign_request(
+    { public_id: req.body.public_id, version: req.body.version },
+    cloudinaryConfig.api_secret
+  );
+
+  if (expectedSignature === req.body.signature) {
+    try {
+      const url = `https://res.cloudinary.com/${cloudinaryConfig.cloud_name}/image/upload/w_200,h_200,c_fill,q_100/${req.body.public_id}.jpg`;
+      const photoUpdated = await users.updatePhoto(
+        req.session.user.emailAddress,
+        url
+      );
+
+      if (photoUpdated) {
+        return res.json({
+          updated: true,
+          user: photoUpdated,
+        });
+      }
+    } catch (e) {
+      const user = await users.getUserByEmail(req.session.user.emailAddress);
+      return res.json({
+        updated: false,
+        photoErrors: e,
+      });
+    }
+  }
+  res.status(500).render("user/error", {
+    error: "Internal Server Error",
+    title: "Error",
+  });
 });
 
 export default router;
