@@ -416,12 +416,21 @@ router.route("/photo").post(async (req, res) => {
     return res.redirect("/user/login");
   }
 
-  const role = req.session.user.role;
-
   const expectedSignature = cloudinary.utils.api_sign_request(
     { public_id: req.body.public_id, version: req.body.version },
     cloudinaryConfig.api_secret
   );
+
+  const user = await users.getUserByEmail(req.session.user.emailAddress);
+
+  let photoId = "";
+  if (user.photo !== "/public/assets/no-photo.jpg") {
+    const photoUrl = user.photo;
+    photoId = photoUrl.substring(
+      photoUrl.lastIndexOf("/") + 1,
+      photoUrl.lastIndexOf(".")
+    );
+  }
 
   if (expectedSignature === req.body.signature) {
     try {
@@ -432,6 +441,7 @@ router.route("/photo").post(async (req, res) => {
       );
 
       if (photoUpdated) {
+        cloudinary.uploader.destroy(photoId);
         return res.json({
           updated: true,
           user: photoUpdated,
