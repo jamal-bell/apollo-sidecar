@@ -158,6 +158,7 @@ router
       const user = await users.loginUser(emailAddress, password);
       if (user) {
         req.session.authenticated = true;
+        req.session.sessionId = user._id;
         req.session.user = {
           firstName: user.firstName,
           lastName: user.lastName,
@@ -191,10 +192,18 @@ router.route("/user").get(async (req, res) => {
 
   const user = await users.getUserByEmail(req.session.user.emailAddress);
 
+  if (req.session.sessionId !== user._id.toString()) {
+    return res.render("user/error", {
+      errors: "No access to such user's account page.",
+    });
+  }
+
   return res.render("user/user", {
     title: "Overview",
     style_partial: "overview",
     user: user,
+    lessons: "",
+    qas: "",
   });
 });
 
@@ -206,11 +215,45 @@ router.route("/admin").get(async (req, res) => {
 
   const user = await users.getUserByEmail(req.session.user.emailAddress);
 
+  if (req.session.sessionId !== user._id.toString()) {
+    return res.render("user/error", {
+      errors: "No access to such user's account page.",
+    });
+  }
   return res.render("user/admin", {
     title: "Overview",
     style_partial: "overview",
     user: user,
+    lessons: "",
+    qas: "",
   });
+});
+
+router.route("/public/:userId").get(async (req, res) => {
+  //code here for GET
+  if (!req.session.authenticated) {
+    return res.redirect("/user/login");
+  }
+
+  try {
+    req.params.userId = validation.checkId(req.params.userId, "User Id");
+  } catch (e) {
+    return res.status(400).render("/user/error", { title: "Error", error: e });
+  }
+
+  try {
+    const user = await users.getUserById(req.params.userId);
+
+    if (user) {
+    }
+    return res.render("user/public", {
+      title: "User Overview",
+      style_partial: "overview",
+      user: user,
+    });
+  } catch (e) {
+    return res.status(400).render("/user/error", { title: "Error", error: e });
+  }
 });
 
 router.route("/error").get(async (req, res) => {
