@@ -73,7 +73,7 @@ let registerForm = document.getElementById("registration-form");
 let updateForm = document.getElementById("update-form");
 let passwordForm = document.getElementById("password-form");
 let cancelAccount = document.getElementById("cancelAccountButton");
-let profileForm = document.getElementById("profile-form");
+let profile = document.getElementById("profile");
 
 if (loginForm) {
   const emailAddressInput = document.getElementById("emailAddressInput");
@@ -175,62 +175,6 @@ if (registerForm) {
   });
 }
 
-if (updateForm) {
-  const firstNameInput = document.getElementById("firstNameInput");
-  const lastNameInput = document.getElementById("lastNameInput");
-  const emailAddressInput = document.getElementById("emailAddressInput");
-  const bioInput = document.getElementById("bioInput");
-  const githubInput = document.getElementById("githubInput");
-  const roleInput = document.getElementById("roleInput");
-  const errorContainer = document.getElementById("errors");
-
-  updateForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-
-    let firstName = firstNameInput.value.trim();
-    let lastName = lastNameInput.value.trim();
-    let emailAddress = emailAddressInput.value.trim();
-    let bio = bioInput.value.trim();
-    let github = githubInput.value.trim();
-    let role = roleInput.value.trim();
-    let errorList = "";
-
-    try {
-      firstName = validation.checkString(firstName, "First Name");
-    } catch (e) {
-      errorList += `<li>${e}</li>`;
-    }
-
-    try {
-      lastName = validation.checkString(lastName, "Last Name");
-    } catch (e) {
-      errorList += `<li>${e}</li>`;
-    }
-
-    try {
-      emailAddress = validation.checkEmail(emailAddress);
-    } catch (e) {
-      errorList += `<li>${e}</li>`;
-    }
-
-    try {
-      if (github.trim().length !== 0 && !new URL(github)) {
-        throw "Invalid Github Link.";
-      }
-    } catch (e) {
-      errorList += `<li>${e}</li>`;
-    }
-
-    if (errorList !== "") {
-      errorContainer.html(errorList);
-      errorContainer.hide();
-    } else {
-      errorContainer.show();
-      updateForm.submit();
-    }
-  });
-}
-
 if (passwordForm) {
   const currentPasswordInput = document.getElementById("currentPasswordInput");
   const newPasswordInput = document.getElementById("newPasswordInput");
@@ -289,7 +233,7 @@ if (cancelAccount) {
   });
 }
 
-if (profileForm) {
+if (profile) {
   (function ($) {
     const editProfileButton = $("#editProfileButton");
     const saveProfileButton = $("#saveProfileButton");
@@ -299,6 +243,13 @@ if (profileForm) {
     const bioInput = $("#bioInput");
     const githubInput = $("#githubInput");
     const errorContainer = $("#errors");
+    const userProfileContainer = $("#userProfileContainer");
+    const photoForm = $("#photo-form");
+    const profileForm = $("#profile-form");
+
+    profileForm.hide();
+    userProfileContainer.show();
+    photoForm.hide();
 
     function activeInput(input) {
       input.attr("disabled", false);
@@ -387,6 +338,10 @@ if (profileForm) {
               deactiveInput(bioInput);
               deactiveInput(githubInput);
 
+              profileForm.hide();
+              userProfileContainer.show();
+              photoForm.hide();
+
               editProfileButton.show();
               saveProfileButton.hide();
               alert("Profile Updated!");
@@ -407,6 +362,9 @@ if (profileForm) {
       activeInput(emailAddressInput);
       activeInput(bioInput);
       activeInput(githubInput);
+      profileForm.show();
+      userProfileContainer.hide();
+      photoForm.show();
 
       editProfileButton.hide();
       saveProfileButton.show();
