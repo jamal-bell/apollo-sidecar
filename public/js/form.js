@@ -244,12 +244,10 @@ if (profile) {
     const githubInput = $("#githubInput");
     const errorContainer = $("#errors");
     const userProfileContainer = $("#userProfileContainer");
-    const photoForm = $("#photo-form");
     const profileForm = $("#profile-form");
 
     profileForm.hide();
     userProfileContainer.show();
-    photoForm.hide();
 
     function activeInput(input) {
       input.attr("disabled", false);
@@ -340,11 +338,11 @@ if (profile) {
 
               profileForm.hide();
               userProfileContainer.show();
-              photoForm.hide();
 
               editProfileButton.show();
               saveProfileButton.hide();
               alert("Profile Updated!");
+              location.reload();
             }
           })
           .catch(function (error) {
@@ -364,7 +362,6 @@ if (profile) {
       activeInput(githubInput);
       profileForm.show();
       userProfileContainer.hide();
-      photoForm.show();
 
       editProfileButton.hide();
       saveProfileButton.show();
@@ -384,15 +381,18 @@ if (profile) {
   })(jQuery);
 }
 
-let photoForm = document.getElementById("photo-form");
-if (photoForm) {
+let uploadPhotoButton = document.getElementById("uploadPhotoButton");
+if (uploadPhotoButton) {
   const api_key = "913344915682151";
   const cloud_name = "dcl4odxgu";
   const userPhotoDisplay = document.getElementById("userPhotoDisplay");
 
-  photoForm.addEventListener("submit", async function (event) {
+  uploadPhotoButton.addEventListener("click", async function (event) {
     event.preventDefault();
     const file = document.getElementById("photoInput");
+    if (file.files.length === 0) {
+      return alert("Please choose a photo to upload");
+    }
 
     const data = new FormData();
     data.append("file", file.files[0]);
