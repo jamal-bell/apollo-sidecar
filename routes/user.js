@@ -33,7 +33,10 @@ router
   .route("/register")
   .get(async (req, res) => {
     //code here for GET
-    res.render("user/register", { title: "Registration" });
+    return res.render("user/register", {
+      title: "Registration",
+      style_partial: "user-form",
+    });
   })
   .post(async (req, res) => {
     //code here for POST
@@ -86,6 +89,7 @@ router
     if (errors.length > 0) {
       return res.status(400).render("user/register", {
         title: "Registration",
+        style_partial: "user-form",
         errors: errors,
         hasErrors: true,
         firstName: firstName,
@@ -110,6 +114,7 @@ router
       errors.push(e);
       return res.status(400).render("user/register", {
         title: "Registration",
+        style_partial: "user-form",
         errors: errors,
         hasErrors: true,
         firstName: firstName,
@@ -126,7 +131,10 @@ router
   .route("/login")
   .get(async (req, res) => {
     //code here for GET
-    res.render("user/login", { title: "Login" });
+    return res.render("user/login", {
+      title: "Login",
+      style_partial: "user-form",
+    });
   })
   .post(async (req, res) => {
     //code here for POST
@@ -166,8 +174,9 @@ router
       }
     } catch (e) {
       errors.push(e);
-      res.status(400).render("user/login", {
+      return res.status(400).render("user/login", {
         title: "Login",
+        style_partial: "user-form",
         hasErrors: true,
         errors: errors,
       });
@@ -182,8 +191,9 @@ router.route("/user").get(async (req, res) => {
 
   const user = await users.getUserByEmail(req.session.user.emailAddress);
 
-  res.render("user/user", {
+  return res.render("user/user", {
     title: "Overview",
+    style_partial: "overview",
     user: user,
   });
 });
@@ -196,15 +206,16 @@ router.route("/admin").get(async (req, res) => {
 
   const user = await users.getUserByEmail(req.session.user.emailAddress);
 
-  res.render("user/admin", {
+  return res.render("user/admin", {
     title: "Overview",
+    style_partial: "overview",
     user: user,
   });
 });
 
 router.route("/error").get(async (req, res) => {
   //code here for GET
-  res.render("user/error", {
+  return res.render("user/error", {
     title: "Error",
     error: "You do not have access to admin.",
   });
@@ -279,7 +290,7 @@ router.route("/profile").post(async (req, res) => {
     });
   }
 
-  res
+  return res
     .status(500)
     .render("user/error", { error: "Internal Server Error", title: "Error" });
 });
@@ -292,7 +303,10 @@ router
       return res.redirect("/user/login");
     }
 
-    res.render("user/password", { title: "Change Password" });
+    return res.render("user/password", {
+      title: "Change Password",
+      style_partial: "user-form",
+    });
   })
   .post(async (req, res) => {
     //code here for POST
@@ -330,6 +344,7 @@ router
     if (errors.length > 0) {
       return res.status(400).render("user/password", {
         title: "Change Password",
+        style_partial: "user-form",
         errors: errors,
         hasErrors: true,
       });
@@ -341,7 +356,7 @@ router
       if (userRegister && userRegister.updated) {
         users.logoutUser(emailAddress);
         req.session.destroy();
-        res.render("user/logout", {
+        return res.render("user/logout", {
           title: "Password Updated",
           message: "Your password have been updated, please login again.",
         });
@@ -349,11 +364,13 @@ router
     } catch (e) {
       return res.status(400).render("user/password", {
         title: "Change Password",
+        style_partial: "user-form",
         errors: errors,
         hasErrors: true,
       });
     }
-    res
+
+    return res
       .status(500)
       .render("user/error", { error: "Internal Server Error", title: "Error" });
   });
@@ -369,7 +386,7 @@ router.route("/logout").get(async (req, res) => {
   if (req.session) {
     users.logoutUser(emailAddress);
     req.session.destroy();
-    res.render("user/logout", {
+    return res.render("user/logout", {
       title: "Logout",
       message: "You have been logged out.",
     });
@@ -408,7 +425,7 @@ router.route("/signature").get(async (req, res) => {
     },
     cloudinaryConfig.api_secret
   );
-  res.json({ timestamp, signature });
+  return res.json({ timestamp, signature });
 });
 
 router.route("/photo").post(async (req, res) => {
@@ -448,14 +465,13 @@ router.route("/photo").post(async (req, res) => {
         });
       }
     } catch (e) {
-      const user = await users.getUserByEmail(req.session.user.emailAddress);
       return res.json({
         updated: false,
         photoErrors: e,
       });
     }
   }
-  res.status(500).render("user/error", {
+  return res.status(500).render("user/error", {
     error: "Internal Server Error",
     title: "Error",
   });
