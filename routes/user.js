@@ -1,4 +1,6 @@
 import users from "../data/users.js";
+import lessons from "../data/lessons.js";
+import qa from "../data/qa.js";
 import { Router } from "express";
 const router = Router();
 import express from "express";
@@ -198,13 +200,36 @@ router.route("/user").get(async (req, res) => {
     });
   }
 
-  
+  const lessons = [];
+  let hasLessons;
+  if (user.lessons.length !== 0) {
+    hasLessons = true;
+    user.lessons.forEach((lessonId) => {
+      try {
+        lessonId = validation.checkId(lessonId);
+      } catch (e) {}
+
+      lessons.push(lessons);
+    });
+  } else {
+    hasLessons = false;
+  }
+
+  const qas = [];
+  let hasQas;
+  if (user.qas.length !== 0) {
+    hasQas = true;
+    user.qas.forEach((qaId) => {});
+  } else {
+    hasQas = false;
+  }
 
   return res.render("user/user", {
     title: "Overview",
     style_partial: "overview",
     user: user,
     lessons: "",
+    hasLessons: hasLessons,
     qas: "",
   });
 });
@@ -457,21 +482,21 @@ router.route("/cancel").get(async (req, res) => {
   }
 });
 
-router.route("/signature").get(async (req, res) => {
-  //code here for GET
-  if (!req.session.authenticated) {
-    return res.redirect("/user/login");
-  }
+// router.route("/signature").get(async (req, res) => {
+//   //code here for GET
+//   if (!req.session.authenticated) {
+//     return res.redirect("/user/login");
+//   }
 
-  const timestamp = Math.round(new Date().getTime() / 1000);
-  const signature = cloudinary.utils.api_sign_request(
-    {
-      timestamp: timestamp,
-    },
-    cloudinaryConfig.api_secret
-  );
-  return res.json({ timestamp, signature });
-});
+//   const timestamp = Math.round(new Date().getTime() / 1000);
+//   const signature = cloudinary.utils.api_sign_request(
+//     {
+//       timestamp: timestamp,
+//     },
+//     cloudinaryConfig.api_secret
+//   );
+//   return res.json({ timestamp, signature });
+// });
 
 router.route("/photo").post(async (req, res) => {
   if (!req.session.authenticated) {

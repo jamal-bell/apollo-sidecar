@@ -101,6 +101,15 @@ const middleware = {
       }
       next();
     });
+
+    app.use("/user/photo", async (req, res, next) => {
+      if (req.method == "GET") {
+        return res.redirect("javascript:history.back()");
+      } else if (!req.session.authenticated) {
+        return res.redirect("/user/login");
+      }
+      next();
+    });
   },
 
   //lesson middleware
