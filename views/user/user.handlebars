@@ -5,8 +5,8 @@
             <tr>
                 <th>First Name</th>
                 <td id="firstName">{{{user.firstName}}}</td>
-                <td rowspan="7" class="photo-cell">
-                    <img src="{{{user.photo}}}" alt="User Photo" id="user-Photo">
+                <td rowspan="6" class="photo-cell">
+                    <img id="userPhotoDisplay" src="{{{user.photo}}}" alt="User Photo" id="user-Photo">
                 </td>
             </tr>
             <tr>
@@ -23,32 +23,26 @@
             </tr>
             <tr>
                 <th>GitHub</th>
-                <td><a href="{{{user.github}}}" id="githubLink">{{{user.github}}}</a></td>
+                <td><a href="{{{user.github}}}" id="github">{{{user.github}}}</a></td>
             </tr>
             <tr>
                 <th>User Type</th>
                 <td id="role">{{{user.role}}}</td>
             </tr>
             <tr>
-                <th>Account Created At</th>
+                <th>Account Created</th>
                 <td id="accountCreatedAt">{{{user.createdAt}}}</td>
+                <td>
+                    <input type="file" id="photoInput" accept="image/*" />
+                </td>
             </tr>
             <tr>
                 <th>Last Login</th>
                 <td id="lastLogin">{{{user.lastLogin}}}</td>
+                <td><button id="uploadPhotoButton">Upload</button></td>
             </tr>
         </table>
     </div>
-
-    <form id="photo-form">
-        <div id="photoDisplay">
-            <img id="userPhotoDisplay" src="{{{user.photo}}}" alt="User Photo" width="100" height="100">
-        </div>
-        <div>
-            <input type="file" id="photoInput" accept="image/*" />
-            <button id="uploadPhotoButton">Upload</button>
-        </div>
-    </form>
 
     <form id="profile-form">
         <div>
