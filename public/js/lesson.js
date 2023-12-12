@@ -1,12 +1,11 @@
-
-
-
 // checks
 let lessonForm = document.getElementById("lesson-form");
+let moduleForm = document.getElementById("module-form");
 
 if (lessonForm) {
   const titleInput = document.getElementById("titleInput");
   const descriptionInput = document.getElementById("descriptionInput");
+  const errorContainer = document.getElementById("errors");
 
   lessonForm.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -18,13 +17,13 @@ if (lessonForm) {
 
     //call checks and append to errorList surrounded by try/catch
     try {
-      title = helpers.checkInput(title, "lesson title", 3, 250);
+      title = helpers.checkContent(title, "lesson title", 3, 250);
     } catch (e) {
       errorList += `<li>${e}</li>`;
     }
 
     try {
-      description = helpers.checkInput(
+      description = helpers.checkContent(
         description,
         "lesson description",
         10,
@@ -41,6 +40,47 @@ if (lessonForm) {
     } else {
       errorContainer.hidden = true;
       lessonForm.submit();
+    }
+  });
+}
+
+if (moduleForm) {
+  const orderInput = document.getElementById("orderInput");
+  const moduleTitleInput = document.getElementById("moduleTitleInput");
+  const textInput = document.getElementById("textInput");
+  const videoLinkInput = document.getElementById("videoLinkInput");
+  const errorContainer = document.getElementById("errors");
+
+  moduleForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    let order = orderInput.value.trim();
+    let moduleTitle = moduleTitleInput.value.trim();
+    let text = textInput.value.trim();
+    let videoLink = videoLinkInput.value.trim();
+    let errorList = "";
+    errorContainer.hidden = true;
+
+    //call checks and append to errorList surrounded by try/catch
+    try {
+      if (order) order = helpers.checkIsPositiveNum(order, "order");
+    } catch (e) {
+      errorList += `<li>${e}</li>`;
+    }
+
+    try {
+      moduleTitle = helpers.checkContent(moduleTitle, "module title", 10, 250);
+    } catch (e) {
+      errorList += `<li>${e}</li>`;
+    }
+    //TODO finish checks
+    if (errorList !== "") {
+      errorContainer.innerHTML = errorList;
+      errorContainer.hidden = false;
+      moduleForm.reset();
+    } else {
+      errorContainer.hidden = true;
+      moduleForm.submit();
     }
   });
 }
@@ -67,7 +107,7 @@ const helpers = {
     return strVal;
   },
   //for lesson uploads
-  checkInput(strVal, varName, min, max) {
+  checkContent(strVal, varName, min, max) {
     if (!strVal) throw `You must supply a ${varName}!`;
     if (typeof strVal !== "string") throw `${varName} must be a string!`;
     strVal = strVal.trim();
@@ -76,6 +116,17 @@ const helpers = {
     if (strVal.length < min || strVal.length > max)
       throw `${varName} length should be between ${min} and ${max} characters.`;
     return strVal;
+  },
+
+  checkIsPositiveNum(val, varName) {
+    if (!val) throw `Error: You must supply a ${varName}!`;
+    if (typeof val !== "number" || val < 0) {
+      throw `${varName || "provided variable"} needs to be a positive integer`;
+    }
+    if (isNaN(val)) {
+      throw `${varName || "provided variable"} is NaN`;
+    }
+    return val;
   },
 
   checkStringArray(arr, varName) {
@@ -106,7 +157,7 @@ const helpers = {
     }
     return obj;
   },
-  
+
   checkArrayObject(obj, varName) {
     if (!obj) throw `You must provide an object of ${varName}`;
     if (typeof obj !== "object") throw `${varName} must be an object`;

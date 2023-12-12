@@ -6,15 +6,14 @@ let exportedLessonsMethods = {
   //Creates a lesson + 1 module
   //Option to create additional modules via createModule()
   async createLesson(
-    title,
+    lessonTitle,
     description,
     contents,
-    order = 1,
     moduleTitle,
     text,
     videoLink
   ) {
-    title = validation.checkContent(title, "lesson title", 3, 250);
+    lessonTitle = validation.checkContent(lessonTitle, "lesson title", 3, 250);
     description = validation.checkContent(
       description,
       "lesson description",
@@ -39,7 +38,7 @@ let exportedLessonsMethods = {
     }
 
     let newLessonInfo = {
-      title: title, //string
+      lessonTitle: lessonTitle, //string
       description: description, //string
       creatorId: ObjectId, //from user ID
       contents: [
@@ -54,6 +53,7 @@ let exportedLessonsMethods = {
             votedUsers: [], // [{ userId: ObjectId, voteTime: "string" }] (timestamp from response header???)
             count: 0, // total count for upVotes
           },
+          createdByRole: "",
         },
       ],
     };
@@ -91,7 +91,7 @@ let exportedLessonsMethods = {
     //TODO: finish input validation
     const lesson = await this.getLessonById(id);
 
-    id = validation.checkId(id);
+    id = await validation.checkId(id);
     //order optional
     if (!order) {
       order = lesson.contents.length + 1;
@@ -122,6 +122,7 @@ let exportedLessonsMethods = {
         votedUsers: [],
         count: 0,
       },
+      createdByRole: ""
     };
     const lessonWithNewModule = await lessonsCollection.updateOne(
       { _id: new ObjectId(id) },
@@ -137,6 +138,7 @@ let exportedLessonsMethods = {
   },
 
   async getAllLessons() {
+    //TODO implement all, byUser, byAdmin per createdByRole using projection
     const lessonsCollection = await lessons();
     const lessonsList = await lessonsCollection
       .find({})
@@ -167,7 +169,7 @@ let exportedLessonsMethods = {
     );
 
     const lessonUpdateInfo = {
-      title: title,
+      lessonTitle: lessonTitle,
       description: description,
       creatorId: ObjectId, //from user ID
     };

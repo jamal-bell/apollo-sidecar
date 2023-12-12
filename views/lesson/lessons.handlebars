@@ -1,11 +1,11 @@
 <section id="lessons">
-  <h2>Lessons</h2>
+  <h2>{{pageTitle}}</h2>
+  
   <ul>
     {{#each lessons}}
-    <li>
-      <h3>{{this.lessonName}}</h3>
-
-      <button type="button" onclick="location.href='/lesson/details'">Go To {{this.lessonName}}</button>
+    <li style="text-decoration: none" ;>
+      <h3><a href="lesson/{{id}}">{{this.title}}</a></h3>
+      {{!-- <button type="button" onclick="location.href='/lesson/{{id}}'">Go To Lesson</button> --}}
     </li>
     {{/each}}
   </ul>
