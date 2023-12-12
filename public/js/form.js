@@ -392,35 +392,44 @@ if (photoForm) {
 
   photoForm.addEventListener("submit", async function (event) {
     event.preventDefault();
-    const signatureResponse = await axios.get("/user/signature");
+    const file = document.getElementById("photoInput");
 
     const data = new FormData();
-    data.append("file", document.querySelector("#photoInput").files[0]);
+    data.append("file", file.files[0]);
+    data.append("upload_preset", "bll8wiq3");
+    data.append("cloud_name", cloud_name);
     data.append("api_key", api_key);
-    data.append("signature", signatureResponse.data.signature);
-    data.append("timestamp", signatureResponse.data.timestamp);
 
-    const cloudinaryResponse = await axios.post(
-      `https://api.cloudinary.com/v1_1/${cloud_name}/auto/upload`,
-      data,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    );
-
-    const photoData = {
-      public_id: cloudinaryResponse.data.public_id,
-      version: cloudinaryResponse.data.version,
-      signature: cloudinaryResponse.data.signature,
+    const config = {
+      headers: { "X-Requested-With": "XMLHttpRequest" },
+      onUploadProgress: function (e) {
+        console.log(e.loaded / e.total);
+      },
     };
 
-    const photoUpdated = await axios.post("/user/photo", photoData);
+    const url = `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`;
 
-    if (photoUpdated.data.updated) {
-      userPhotoDisplay.src = photoUpdated.data.user.photo;
-      alert("Photo Updated!");
-    } else {
-      alert("Error Updating Photo: " + photoUpdated.data.photoErrors);
-    }
+    await axios
+      .post(url, data, config)
+      .then(async function (res) {
+        const photoData = {
+          public_id: res.data.public_id,
+          version: res.data.version,
+          signature: res.data.signature,
+        };
+
+        const photoUpdated = await axios.post("/user/photo", photoData);
+
+        if (photoUpdated.data.updated) {
+          userPhotoDisplay.src = photoUpdated.data.user.photo;
+          alert("Photo Updated!");
+        } else {
+          alert("Error Updating Photo: " + photoUpdated.data.photoErrors);
+        }
+        file.value = "";
+      })
+      .catch(function (error) {
+        alert("Error Updating Photo: " + error);
+      });
   });
 }
