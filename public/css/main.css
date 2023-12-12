@@ -44,7 +44,7 @@ a, p, footer, h1 {
     margin-top: 5px;
 }
 
-.user-photo {
+.user-photo, #photoDisplay {
     text-align: center;
     flex-direction: column;
     display: flex;
@@ -54,5 +54,12 @@ a, p, footer, h1 {
 }
 
 img {
+    border-radius: 50%; /* Makes the image circular */
+    object-fit: cover;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-bottom: 5px;
+    
 }

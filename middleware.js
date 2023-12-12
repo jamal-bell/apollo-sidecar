@@ -18,7 +18,7 @@ const middleware = {
   user: (app) => {
     //user
     app.use("/user", async (req, res, next) => {
-      if (req.originalUrl === "/user") {
+      if (req.originalUrl === "/user" || req.originalUrl === "/user/") {
         if (req.session.authenticated) {
           if (req.session.user.role === "admin") {
             return res.redirect("/user/admin");
