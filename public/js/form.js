@@ -73,7 +73,7 @@ let registerForm = document.getElementById("registration-form");
 let updateForm = document.getElementById("update-form");
 let passwordForm = document.getElementById("password-form");
 let cancelAccount = document.getElementById("cancelAccountButton");
-let profileForm = $("#profile-form");
+let profileForm = document.getElementById("profile-form");
 
 if (loginForm) {
   const emailAddressInput = document.getElementById("emailAddressInput");
