@@ -1,16 +1,48 @@
+<h2>{{{title}}}</h2>
 <section id="profile">
-    <h2>{{{title}}}</h2>
-
-    <div id="photoDisplay">
-        <img id="userPhotoDisplay" src="{{{user.photo}}}" alt="User Photo" width="100" height="100">
+    <div id="userProfileContainer">
+        <table>
+            <tr>
+                <th>First Name</th>
+                <td id="firstName">{{{user.firstName}}}</td>
+                <td rowspan="6" class="photo-cell">
+                    <img id="userPhotoDisplay" src="{{{user.photo}}}" alt="User Photo" id="user-Photo">
+                </td>
+            </tr>
+            <tr>
+                <th>Last Name</th>
+                <td id="lastName">{{{user.lastName}}}</td>
+            </tr>
+            <tr>
+                <th>Email Address</th>
+                <td id="email">{{{user.emailAddress}}}</td>
+            </tr>
+            <tr>
+                <th>Bio</th>
+                <td id="bio">{{{user.bio}}}</td>
+            </tr>
+            <tr>
+                <th>GitHub</th>
+                <td><a href="{{{user.github}}}" id="github">{{{user.github}}}</a></td>
+            </tr>
+            <tr>
+                <th>User Type</th>
+                <td id="role">{{{user.role}}}</td>
+            </tr>
+            <tr>
+                <th>Account Created</th>
+                <td id="accountCreatedAt">{{{user.createdAt}}}</td>
+                <td>
+                    <input type="file" id="photoInput" accept="image/*" />
+                </td>
+            </tr>
+            <tr>
+                <th>Last Login</th>
+                <td id="lastLogin">{{{user.lastLogin}}}</td>
+                <td><button id="uploadPhotoButton">Upload</button></td>
+            </tr>
+        </table>
     </div>
-
-    <form id="photo-form">
-        <div>
-            <input type="file" id="photoInput" accept="image/*"/>
-            <button id="uploadPhotoButton">Upload</button>
-        </div>
-    </form>
 
     <form id="profile-form">
         <div>
@@ -58,13 +90,13 @@
                 {{/if}}
             </ul>
         </div>
-        <div class="buttons">
-            <button type="button" id="saveProfileButton" hidden>Save Profile</button>
-            <button type="button" id="editProfileButton">Edit Profile</button>
-            <button type="button" onclick="location.href='/user/password'">Change Password</button>
-            <button type="button" id="cancelAccountButton">Cancel Account</button>
-        </div>
     </form>
+    <div id="editButtons" class="buttons">
+        <button type="button" id="saveProfileButton" hidden>Save Profile</button>
+        <button type="button" id="editProfileButton">Edit Profile</button>
+        <button type="button" onclick="location.href='/user/password'">Change Password</button>
+        <button type="button" id="cancelAccountButton">Cancel Account</button>
+    </div>
 </section>
 
     <section id="lessons">

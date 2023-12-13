@@ -16,11 +16,19 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+<<<<<<< HEAD
 form div {
   margin-bottom: 10px;
   justify-content: center;
   display: flex;
   align-items: center;
+=======
+form div, #userProfileContainer, #editButtons {
+    margin-bottom: 10px;
+	justify-content: center;
+    display: flex; 
+    align-items: center;
+>>>>>>> d021838d6165123eb5905b280d6e6bdd25aea612
 }
 
 .form-errors {
@@ -34,6 +42,7 @@ form label {
   margin-right: 5px;
 }
 
+<<<<<<< HEAD
 a,
 p,
 footer,
@@ -43,6 +52,14 @@ h1 {
   justify-content: center;
   align-items: center;
   margin-top: 10px;
+=======
+a, p, footer, h1, h2 {
+	text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+>>>>>>> d021838d6165123eb5905b280d6e6bdd25aea612
 }
 
 .form-footer {
@@ -64,6 +81,7 @@ h1 {
 }
 
 img {
+<<<<<<< HEAD
   border-radius: 50%; /* Makes the image circular */
   object-fit: cover;
   text-align: center;
@@ -72,3 +90,18 @@ img {
   align-items: center;
   margin-bottom: 5px;
 }
+=======
+    border-radius: 50%; /* Makes the image circular */
+    object-fit: cover;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+table td a {
+    display: block;
+    text-align: left;
+}
+>>>>>>> d021838d6165123eb5905b280d6e6bdd25aea612

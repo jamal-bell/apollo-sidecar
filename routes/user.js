@@ -1,4 +1,6 @@
 import users from "../data/users.js";
+import lessons from "../data/lessons.js";
+import qa from "../data/qa.js";
 import { Router } from "express";
 const router = Router();
 import express from "express";
@@ -158,6 +160,7 @@ router
       const user = await users.loginUser(emailAddress, password);
       if (user) {
         req.session.authenticated = true;
+        req.session.sessionId = user._id;
         req.session.user = {
           firstName: user.firstName,
           lastName: user.lastName,
@@ -191,10 +194,43 @@ router.route("/user").get(async (req, res) => {
 
   const user = await users.getUserByEmail(req.session.user.emailAddress);
 
+  if (req.session.sessionId !== user._id.toString()) {
+    return res.render("user/error", {
+      errors: "No access to such user's account page.",
+    });
+  }
+
+  const lessons = [];
+  let hasLessons;
+  if (user.lessons.length !== 0) {
+    hasLessons = true;
+    user.lessons.forEach((lessonId) => {
+      try {
+        lessonId = validation.checkId(lessonId);
+      } catch (e) {}
+
+      lessons.push(lessons);
+    });
+  } else {
+    hasLessons = false;
+  }
+
+  const qas = [];
+  let hasQas;
+  if (user.qas.length !== 0) {
+    hasQas = true;
+    user.qas.forEach((qaId) => {});
+  } else {
+    hasQas = false;
+  }
+
   return res.render("user/user", {
     title: "Overview",
     style_partial: "overview",
     user: user,
+    lessons: "",
+    hasLessons: hasLessons,
+    qas: "",
   });
 });
 
@@ -206,11 +242,45 @@ router.route("/admin").get(async (req, res) => {
 
   const user = await users.getUserByEmail(req.session.user.emailAddress);
 
+  if (req.session.sessionId !== user._id.toString()) {
+    return res.render("user/error", {
+      errors: "No access to such user's account page.",
+    });
+  }
   return res.render("user/admin", {
     title: "Overview",
     style_partial: "overview",
     user: user,
+    lessons: "",
+    qas: "",
   });
+});
+
+router.route("/public/:userId").get(async (req, res) => {
+  //code here for GET
+  if (!req.session.authenticated) {
+    return res.redirect("/user/login");
+  }
+
+  try {
+    req.params.userId = validation.checkId(req.params.userId, "User Id");
+  } catch (e) {
+    return res.status(400).render("/user/error", { title: "Error", error: e });
+  }
+
+  try {
+    const user = await users.getUserById(req.params.userId);
+
+    if (user) {
+    }
+    return res.render("user/public", {
+      title: "User Overview",
+      style_partial: "overview",
+      user: user,
+    });
+  } catch (e) {
+    return res.status(400).render("/user/error", { title: "Error", error: e });
+  }
 });
 
 router.route("/error").get(async (req, res) => {
@@ -412,21 +482,21 @@ router.route("/cancel").get(async (req, res) => {
   }
 });
 
-router.route("/signature").get(async (req, res) => {
-  //code here for GET
-  if (!req.session.authenticated) {
-    return res.redirect("/user/login");
-  }
+// router.route("/signature").get(async (req, res) => {
+//   //code here for GET
+//   if (!req.session.authenticated) {
+//     return res.redirect("/user/login");
+//   }
 
-  const timestamp = Math.round(new Date().getTime() / 1000);
-  const signature = cloudinary.utils.api_sign_request(
-    {
-      timestamp: timestamp,
-    },
-    cloudinaryConfig.api_secret
-  );
-  return res.json({ timestamp, signature });
-});
+//   const timestamp = Math.round(new Date().getTime() / 1000);
+//   const signature = cloudinary.utils.api_sign_request(
+//     {
+//       timestamp: timestamp,
+//     },
+//     cloudinaryConfig.api_secret
+//   );
+//   return res.json({ timestamp, signature });
+// });
 
 router.route("/photo").post(async (req, res) => {
   if (!req.session.authenticated) {
