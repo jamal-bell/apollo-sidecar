@@ -2,7 +2,7 @@
 
 
 
- if($(window).width() <= 600) 
+  if (window.matchMedia('(max-width: 600px)').matches)
  {  
     $(".menu-action-text").hide();
     $("#logo").css("width", "225px");
@@ -52,31 +52,31 @@
          $("#right-nav").addClass("closed-nav");
          $("#right-nav").removeClass("full-width");
      });
-} else if($(window).width() <= 600){
+// } else if($(window).width() <= 600){
 
     
-    $( "#open-left-nav" ).on( "click", function() {
-        // $("#left-nav").removeClass("col-s-2");
-        $("#left-nav").addClass("half-width");
-     });
+//     $( "#open-left-nav" ).on( "click", function() {
+//         // $("#left-nav").removeClass("col-s-2");
+//         $("#left-nav").addClass("half-width");
+//      });
      
-       $( "#open-right-nav" ).on( "click", function() {
-        //  $("#right-nav").removeClass("col-s-2");
-         $("#right-nav").addClass("half-width");
+//        $( "#open-right-nav" ).on( "click", function() {
+//         //  $("#right-nav").removeClass("col-s-2");
+//          $("#right-nav").addClass("half-width");
 
-     });
+//      });
 
-     $( "#close-left-nav" ).on( "click", function() {
-        // $("#left-nav").addClass("closed-nav");
-        $("#left-nav").removeClass("half-width");
+//      $( "#close-left-nav" ).on( "click", function() {
+//         // $("#left-nav").addClass("closed-nav");
+//         $("#left-nav").removeClass("half-width");
 
-     });
+//      });
      
-       $( "#close-right-nav" ).on( "click", function() {
-        //  $("#right-nav").addClass("closed-nav");
-         $("#right-nav").removeClass("half-width");
-     });
-} else if($(window).width() <= 768){
+//        $( "#close-right-nav" ).on( "click", function() {
+//         //  $("#right-nav").addClass("closed-nav");
+//          $("#right-nav").removeClass("half-width");
+//      });
+} else if (window.matchMedia('(max-width: 768px)').matches){
     $( "#close-left-nav" ).on( "click", function() {
         $("#left-nav").addClass("closed-nav");
         $("#close-left-nav").addClass("hidden ");
@@ -100,7 +100,7 @@
           $("#open-right-nav").addClass("hidden ");
           $("#close-right-nav").removeClass("hidden ");
       });
-    }else if($(window).width() <= 1200){
+    }else if (window.matchMedia('(max-width: 1200px)').matches){
         $( "#close-left-nav" ).on( "click", function() {
             $("#left-nav").addClass("closed-nav");
             $("#close-left-nav").addClass("hidden ");

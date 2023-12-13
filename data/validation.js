@@ -36,6 +36,44 @@ const helperFunctions = {
     return arr;
   },
 
+    //for lesson uploads
+    checkContent(strVal, varName, min, max) {
+      if (!strVal) throw `You must supply a ${varName}!`;
+      if (typeof strVal !== "string") throw `${varName} must be a string!`;
+      strVal = strVal.trim();
+      if (strVal.length === 0)
+        throw `${varName} cannot be an empty string or string with just spaces`;
+      if (strVal.length < min || strVal.length > max)
+        throw `${varName} length should be between ${min} and ${max} characters.`;
+      return strVal;
+    },
+
+  checkStringObject(obj, varName) {
+    if (!obj) throw `You must provide an object of ${varName}`;
+    if (typeof obj !== "object") throw `${varName} must be an object`;
+    if (Array.isArray(obj))
+      throw `${varName} must be an object, but an array was supplied`;
+
+    for (let k in obj) {
+      if (typeof obj[k] !== "string" || obj[k].trim() === "") {
+        throw `One or more elements in ${varName} object is not a string or is an empty string`;
+      }
+      obj[k] = obj[k].trim();
+    }
+    return obj;
+  },
+
+  // checkObjInArr(arr, varName) {
+  //   if (!arr || !Array.isArray(arr)) throw `You must provide an array of ${varName} objects`;
+
+  //   arr.forEach((c) =>  { //check contents, title and text
+  //     this.checkStringObject(arr[c], "contents object in array")
+  //   })
+    
+  //   return arr;
+  // },
+
+
   checkIsPositiveNum(val, varName) {
     if (!val) throw `Error: You must supply a ${varName}!`;
     if (typeof val !== "number" || val < 0) {

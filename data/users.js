@@ -2,6 +2,7 @@ import { users } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import validation from "../data/validation.js";
 import bcrypt from "bcryptjs";
+import cloudinary from "cloudinary";
 
 function checkRole(role) {
   if (!role) throw "You must provide the role.";
@@ -13,7 +14,7 @@ function checkRole(role) {
   return role;
 }
 
-const saltRounds = 16;
+const saltRounds = 10;
 
 const exportedusersMethods = {
   //TODO: add input validation
@@ -35,6 +36,7 @@ const exportedusersMethods = {
       emailAddress: emailAddress,
       password: hashedPassword,
       role: role,
+      photo: "/public/assets/no-photo.jpg",
       handle: "",
       github: "",
       lastIp: "",
@@ -92,14 +94,14 @@ const exportedusersMethods = {
 
     let ip = "";
 
-    fetch("https://api.ipify.org?format=json")
-      .then((response) => response.json())
-      .then((data) => {
-        ip = data.ip;
-      })
-      .catch((error) => {
-        console.log("Error:", error);
-      });
+    // fetch("https://api.ipify.org?format=json")
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     ip = data.ip;
+    //   })
+    //   .catch((error) => {
+    //     console.log("Error:", error);
+    //   });
 
     let loggedCount = user.loggedInCount + 1;
 
@@ -157,14 +159,17 @@ const exportedusersMethods = {
   }, //end removeUser()
 
   async updateUser(emailAddress, userObject) {
-    let firstName = userObject.firstName;
-    let lastName = userObject.lastName;
-    let role = userObject.role;
+    let firstName = userObject.firstName.trim();
+    let lastName = userObject.lastName.trim();
+    let bio = userObject.bio.trim();
+    let github = userObject.github.trim();
 
-    firstName = validation.checkFirstName(firstName, "First Name");
+    firstName = validation.checkString(firstName, "First Name");
     lastName = validation.checkString(lastName, "Last Name");
     emailAddress = validation.checkEmail(emailAddress);
-    role = checkRole(role);
+    if (github.trim().length !== 0 && !new URL(github)) {
+      throw "Invalid Github link.";
+    }
 
     const usersCollection = await users();
     const user = await usersCollection.findOne({ emailAddress: emailAddress });
@@ -175,35 +180,20 @@ const exportedusersMethods = {
       firstName: firstName,
       lastName: lastName,
       emailAddress: emailAddress,
-      role: role,
-      handle: "",
-      github: "",
-      lastIp: "",
+      github: github,
+      bio: bio,
       updatedAt: new Date(),
-      isAdmin: role === "admin" ? true : false,
-      isActive: true,
-      permissions: {
-        lessonAuth: {
-          edit: role === "admin" ? true : false,
-          Delete: role === "admin" ? true : false,
-          Publish: role === "admin" ? true : false,
-        },
-        learningAuth: {
-          edit: role === "admin" ? true : false,
-          publish: role === "admin" ? true : false,
-        },
-      },
     };
 
     const updatedUser = await usersCollection.findOneAndUpdate(
       { emailAddress: emailAddress },
       { $set: updatedInfo },
-      { returnNewDocument: true }
+      { returnDocument: "after" }
     );
 
     if (!updatedUser) throw "Could not update the information successfully.";
 
-    return { emailAddress: emailAddress, updated: true };
+    return updatedUser;
   }, //end updateUser
 
   async comparePassword(emailAddress, password) {
@@ -218,7 +208,7 @@ const exportedusersMethods = {
     if (!compareToMatch) throw "Email address and the password do not match.";
 
     return password;
-  },
+  }, //end comparePassword
 
   async updatePassword(emailAddress, newPassword) {
     newPassword = validation.checkPassword(newPassword);
@@ -237,13 +227,13 @@ const exportedusersMethods = {
     const updatedUser = await usersCollection.findOneAndUpdate(
       { emailAddress: emailAddress },
       { $set: updatedInfo },
-      { returnNewDocument: true }
+      { returnDocument: "after" }
     );
 
     if (!updatedUser) throw "Could not update the information successfully.";
 
     return { emailAddress: emailAddress, updated: true };
-  },
+  }, //end updatePassword
 
   async logoutUser(emailAddress) {
     emailAddress = validation.checkEmail(emailAddress);
@@ -258,12 +248,12 @@ const exportedusersMethods = {
     const updatedUser = await usersCollection.findOneAndUpdate(
       { emailAddress: emailAddress },
       { $set: updatedInfo },
-      { returnNewDocument: true }
+      { returnDocument: "after" }
     );
 
     if (!updatedUser) throw "Could not update the information successfully.";
     return { emailAddress: emailAddress, logout: true };
-  },
+  }, //end logoutUser
 
   async deactiveUser(emailAddress) {
     emailAddress = validation.checkEmail(emailAddress);
@@ -278,12 +268,12 @@ const exportedusersMethods = {
     const updatedUser = await usersCollection.findOneAndUpdate(
       { emailAddress: emailAddress },
       { $set: updatedInfo },
-      { returnNewDocument: true }
+      { returnDocument: "after" }
     );
 
     if (!updatedUser) throw "Could not update the information successfully.";
     return { emailAddress: emailAddress, deactivated: true };
-  },
+  }, //end deactiveUser
 
   async reactivateUser(emailAddress) {
     emailAddress = validation.checkEmail(emailAddress);
@@ -298,11 +288,38 @@ const exportedusersMethods = {
     const updatedUser = await usersCollection.findOneAndUpdate(
       { emailAddress: emailAddress },
       { $set: updatedInfo },
-      { returnNewDocument: true }
+      { returnDocument: "after" }
     );
 
     if (!updatedUser) throw "Could not update the information successfully.";
     return { emailAddress: emailAddress, deactivated: true };
+  }, //end reactivateUser
+
+  async updatePhoto(emailAddress, url) {
+    emailAddress = validation.checkEmail(emailAddress);
+    if (url.length !== 0 && !new URL(url)) {
+      throw "Invalid photo Link.";
+    }
+
+    const usersCollection = await users();
+    const user = await usersCollection.findOne({ emailAddress: emailAddress });
+
+    if (!user) throw "User not found in the system.";
+
+    const updatedPhoto = {
+      photo: url,
+      updatedAt: new Date(),
+    };
+
+    const updatedUser = await usersCollection.findOneAndUpdate(
+      { emailAddress: emailAddress },
+      { $set: updatedPhoto },
+      { returnDocument: "after" }
+    );
+
+    if (!updatedUser) throw "Could not update the photo successfully.";
+
+    return updatedUser;
   },
 }; //end createUser()
 

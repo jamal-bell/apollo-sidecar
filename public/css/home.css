@@ -6,10 +6,15 @@ main, #main, footer {
     width: 100% !important;
 }
 
+#header-block h1 {
+    visibility: hidden;
+}
+
 #left-nav, #right-nav, #close-left-nav, #close-left-nav {
     width: 0 !important;
     visibility: hidden;
 }
+
 header {
     z-index: 5;
 }
@@ -77,7 +82,7 @@ a.register-btn {
     display: inline-block;
     transform: skewX(168deg);
     transform-origin: top right;
-    width: 30%;
+    /* width: 30%; */
     content: "";
     font-size: 80%;
     border: 1px solid #000;
@@ -130,8 +135,38 @@ a.register-btn:active {
     text-align: right;
 }
 
+.cb-adj {
+    margin-right: 68px;
+}
+
 .content-box-left{
     width: 45%;
     position: absolute;
     left: 10%;
+}
+
+ul.content-text {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: block;
+    letter-spacing: 2px;
+    font-size: 1.1em;
+    width: 74%;
+}
+
+ul.content-text li {
+    margin-bottom: 25px;
+}
+
+ul.right-box {
+    right: 0;
+    /* justify-content: right; */
+    position: absolute;
+
+    display: inline-block;
+}
+
+ul.left-box {
+    text-align: left;
 }

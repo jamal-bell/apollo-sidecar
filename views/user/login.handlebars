@@ -1,27 +1,29 @@
-<h1>{{title}}</h1>
+<div id="login-page">
+    {{!-- <h1>{{title}}</h1> --}}
 
-<form id="login-form" method="POST" action="/user/login" class="form">
-    <div>
-        <label class="email-label" for="emailAddressInput">Email Address:</label>
-        <input class="email-input" type="email" name="emailAddressInput" id="emailAddressInput" required>
-    </div>
-    <div>
-        <label class="password-label" for="passwordInput">Password:</label>
-        <input class="password-input" type="password" name="passwordInput" id="passwordInput" required>
-    </div>
-    <div>
-        <button type="submit">Login</button>
-    </div>
-    <a class="form-footer" href="/user/register">Click here to register!</a>
-    <div class="form-errors">
-        <ul id="errors" class="errors">
-            {{#if hasErrors}}
-                {{#each errors}}
-                <li>
-                    {{this}}
-                </li>
-                {{/each}}
-            {{/if}}
-        </ul>
-    </div>
-</form>
+    <form id="login-form" method="POST" action="/user/login" class="form">
+        <div>
+            <label class="email-label" for="emailAddressInput">Email Address:</label>
+            <input class="email-input" type="email" name="emailAddressInput" id="emailAddressInput" required>
+        </div>
+        <div>
+            <label class="password-label" for="passwordInput">Password:</label>
+            <input class="password-input" type="password" name="passwordInput" id="passwordInput" required>
+        </div>
+        <div>
+            <button type="submit">Login</button>
+        </div>
+        <a class="form-footer" href="/user/register">Click here to register!</a>
+        <div class="form-errors">
+            <ul id="errors" class="errors">
+                {{#if hasErrors}}
+                    {{#each errors}}
+                    <li>
+                        {{this}}
+                    </li>
+                    {{/each}}
+                {{/if}}
+            </ul>
+        </div>
+    </form>
+</div>

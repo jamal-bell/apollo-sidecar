@@ -1,4 +1,5 @@
 // In this file, you must perform all client-side validation for every single form input (and the role dropdown) on your pages. The constraints for those fields are the same as they are for the data functions and routes. Using client-side JS, you will intercept the form's submit event when the form is submitted and If there is an error in the user's input or they are missing fields, you will not allow the form to submit to the server and will display an error on the page to the user informing them of what was incorrect or missing.  You must do this for ALL fields for the register form as well as the login form. If the form being submitted has all valid data, then you will allow it to submit to the server for processing. Don't forget to check that password and confirm password match on the registration form!
+
 const validation = {
   checkString(strVal, varName) {
     if (!strVal) throw `You must supply a ${varName}!`;
@@ -72,7 +73,7 @@ let registerForm = document.getElementById("registration-form");
 let updateForm = document.getElementById("update-form");
 let passwordForm = document.getElementById("password-form");
 let cancelAccount = document.getElementById("cancelAccountButton");
-let profileForm = $("#profile-form");
+let profile = document.getElementById("profile");
 
 if (loginForm) {
   const emailAddressInput = document.getElementById("emailAddressInput");
@@ -174,62 +175,6 @@ if (registerForm) {
   });
 }
 
-if (updateForm) {
-  const firstNameInput = document.getElementById("firstNameInput");
-  const lastNameInput = document.getElementById("lastNameInput");
-  const emailAddressInput = document.getElementById("emailAddressInput");
-  const bioInput = document.getElementById("bioInput");
-  const githubInput = document.getElementById("githubInput");
-  const roleInput = document.getElementById("roleInput");
-  const errorContainer = document.getElementById("errors");
-
-  updateForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-
-    let firstName = firstNameInput.value.trim();
-    let lastName = lastNameInput.value.trim();
-    let emailAddress = emailAddressInput.value.trim();
-    let bio = bioInput.value.trim();
-    let github = githubInput.value.trim();
-    let role = roleInput.value.trim();
-    let errorList = "";
-
-    try {
-      firstName = validation.checkString(firstName, "First Name");
-    } catch (e) {
-      errorList += `<li>${e}</li>`;
-    }
-
-    try {
-      lastName = validation.checkString(lastName, "Last Name");
-    } catch (e) {
-      errorList += `<li>${e}</li>`;
-    }
-
-    try {
-      emailAddress = validation.checkEmail(emailAddress);
-    } catch (e) {
-      errorList += `<li>${e}</li>`;
-    }
-
-    try {
-      if (github.trim().length !== 0 && !new URL(github)) {
-        throw "Invalid Github Link.";
-      }
-    } catch (e) {
-      errorList += `<li>${e}</li>`;
-    }
-
-    if (errorList !== "") {
-      errorContainer.html(errorList);
-      errorContainer.hide();
-    } else {
-      errorContainer.show();
-      updateForm.submit();
-    }
-  });
-}
-
 if (passwordForm) {
   const currentPasswordInput = document.getElementById("currentPasswordInput");
   const newPasswordInput = document.getElementById("newPasswordInput");
@@ -288,30 +233,7 @@ if (cancelAccount) {
   });
 }
 
-// if (profileForm) {
-
-//   const userPhotoButton = document.getElementById("uploadPhotoButton");
-//   const userPhotoDisplay = document.getElementById("userPhotoDisplay");
-//   const photoInput = document.getElementById("photoInput");
-
-//   userPhotoButton.addEventListener("click", function() {
-//     photoInput.click();
-//   });
-
-//   photoInput.addEventListener("change", function(event) {
-//     if (event.target.files && event.target.files[0]) {
-//       var reader = new FileReader();
-
-//       reader.onload = function(e) {
-//           document.getElementById('userPhotoDisplay').src = e.target.result;
-//       };
-
-//       reader.readAsDataURL(event.target.files[0]);
-//     }
-//   });
-// }
-
-if (profileForm) {
+if (profile) {
   (function ($) {
     const editProfileButton = $("#editProfileButton");
     const saveProfileButton = $("#saveProfileButton");
@@ -321,6 +243,11 @@ if (profileForm) {
     const bioInput = $("#bioInput");
     const githubInput = $("#githubInput");
     const errorContainer = $("#errors");
+    const userProfileContainer = $("#userProfileContainer");
+    const profileForm = $("#profile-form");
+
+    profileForm.hide();
+    userProfileContainer.show();
 
     function activeInput(input) {
       input.attr("disabled", false);
@@ -409,9 +336,13 @@ if (profileForm) {
               deactiveInput(bioInput);
               deactiveInput(githubInput);
 
+              profileForm.hide();
+              userProfileContainer.show();
+
               editProfileButton.show();
               saveProfileButton.hide();
               alert("Profile Updated!");
+              location.reload();
             }
           })
           .catch(function (error) {
@@ -429,6 +360,8 @@ if (profileForm) {
       activeInput(emailAddressInput);
       activeInput(bioInput);
       activeInput(githubInput);
+      profileForm.show();
+      userProfileContainer.hide();
 
       editProfileButton.hide();
       saveProfileButton.show();
@@ -446,4 +379,57 @@ if (profileForm) {
       saveProfileClick.call(this, event);
     });
   })(jQuery);
+}
+
+let uploadPhotoButton = document.getElementById("uploadPhotoButton");
+if (uploadPhotoButton) {
+  const api_key = "913344915682151";
+  const cloud_name = "dcl4odxgu";
+  const userPhotoDisplay = document.getElementById("userPhotoDisplay");
+
+  uploadPhotoButton.addEventListener("click", async function (event) {
+    event.preventDefault();
+    const file = document.getElementById("photoInput");
+    if (file.files.length === 0) {
+      return alert("Please choose a photo to upload");
+    }
+
+    const data = new FormData();
+    data.append("file", file.files[0]);
+    data.append("upload_preset", "bll8wiq3");
+    data.append("cloud_name", cloud_name);
+    data.append("api_key", api_key);
+
+    const config = {
+      headers: { "X-Requested-With": "XMLHttpRequest" },
+      onUploadProgress: function (e) {
+        console.log(e.loaded / e.total);
+      },
+    };
+
+    const url = `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`;
+
+    await axios
+      .post(url, data, config)
+      .then(async function (res) {
+        const photoData = {
+          public_id: res.data.public_id,
+          version: res.data.version,
+          signature: res.data.signature,
+        };
+
+        const photoUpdated = await axios.post("/user/photo", photoData);
+
+        if (photoUpdated.data.updated) {
+          userPhotoDisplay.src = photoUpdated.data.user.photo;
+          alert("Photo Updated!");
+        } else {
+          alert("Error Updating Photo: " + photoUpdated.data.photoErrors);
+        }
+        file.value = "";
+      })
+      .catch(function (error) {
+        alert("Error Updating Photo: " + error);
+      });
+  });
 }

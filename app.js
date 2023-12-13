@@ -4,7 +4,8 @@ import configRoutes from "./routes/index.js";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import exphbs from "express-handlebars";
-import middleware from "./middleware.js";
+import middlewareUser from "./middleware-user.js";
+import middlewareLessons from "./middleware-lessons.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -17,9 +18,11 @@ const handlebarsInstance = exphbs.create({
     asJSON: (obj, spacing) => {
       if (typeof spacing === 'number')
         return new Handlebars.SafeString(JSON.stringify(obj, null, spacing));
-
       return new Handlebars.SafeString(JSON.stringify(obj));
-    }
+    },
+    isArray: function (value) {
+      return Array.isArray(value);
+    },
   },
   partialsDir: ['views/partials/']
 });
@@ -47,15 +50,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(rewriteUnsupportedBrowserMethods);
 
-// app.engine("handlebars", exphbs.engine({ defaultLayout: "main" }));
+
 app.engine('handlebars', handlebarsInstance.engine);
 app.set("view engine", "handlebars");
 
-middleware.session(app);
-middleware.user(app);
-middleware.lesson(app);
-middleware.qa(app);
-middleware.home(app);
+middlewareUser.session(app);
+middlewareUser.user(app);
+middlewareLessons.lesson(app);
+middlewareUser.qa(app);
+middlewareUser.home(app);
 
 configRoutes(app);
 
