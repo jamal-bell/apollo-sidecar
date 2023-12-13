@@ -259,4 +259,12 @@ router
       .render("/error", { error: "Internal Server Error", title: "Error" });
   });
 
+  router.route("/error").get(async (req, res) => {
+    //code here for GET
+    return res.render("error", {
+      title: "Error",
+      error: "You do not have access.",
+    });
+  });
+
 export default router;
