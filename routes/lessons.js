@@ -131,7 +131,7 @@ router
   });
 
 router
-  .route("/lesson/addmodule")
+  .route("/addmodule")
   .get(async (req, res) => {
     const lessonId = req.params["lesson-id"];
     return res.render("lesson/publish", {
