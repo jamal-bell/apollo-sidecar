@@ -16,25 +16,25 @@ let newQaResponse = undefined;
 
 //-----------------Create Lessons---------------------//
 
-// try {
-//   for (let i = 1; i < 4; i++) {
-//     let newLesson = await lessonData.createLesson(
-//       "Lesson " + i + ": JavaScript",
-//       "Data Structures: " + i,
-//       [
-//         {
-//           moduleTitle: i + " Intro to Data Structures",
-//           text: "This is an intro to Data Structures.",
-//           videoLink: "https://www.youtube.com/watch?v=yourVideoId",
-//         },
-//       ]
-//     );
-//   }
-//   //console.log(newLesson);
-// } catch (e) {
-//   console.log("Caught an error creating lesson from seed!");
-//   console.log(e);
-// }
+try {
+  for (let i = 1; i < 4; i++) {
+    let newLesson = await lessonData.createLesson(
+      "Lesson " + i + ": JavaScript",
+      "Data Structures: " + i,
+      [
+        {
+          moduleTitle: i + " Intro to Data Structures",
+          text: "This is an intro to Data Structures.",
+          videoLink: "https://www.youtube.com/watch?v=yourVideoId",
+        },
+      ]
+    );
+  }
+  //console.log(newLesson);
+} catch (e) {
+  console.log("Caught an error creating lesson from seed!");
+  console.log(e);
+}
 
 // try {
 //   let firstLesson = await lessonData.getLessonById("65732a03793ff6fd82b82acf")

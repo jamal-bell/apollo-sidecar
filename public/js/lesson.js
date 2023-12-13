@@ -1,4 +1,5 @@
-// checks
+
+(function ($) {
 let lessonForm = document.getElementById("lesson-form");
 let moduleForm = document.getElementById("module-form");
 
@@ -84,7 +85,144 @@ if (moduleForm) {
     }
   });
 }
+//TODO implemnent for updating lessons/modules
+// if (profileForm) {
+//   
+//     const editProfileButton = $("#editProfileButton");
+//     const saveProfileButton = $("#saveProfileButton");
+//     const firstNameInput = $("#firstNameInput");
+//     const lastNameInput = $("#lastNameInput");
+//     const emailAddressInput = $("#emailAddressInput");
+//     const bioInput = $("#bioInput");
+//     const githubInput = $("#githubInput");
+//     const errorContainer = $("#errors");
 
+//     function activeInput(input) {
+//       input.attr("disabled", false);
+//     }
+
+//     function deactiveInput(input) {
+//       input.attr("disabled", true);
+//     }
+
+//     function saveProfileClick(event) {
+//       event.preventDefault();
+//       let errorList = "";
+
+//       let firstName = firstNameInput.val().trim();
+//       let lastName = lastNameInput.val().trim();
+//       let emailAddress = emailAddressInput.val().trim();
+//       let bio = bioInput.val().trim();
+//       let github = githubInput.val().trim();
+
+//       try {
+//         firstName = validation.checkString(firstName, "First Name");
+//       } catch (e) {
+//         errorList += `<li>${e}</li>`;
+//       }
+
+//       try {
+//         lastName = validation.checkString(lastName, "Last Name");
+//       } catch (e) {
+//         errorList += `<li>${e}</li>`;
+//       }
+
+//       try {
+//         emailAddress = validation.checkEmail(emailAddress);
+//       } catch (e) {
+//         errorList += `<li>${e}</li>`;
+//       }
+
+//       try {
+//         if (github.length !== 0 && !new URL(github)) {
+//           throw "Invalid Github Link.";
+//         }
+//       } catch (e) {
+//         errorList += `<li>${e}</li>`;
+//       }
+
+//       if (errorList !== "") {
+//         errorContainer.html(errorList);
+//         errorContainer.show();
+//       } else {
+//         errorContainer.hide();
+
+//         let requestConfig = {
+//           method: "POST",
+//           url: "/user/profile",
+//           contentType: "application/json",
+//           data: JSON.stringify({
+//             firstName: firstName,
+//             lastName: lastName,
+//             emailAddress: emailAddress,
+//             bio: bio,
+//             github: github,
+//           }),
+//         };
+
+//         $.ajax(requestConfig)
+//           .then(function (response) {
+//             if (response.hasErrors) {
+//               errorContainer.html(response.errors);
+//               errorContainer.show();
+//             } else if (response.updated) {
+//               firstName = response.user.firstName;
+//               lastName = response.user.lastName;
+//               email = response.user.emailAddress;
+//               bio = response.user.bio;
+//               github = response.user.github;
+
+//               firstNameInput.val(firstName);
+//               lastNameInput.val(lastName);
+//               emailAddressInput.val(email);
+//               bioInput.val(bio);
+//               githubInput.val(github);
+
+//               deactiveInput(firstNameInput);
+//               deactiveInput(lastNameInput);
+//               deactiveInput(emailAddressInput);
+//               deactiveInput(bioInput);
+//               deactiveInput(githubInput);
+
+//               editProfileButton.show();
+//               saveProfileButton.hide();
+//               alert("Profile Updated!");
+//             }
+//           })
+//           .catch(function (error) {
+//             errorList.push(`<li>${e}</li>`);
+//             errorContainer.show();
+//           });
+//       }
+//     }
+//     function editProfileClick(event) {
+//       event.preventDefault();
+//       errorContainer.hide();
+//       activeInput(firstNameInput);
+//       activeInput(lastNameInput);
+//       activeInput(emailAddressInput);
+//       activeInput(bioInput);
+//       activeInput(githubInput);
+
+//       editProfileButton.hide();
+//       saveProfileButton.show();
+//     }
+
+//     editProfileButton.click(function (event) {
+//       event.preventDefault();
+//       errorContainer.hide();
+//       editProfileClick.call(this, event);
+//     });
+
+//     saveProfileButton.click(function (event) {
+//       event.preventDefault();
+//       errorContainer.hide();
+//       saveProfileClick.call(this, event);
+//     });
+   })(jQuery);
+// }
+
+  
 const helpers = {
   checkId(id, varName) {
     if (!id) throw `Error: You must provide a ${varName}`;

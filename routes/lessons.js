@@ -33,16 +33,17 @@ router.route("/lesson/:id").get(async (req, res) => {
   const lessonFound = await lessonsData.getLessonById(req.params.id);
   res.status(200).render("lesson/lessonById", {
     title: lessonFound.title,
-    title: lessonFound.title,
+    moduleTitle: lessonFound.moduleTitle,
     description: lessonFound.description,
     contents: lessonFound.contents,
   });
 });
 
 router
-  .route("/lesson/newlesson")
+  .route("/newlesson")
   //new lesson form
   .get(async (req, res) => {
+    console.log("Hitting get");
     try {
       return res.status(200).render("lesson/newlesson", {
         title: "Create Lesson",
@@ -53,7 +54,7 @@ router
   })
   .post(async (req, res) => {
     const { lessonTitle, description, moduleTitle, text, videoLink } = req.body;
-
+    console.log(req.body);
     try {
       const content = [
         {
@@ -90,12 +91,12 @@ router
       console.log(error);
       return res.status(400).render("lesson/newlesson", {
         title: "Creating lesson failed",
-        error,
+        error: error,
         hasErrors: true,
         lessonTitle,
         description: description,
         moduleTitle,
-        text,
+        text: text,
         videoLink,
         createdBy: null,
       });
