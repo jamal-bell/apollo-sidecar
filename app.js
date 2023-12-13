@@ -46,9 +46,9 @@ app.set("view engine", "handlebars");
 
 middleware.session(app);
 middleware.user(app);
-middleware.lesson(app);
-middleware.qa(app);
-middleware.home(app);
+// middleware.lesson(app);
+// middleware.qa(app);
+// middleware.home(app);
 
 configRoutes(app);
 
