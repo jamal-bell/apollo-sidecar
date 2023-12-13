@@ -10,18 +10,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="/public/css/main.css">
     <link rel="stylesheet" href="/public/css/style.css">
-    {{!-- {{#if (lookup . 'style_partial')}}
+    {{#if (lookup . 'style_partial')}}
         {{> (lookup . 'style_partial') }}
-    {{/if}} --}}
-    {{#if style_partial}}
-        {{#if (isArray style_partial)}}
-            {{#each style_partial}}
-                {{> (this)}}
-            {{/each}}
-        {{else}}
-            {{> (lookup . 'style_partial') }}
-        {{/if}}
     {{/if}}
+
 </head>
 <body>
     <div class="row">  
@@ -31,10 +23,11 @@
             
             <img alt="space background" src="https://img.freepik.com/free-vector/space-monochrome-seamless-pattern-with-astronaut-cosmic-objects-manned-ships-satellite-starry-sky_1284-33842.jpg?w=740&t=st=1701995278~exp=1701995878~hmac=5e98635b88196ded8e495bf0723d97681e5624eca3229a18343bc454ba32829b" />
             <ul>
-            <li>The Flight</li>
+            {{!-- <li>The Flight</li>
             <li>The City</li>
             <li>The Island</li>
-            <li>The Food</li>
+            <li>The Food</li> --}}
+            {{{menu_items}}}
             </ul>
         </div>
       
@@ -80,18 +73,12 @@
                     </div>
                     
                 <footer> 
-                <div class="row">
+                {{!-- <div class="row"> --}}
                 <h3>TOGETHER WE KNOW, TOGETHER WE GROW</h3> 
-                <div class="col-s-2">
-                    
+                <div id="footer-content">
+                    STuff
                 </div>
-                <div class=".all-open-main">
-
-                </div>
-                <div class="col-s-2">
-
-                </div>
-                </div>
+                {{!-- </div> --}}
                 <div class="base">&copy 2023 Apollo Sidecar </div>
             </footer>
     </div>
@@ -100,18 +87,8 @@
     <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
     {{!-- <script src="/public/js/form.js"></script> --}}
     <script src="/public/js/function.js"></script>
-        {{!-- {{#if (lookup . 'script_partial')}}
+        {{#if (lookup . 'script_partial')}}
             {{> (lookup . 'script_partial') }}
-        {{/if}} --}}
-        {{!-- {{#if script_partial}}
-            {{#if (isArray script_partial)}}
-                {{#each script_partial}}
-                    {{> (this)}}
-                {{/each}}
-            {{else}}
-                {{> (lookup . 'script_partial') }}
-            {{/if}}
-        {{/if}} --}}
-
+        {{/if}}
 </body>
 </html>

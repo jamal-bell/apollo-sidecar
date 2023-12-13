@@ -172,9 +172,10 @@ router
           emailAddress: user.emailAddress,
           role: user.role,
         };
-        if (user.role === "admin") {
-          return res.redirect("/user/admin");
-        } else if (user.role === "user") {
+        if(req.session.authenticated) {
+        // if (user.role === "admin") {
+        //   return res.redirect("/user/admin");
+        // } else if (user.role === "user") {
           return res.redirect("/user/user");
         }
       } else {
@@ -230,14 +231,40 @@ router.route("/user").get(async (req, res) => {
     hasQas = false;
   }
 
-  return res.render("user/user", {
-    title: "Overview",
-    script_partial: ["script_axios", "script_userform"],
-    user: user,
-    lessons: "",
-    hasLessons: hasLessons,
-    qas: "",
-  });
+  if (req.session.user.role === "admin") {
+
+    return res.render("user/user", {
+      title: "Overview",
+      style_partial: "css_userprofile",
+      script_partial: "script_overview",
+      user: user,
+      lessons: "",
+      hasLessons: hasLessons,
+      qas: "",
+      menu_items: "<li><a href='/user/edit'>Overview</a></li> \
+      <li><a href='/user/admin'>Manage Profile</a></li> \
+      <li><a href='/user/password'>Change Password</a></li> \
+      <li><a href='/user/cancel'>Cancel Account</a></li> \
+      <li><a href='/user/logout'>Log Out</a></li>"
+    });
+    
+  } else {
+
+    return res.render("user/user", {
+      title: "Overview",
+      style_partial: "css_userprofile",
+      script_partial: "script_overview",
+      user: user,
+      lessons: "",
+      hasLessons: hasLessons,
+      qas: "",
+      menu_items: "<li><a href='/user/edit'>Overview</a></li> \
+      <li><a href='/user/edit'>Edit Profile</a></li> \
+      <li><a href='/user/password'>Change Password</a></li> \
+      <li><a href='/user/cancel'>Cancel Account</a></li> \
+      <li><a href='/user/logout'>Log Out</a></li>"
+    });
+  }
 });
 
 router.route("/admin").get(async (req, res) => {
@@ -253,15 +280,69 @@ router.route("/admin").get(async (req, res) => {
       errors: "No access to such user's account page.",
     });
   }
+
+
   return res.render("user/admin", {
-    title: "Overview",
-    script_partial: ["script_axios", "script_userform"],
+    title: "User Profile",
+    script_partial: "script_overview",
+    style_partial: "css_userprofile",
+    left_menu_list: "<li>",
     user: user,
     lessons: "",
     qas: "",
+    menu_items: "<li><a href='/user/user'>Overview</a></li> \
+    <li><a class='active' href=''>Manage Profile</a></li> \
+    <li><a href='/user/content'>Manage Content</a></li> \
+    <li><a href='/user/password'>Change Password</a></li> \
+    <li><a href='/user/cancel'>Cancel Account</a></li> \
+    <li><a href='/user/logout'>Log Out</a></li>"
   });
 });
 
+//====================================== New routes
+// check middlware if needed
+router.route("/edit").get(async (req, res) => {
+  //code here for GET
+  if (!req.session.authenticated) {
+    return res.redirect("/user/login");
+  }
+
+  const user = await users.getUserByEmail(req.session.user.emailAddress);
+
+  if (req.session.sessionId !== user._id.toString()) {
+    return res.render("user/error", {
+      errors: "No access to such user's account page.",
+    });
+  }
+  return res.render("user/admin", {
+    title: "User Profile",
+    script_partial: "script_overview",
+    style_partial: "css_userprofile",
+    left_menu_list: "<li>",
+    user: user,
+    lessons: "",
+    qas: "",
+    menu_items: "<li><a href='/user/user'>Overview</a></li> \
+    <li><a href='/user/edit'>Edit Profile</a></li> \
+    <li><a href='/user/password'>Change Password</a></li> \
+    <li><a href='/user/cancel'>Cancel Account</a></li> \
+    <li><a href='/user/logout'>Log Out</a></li>"
+  });
+});
+
+router.route("/content").get(async (req, res) => {
+
+  return res.render("user/content", {
+    title: "My Content",
+    style_partial: "css_content",
+    menu_items: "<li><a href='/user/user'>Overview</a></li> \
+    <li><a class='active' href=''>Manage Content</a></li> \
+    <li><a href=''>Manage Lessons</a></li> \
+    <li><a href=''>Manaage QA Posts</a></li> \
+    <li><a href='/logout'>Log Out</a></li>"
+  });
+});
+//============================================================= End new routes
 router.route("/public/:userId").get(async (req, res) => {
   //code here for GET
   if (!req.session.authenticated) {
@@ -281,7 +362,7 @@ router.route("/public/:userId").get(async (req, res) => {
     }
     return res.render("user/public", {
       title: "User Overview",
-      script_partial: ["script_axios", "script_userform"],
+      script_partial: "script_overview",
       user: user,
     });
   } catch (e) {

@@ -246,7 +246,7 @@ if (profile) {
     const userProfileContainer = $("#userProfileContainer");
     const profileForm = $("#profile-form");
 
-    profileForm.hide();
+    // profileForm.hide();
     userProfileContainer.show();
 
     function activeInput(input) {

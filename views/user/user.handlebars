@@ -40,7 +40,7 @@
         </table>
     </div>
 
-    <form id="photo-form">
+    {{!-- <form id="photo-form">
         <div id="photoDisplay">
             <img id="userPhotoDisplay" src="{{{user.photo}}}" alt="User Photo" width="100" height="100">
         </div>
@@ -48,9 +48,9 @@
             <input type="file" id="photoInput" accept="image/*" />
             <button id="uploadPhotoButton">Upload</button>
         </div>
-    </form>
+    </form> --}}
 
-    <form id="profile-form">
+    {{!-- <form id="profile-form">
         <div>
             <label for="firstNameInput">First Name:</label>
             <input type="text" id="firstNameInput" name="firstNameInput" value="{{{user.firstName}}}" disabled>
@@ -102,15 +102,15 @@
         <button type="button" id="editProfileButton">Edit Profile</button>
         <button type="button" onclick="location.href='/user/password'">Change Password</button>
         <button type="button" id="cancelAccountButton">Cancel Account</button>
-    </div>
+    </div> --}}
 </section>
 
     <section id="lessons">
-        <h2>Lessons</h2>
+        <h2>My Lessons</h2>
         <ul>
             {{#each lessons}}
                 <li>
-                    <h3>{{this.lessonName}}</h3>
+                    <h3>My Lessons</h3>
                     <p>Status: <span>Completed/In Progress</span></p>
                     <button type="button" onclick="location.href='/lesson/details'">Review/Continue</button>
                 </li>

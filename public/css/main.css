@@ -12,8 +12,8 @@
 */
 form div, #userProfileContainer, #editButtons {
     margin-bottom: 10px;
-	justify-content: center;
-    display: flex; 
+    justify-content: center;
+    display: flex;
     align-items: center;
 }
 

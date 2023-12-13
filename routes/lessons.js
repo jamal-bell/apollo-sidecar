@@ -3,7 +3,6 @@ import validation from "../data/validation.js";
 import lessons from "../data/lessons.js";
 import express from "express";
 import { Router } from "express";
-import xss from "xss";
 const app = express();
 const router = Router();
 
@@ -19,7 +18,6 @@ router.route("/lessons").get(async (req, res) => {
   res.render("lesson/lessons", {
     title: "Lessons",
     lessons: lessons,
-    script_partial: "script_lessons",
   });
 });
 
@@ -38,7 +36,6 @@ router.route("/lesson/:id").get(async (req, res) => {
     moduleTitle: lessonFound.moduleTitle,
     description: lessonFound.description,
     contents: lessonFound.contents,
-    script_partial: "script_lessons",
   });
 });
 
@@ -50,7 +47,6 @@ router
     try {
       return res.status(200).render("lesson/newlesson", {
         title: "Create Lesson",
-        script_partial: "script_lessons",
       });
     } catch (e) {
       res.status(500).json({ Error: e });
@@ -135,13 +131,12 @@ router
   });
 
 router
-  .route("/lesson/addmodule")
+  .route("/addmodule")
   .get(async (req, res) => {
     const lessonId = req.params["lesson-id"];
     return res.render("lesson/publish", {
       title: "Publish Lesson",
       lessonId,
-      script_partial: "script_lessons",
     });
   })
   .post(async (req, res) => {
@@ -189,7 +184,6 @@ router
       title: "Publish Lesson",
       lesson,
       lessonId,
-      script_partial: "script_lessons",
     });
   })
   .post(async (req, res) => {
@@ -197,12 +191,12 @@ router
       
     //   return res.redirect("/user/login");
     // }
-    const firstName = xss(res.session.user.firstName);
-    const lastName = xss(res.session.user.lastName);
-    let moduleTitle = xss(req.body.contents.moduleTitle);
+    const firstName = res.session.user.firstName;
+    const lastName = res.session.user.lastName;
+    let moduleTitle = req.body.contents.moduleTitle;
     const creatorId = `${firstName} ${lastName}`;
-    let text = xss(req.body.contents.text);
-    let videoLink = xss(req.body.contents.videoLink);
+    let text = req.body.contents.text;
+    let videoLink = req.body.contents.videoLink;
     let errors = [];
     let createdBy;
 
