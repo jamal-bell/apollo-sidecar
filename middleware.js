@@ -112,12 +112,31 @@ const middleware = {
     });
   },
 
-  //lesson middleware
-  lesson: (app) => {},
-  //qa middleware
-  qa: (app) => {},
-  //home middleware
-  home: (app) => {},
+  // //lesson middleware
+  // lesson: (app) => {
+  //   app.use("/", async (req, res, next) => {
+  //     let authStatus = req.session.user ? "Authenticated" : "Unuthenticated";
+  //     console.log(
+  //       `Logger:
+  //       // ${new Date().toUTCString()}
+  //       // ${req.method}
+  //       // ${req.originalUrl}
+  //       ${authStatus}`
+  //     );
+
+  //   });
+    //new lesson middleware
+    // app.use("/lesson/newlesson", async (req, res, next) => {
+    //   if (req.method == "GET" && !req.session.authenticated) {
+    //     return res.redirect("/user/login");
+    //   }
+    //   next();
+    // });
+  // },
+  // //qa middleware
+  // qa: (app) => {},
+  // //home middleware
+  // home: (app) => {},
 };
 
 export default middleware;
