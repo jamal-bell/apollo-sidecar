@@ -10,6 +10,7 @@ const middleware = {
         saveUninitialized: false,
         resave: false,
         cookie: { maxAge: 6000000 },
+        authenticated: false,
       })
     );
   },
@@ -125,13 +126,13 @@ const middleware = {
   //     );
 
   //   });
-    //new lesson middleware
-    // app.use("/lesson/newlesson", async (req, res, next) => {
-    //   if (req.method == "GET" && !req.session.authenticated) {
-    //     return res.redirect("/user/login");
-    //   }
-    //   next();
-    // });
+  //new lesson middleware
+  // app.use("/lesson/newlesson", async (req, res, next) => {
+  //   if (req.method == "GET" && !req.session.authenticated) {
+  //     return res.redirect("/user/login");
+  //   }
+  //   next();
+  // });
   // },
   // //qa middleware
   // qa: (app) => {},

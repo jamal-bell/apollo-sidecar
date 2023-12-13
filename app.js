@@ -44,8 +44,8 @@ app.use(rewriteUnsupportedBrowserMethods);
 app.engine("handlebars", handlebarsInstance.engine);
 app.set("view engine", "handlebars");
 
-// middleware.session(app);
-// middleware.user(app);
+middleware.session(app);
+middleware.user(app);
 // middleware.lesson(app);
 // middleware.qa(app);
 // middleware.home(app);
