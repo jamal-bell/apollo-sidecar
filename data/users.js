@@ -65,8 +65,8 @@ const exportedusersMethods = {
           comment_vote: true,
         },
       },
-      lessons: [],
-      qas: [],
+      lessons: { created: [], learned: [] },
+      qas: { created: [], answered: [] },
     };
 
     const usersCollection = await users();
@@ -294,6 +294,74 @@ const exportedusersMethods = {
     if (!updatedUser) throw "Could not update the information successfully.";
     return { emailAddress: emailAddress, deactivated: true };
   }, //end reactivateUser
+
+  async addLesson(userId, lessonId, createdOrLearned) {
+    userId = validation.checkId(userId);
+    lessonId = validation.checkId(lessonId);
+
+    const usersCollection = await users();
+    const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+
+    if (!user) throw "User not found in the system.";
+
+    let lessons = user.lessons;
+
+    if (createdOrLearned === "created") {
+      lessons.created.push(new ObjectId(lessonId));
+    } else if (createdOrLearned === "learned") {
+      lessons.learned.push(new ObjectId(lessonId));
+    } else {
+      throw `Invalid argument for 'createdOrLearned'. Must be either 'created' or 'learned'`;
+    }
+    const updatedLessons = {
+      lessons: lessons,
+      updatedAt: new Date(),
+    };
+
+    const updatedUser = await usersCollection.findOneAndUpdate(
+      { _id: new ObjectId(userId) },
+      { $set: updatedLessons },
+      { returnDocument: "after" }
+    );
+
+    if (!updatedUser) throw "Could not update the user successfully.";
+
+    return true;
+  },
+
+  async addQuestion(userId, questionId, createOranswered) {
+    userId = validation.checkId(userId);
+    questionId = validation.checkId(questionId);
+
+    const usersCollection = await users();
+    const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+
+    if (!user) throw "User not found in the system.";
+
+    let qas = user.qas;
+
+    if (createdOrLearned === "created") {
+      qas.created.push(new ObjectId(questionId));
+    } else if (createdOrLearned === "answered") {
+      qas.learned.push(new ObjectId(questionId));
+    } else {
+      throw `Invalid argument for 'createdOrLearned'. Must be either 'created' or 'answered'`;
+    }
+    const updatedQas = {
+      qas: qas,
+      updatedAt: new Date(),
+    };
+
+    const updatedUser = await usersCollection.findOneAndUpdate(
+      { _id: new ObjectId(userId) },
+      { $set: updatedQas },
+      { returnDocument: "after" }
+    );
+
+    if (!updatedUser) throw "Could not update the user successfully.";
+
+    return true;
+  },
 
   async updatePhoto(emailAddress, url) {
     emailAddress = validation.checkEmail(emailAddress);

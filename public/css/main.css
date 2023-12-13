@@ -44,7 +44,7 @@ a, p, footer, h1, h2 {
     margin-top: 5px;
 }
 
-.user-photo, #photoDisplay {
+.user-photo{
     text-align: center;
     flex-direction: column;
     display: flex;
@@ -61,6 +61,24 @@ img {
     justify-content: center;
     align-items: center;
     margin-bottom: 5px;
+}
+
+.centered-cell {
+    text-align: right;
+    vertical-align: middle;
+}
+
+#uploadPhotoButton {
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer; 
+    transition: all 0.3s;
+}
+#uploadPhotoButton:hover {
+    background-color: #45a049;
 }
 
 table td a {
