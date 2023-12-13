@@ -1,4 +1,5 @@
 import { lessonsData } from "../data/index.js";
+import { usersData } from "../data/index.js";
 import validation from "../data/validation.js";
 import lessons from "../data/lessons.js";
 import express from "express";
@@ -26,9 +27,11 @@ router.route("/lesson/:id").get(async (req, res) => {
   //   return res.redirect("/user/login");
   // }
   try {
-    req.params.id = validation.checkId(req.params.id, 'Id URL Param');
+    req.params.id = validation.checkId(req.params.id, "Id URL Param");
   } catch (e) {
-    return res.status(400).render("/error", { error: "Unknown url id param", title: "Error" });
+    return res
+      .status(400)
+      .render("/error", { error: "Unknown url id param", title: "Error" });
   }
   const lessonFound = await lessonsData.getLessonById(req.params.id);
   res.status(200).render("lesson/lessonById", {
@@ -54,7 +57,7 @@ router
   })
   .post(async (req, res) => {
     const { lessonTitle, description, moduleTitle, text, videoLink } = req.body;
-    console.log(req.body);
+    //console.log(req.body);
     try {
       const content = [
         {
@@ -73,8 +76,22 @@ router
         text,
         videoLink
       );
+      
+      // const user = await usersData.getUserByEmail(
+      //   req.session.user.emailAddress
+      // );
+
+      // if (req.session.sessionId !== user._id.toString()) {
+      //   return res.render("error", {
+      //     errors: "Could not get user.",
+      //   });
+      // }
+      // const creatorId = user.id;
+      // const author = user.firstName + user.lastName;
 
       const { _id } = lesson;
+      user.lessons.created.push(_id.toString());
+      console.log(user);
 
       return res.status(200).render(`lesson/lessonById`, {
         title: "Create Lesson",
@@ -86,6 +103,8 @@ router
         text,
         videoLink,
         createdBy: null,
+        creatorId,
+        author,
       });
     } catch (error) {
       console.log(error);
@@ -98,7 +117,6 @@ router
         moduleTitle,
         text: text,
         videoLink,
-        createdBy: null,
       });
     }
     // const creatorId =
@@ -188,7 +206,7 @@ router
   })
   .post(async (req, res) => {
     // if (!req.session.authenticated) {
-      
+
     //   return res.redirect("/user/login");
     // }
     const firstName = res.session.user.firstName;
@@ -259,12 +277,12 @@ router
       .render("/error", { error: "Internal Server Error", title: "Error" });
   });
 
-  router.route("/error").get(async (req, res) => {
-    //code here for GET
-    return res.render("error", {
-      title: "Error",
-      error: "You do not have access.",
-    });
+router.route("/error").get(async (req, res) => {
+  //code here for GET
+  return res.render("error", {
+    title: "Error",
+    error: "You do not have access.",
   });
+});
 
 export default router;
