@@ -118,6 +118,26 @@ await closeConnection();
 
 // Example to loop and seed database
 
+try {
+  newUser = await users.registerUser(
+    "Haonan",
+    "Guan",
+    "guanhn1214@gmail.com",
+    "qwe123QWE!@#",
+    "admin"
+  );
+  newUser = await users.registerUser(
+    "Apollo",
+    "Sidecar",
+    "hguan6@stevens.edu",
+    "qwe123QWE!@#",
+    "user"
+  );
+} catch (e) {
+  console.log("Got an error!");
+  console.log(e);
+}
+
 // try {
 //   for (let i = 0; i < 20; i++) {
 //   newUser = await userData.create(
