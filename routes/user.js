@@ -159,7 +159,6 @@ router
     try {
       const user = await users.loginUser(emailAddress, password);
       if (user) {
-        console.log(user);
         req.session.authenticated = true;
         req.session.sessionId = user._id;
         req.session.user = {
