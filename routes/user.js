@@ -4,6 +4,15 @@ const router = Router();
 import express from "express";
 const app = express();
 import validation from "../data/validation.js";
+import cloudinary from "cloudinary";
+import dotenv from "dotenv";
+
+const cloudinaryConfig = cloudinary.config({
+  cloud_name: "dcl4odxgu",
+  api_key: "913344915682151",
+  api_secret: "m-sXkAU8THL0ky6meEXfy4DL0M4",
+  secure: true,
+});
 
 function checkRole(role) {
   if (!role) throw "You must provide the role.";
@@ -24,7 +33,10 @@ router
   .route("/register")
   .get(async (req, res) => {
     //code here for GET
-    res.render("user/register", { title: "Registration" });
+    return res.render("user/register", {
+      title: "Registration",
+      style_partial: "user-form",
+    });
   })
   .post(async (req, res) => {
     //code here for POST
@@ -77,6 +89,7 @@ router
     if (errors.length > 0) {
       return res.status(400).render("user/register", {
         title: "Registration",
+        style_partial: "user-form",
         errors: errors,
         hasErrors: true,
         firstName: firstName,
@@ -101,6 +114,7 @@ router
       errors.push(e);
       return res.status(400).render("user/register", {
         title: "Registration",
+        style_partial: "user-form",
         errors: errors,
         hasErrors: true,
         firstName: firstName,
@@ -117,7 +131,10 @@ router
   .route("/login")
   .get(async (req, res) => {
     //code here for GET
-    res.render("user/login", { title: "Login" });
+    return res.render("user/login", {
+      title: "Login",
+      style_partial: "user-form",
+    });
   })
   .post(async (req, res) => {
     //code here for POST
@@ -157,8 +174,9 @@ router
       }
     } catch (e) {
       errors.push(e);
-      res.status(400).render("user/login", {
+      return res.status(400).render("user/login", {
         title: "Login",
+        style_partial: "user-form",
         hasErrors: true,
         errors: errors,
       });
@@ -173,8 +191,9 @@ router.route("/user").get(async (req, res) => {
 
   const user = await users.getUserByEmail(req.session.user.emailAddress);
 
-  res.render("user/user", {
+  return res.render("user/user", {
     title: "Overview",
+    style_partial: "overview",
     user: user,
   });
 });
@@ -187,105 +206,94 @@ router.route("/admin").get(async (req, res) => {
 
   const user = await users.getUserByEmail(req.session.user.emailAddress);
 
-  res.render("user/admin", {
+  return res.render("user/admin", {
     title: "Overview",
+    style_partial: "overview",
     user: user,
   });
 });
 
 router.route("/error").get(async (req, res) => {
   //code here for GET
-  res.render("user/error", {
+  return res.render("user/error", {
     title: "Error",
     error: "You do not have access to admin.",
   });
 });
 
-router
-  .route("/profile")
-  // .get(async (req, res) => {
-  //   //code here for GET
-  //   if (!req.session.authenticated) {
-  //     return res.redirect("/user/login");
-  //   }
+router.route("/profile").post(async (req, res) => {
+  let firstName = req.body.firstName;
+  let lastName = req.body.lastName;
+  let emailAddress = req.body.emailAddress;
+  let bio = req.body.bio;
+  let github = req.body.github;
+  let errors = [];
 
-  //   const user = await users.getUserByEmail(req.session.user.emailAddress);
+  try {
+    firstName = validation.checkString(firstName, "First Name");
+  } catch (e) {
+    errors.push(`<li>${e}</li>`);
+  }
 
-  //   res.render("user/profile", { title: "Profile", user: user });
-  // })
-  .post(async (req, res) => {
-    let firstName = req.body.firstName;
-    let lastName = req.body.lastName;
-    let emailAddress = req.body.emailAddress;
-    let bio = req.body.bio;
-    let github = req.body.github;
-    let errors = [];
+  try {
+    lastName = validation.checkString(lastName, "Last Name");
+  } catch (e) {
+    errors.push(`<li>${e}</li>`);
+  }
 
-    try {
-      firstName = validation.checkString(firstName, "First Name");
-    } catch (e) {
-      errors.push(`<li>${e}</li>`);
+  try {
+    emailAddress = validation.checkEmail(emailAddress);
+  } catch (e) {
+    errors.push(`<li>${e}</li>`);
+  }
+
+  try {
+    if (github.trim().length !== 0 && !new URL(github)) {
+      throw "Invalid Github Link.";
     }
+  } catch (e) {
+    errors.push(`<li>${e}</li>`);
+  }
 
-    try {
-      lastName = validation.checkString(lastName, "Last Name");
-    } catch (e) {
-      errors.push(`<li>${e}</li>`);
-    }
+  let userUpdated;
 
-    try {
-      emailAddress = validation.checkEmail(emailAddress);
-    } catch (e) {
-      errors.push(`<li>${e}</li>`);
-    }
+  const user = {
+    firstName: firstName,
+    lastName: lastName,
+    emailAddress: emailAddress,
+    bio: bio,
+    github: github,
+  };
+  if (errors.length > 0) {
+    return res.json({
+      errors: errors,
+      hasErrors: true,
+      user: user,
+    });
+  }
 
-    try {
-      if (github.trim().length !== 0 && !new URL(github)) {
-        throw "Invalid Github Link.";
-      }
-    } catch (e) {
-      errors.push(`<li>${e}</li>`);
-    }
+  try {
+    userUpdated = await users.updateUser(emailAddress, user);
 
-    let userUpdated;
-
-    const user = {
-      firstName: firstName,
-      lastName: lastName,
-      emailAddress: emailAddress,
-      bio: bio,
-      github: github,
-    };
-    if (errors.length > 0) {
+    if (userUpdated) {
       return res.json({
-        errors: errors,
-        hasErrors: true,
+        updated: true,
         user: user,
       });
     }
+  } catch (e) {
+    errors.push(`<li>${e}</li>`);
+    return res.json({
+      errors: errors,
+      hasErrors: true,
+      user: user,
+    });
+  }
 
-    try {
-      userUpdated = await users.updateUser(emailAddress, user);
-
-      if (userUpdated) {
-        return res.json({
-          updated: true,
-          user: user,
-        });
-      }
-    } catch (e) {
-      errors.push(`<li>${e}</li>`);
-      return res.json({
-        errors: errors,
-        hasErrors: true,
-        user: user,
-      });
-    }
-
-    res
-      .status(500)
-      .render("user/error", { error: "Internal Server Error", title: "Error" });
-  });
+  return res
+    .status(500)
+    .render("user/error", { error: "Internal Server Error", title: "Error" });
+});
 
 router
   .route("/password")
@@ -295,7 +303,10 @@ router
       return res.redirect("/user/login");
     }
 
-    res.render("user/password", { title: "Change Password" });
+    return res.render("user/password", {
+      title: "Change Password",
+      style_partial: "user-form",
+    });
   })
   .post(async (req, res) => {
     //code here for POST
@@ -333,6 +344,7 @@ router
     if (errors.length > 0) {
       return res.status(400).render("user/password", {
         title: "Change Password",
+        style_partial: "user-form",
         errors: errors,
         hasErrors: true,
       });
@@ -344,7 +356,7 @@ router
       if (userRegister && userRegister.updated) {
         users.logoutUser(emailAddress);
         req.session.destroy();
-        res.render("user/logout", {
+        return res.render("user/logout", {
           title: "Password Updated",
           message: "Your password have been updated, please login again.",
         });
@@ -352,11 +364,13 @@ router
     } catch (e) {
       return res.status(400).render("user/password", {
         title: "Change Password",
+        style_partial: "user-form",
         errors: errors,
         hasErrors: true,
       });
     }
-    res
+
+    return res
       .status(500)
       .render("user/error", { error: "Internal Server Error", title: "Error" });
   });
@@ -372,7 +386,7 @@ router.route("/logout").get(async (req, res) => {
   if (req.session) {
     users.logoutUser(emailAddress);
     req.session.destroy();
-    res.render("user/logout", {
+    return res.render("user/logout", {
       title: "Logout",
       message: "You have been logged out.",
     });
@@ -396,6 +410,71 @@ router.route("/cancel").get(async (req, res) => {
   } else {
     return res.render("user/error", { title: "Failed to delete account" });
   }
+});
+
+router.route("/signature").get(async (req, res) => {
+  //code here for GET
+  if (!req.session.authenticated) {
+    return res.redirect("/user/login");
+  }
+
+  const timestamp = Math.round(new Date().getTime() / 1000);
+  const signature = cloudinary.utils.api_sign_request(
+    {
+      timestamp: timestamp,
+    },
+    cloudinaryConfig.api_secret
+  );
+  return res.json({ timestamp, signature });
+});
+
+router.route("/photo").post(async (req, res) => {
+  if (!req.session.authenticated) {
+    return res.redirect("/user/login");
+  }
+
+  const expectedSignature = cloudinary.utils.api_sign_request(
+    { public_id: req.body.public_id, version: req.body.version },
+    cloudinaryConfig.api_secret
+  );
+
+  const user = await users.getUserByEmail(req.session.user.emailAddress);
+
+  let photoId = "";
+  if (user.photo !== "/public/assets/no-photo.jpg") {
+    const photoUrl = user.photo;
+    photoId = photoUrl.substring(
+      photoUrl.lastIndexOf("/") + 1,
+      photoUrl.lastIndexOf(".")
+    );
+  }
+
+  if (expectedSignature === req.body.signature) {
+    try {
+      const url = `https://res.cloudinary.com/${cloudinaryConfig.cloud_name}/image/upload/w_200,h_200,c_fill,q_100/${req.body.public_id}.jpg`;
+      const photoUpdated = await users.updatePhoto(
+        req.session.user.emailAddress,
+        url
+      );
+
+      if (photoUpdated) {
+        cloudinary.uploader.destroy(photoId);
+        return res.json({
+          updated: true,
+          user: photoUpdated,
+        });
+      }
+    } catch (e) {
+      return res.json({
+        updated: false,
+        photoErrors: e,
+      });
+    }
+  }
+  return res.status(500).render("user/error", {
+    error: "Internal Server Error",
+    title: "Error",
+  });
 });
 
 export default router;

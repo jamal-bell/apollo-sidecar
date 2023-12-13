@@ -3,10 +3,9 @@
     {{#each lessons}}
     <li style="text-decoration: none" ;>
       <div>
-        <h3><a href="/lessons/lesson/{{this._id}}">{{this.title}}</a></h3>
-        <h4>{{this.description}}</h4>
-        <h4 hidden="true">{{this._id}}</h4>
-
+        <h3><a href="/lessons/lesson/{{this._id}}">Lesson Title: {{this.lessonTitle}}</a></h3>
+        <h4>Description: {{this.description}}</h4>
+        <h4>lessonId: {{this._id}}</h4>
       </div>
 
       {{!-- <button type="button" onclick="location.href='/lesson/{{id}}'">Go To Lesson</button> --}}

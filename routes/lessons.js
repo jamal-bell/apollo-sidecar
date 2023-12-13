@@ -6,10 +6,10 @@ import { Router } from "express";
 const app = express();
 const router = Router();
 
-router.route("/").get(async (req, res) => {
-  //reserved for logging
-  return res.render("user/error", { error: "Internal Error." });
-});
+// router.route("/").get(async (req, res) => {
+//   //reserved for logging
+//   return res.render("user/error", { error: "Internal Error." });
+// });
 
 router.route("/lessons").get(async (req, res) => {
   //Lesson 'home' list of all lessons, unrestricted
@@ -40,7 +40,7 @@ router.route("/lesson/:id").get(async (req, res) => {
 });
 
 router
-  .route("/newlesson")
+  .route("/lesson/newlesson")
   //new lesson form
   .get(async (req, res) => {
     try {
@@ -51,87 +51,149 @@ router
       res.status(500).json({ Error: e });
     }
   })
-  //post saves to lessons collection and shows preview of what to publish
   .post(async (req, res) => {
-    if (!req.session.authenticated) {
-      //and admin
-      return res.redirect("/user/login");
-    }
-    const firstName = res.session.user.firstName;
-    const lastName = res.session.user.lastName;
-    
-    const creatorId = `${firstName} ${lastName}`;
-    let title = req.body.titleInput;
-    let description = req.body.descriptionInput;
-    let moduleTitle = req.body.contents.moduleTitle;
-    let text = req.body.contents.text;
-    let videoLink = req.body.contents.videoLink;
-    let errors = [];
-    let createdBy;
+    const { lessonTitle, description, moduleTitle, text, videoLink } = req.body;
 
     try {
-      title = validation.checkContent(text, "lesson title", 3, 250);
-    } catch (e) {
-      errors.push(e);
-    }
-    //TODO other validation
+      const content = [
+        {
+          moduleTitle,
+          videoLink,
+          text,
+          order: 1,
+        },
+      ];
 
-    req.session.user.role == "admin"
-      ? createdBy == "admin"
-      : createdBy == "user";
+      const lesson = await lessonsData.createLesson(
+        lessonTitle,
+        description,
+        content,
+        moduleTitle,
+        text,
+        videoLink
+      );
 
-    if (errors.length > 0) {
+      const { _id } = lesson;
+
+      return res.status(200).render(`lesson/lessonById`, {
+        title: "Create Lesson",
+        hasErrors: false,
+        lessonTitle,
+        lessonId: _id.toString(),
+        description,
+        moduleTitle,
+        text,
+        videoLink,
+        createdBy: null,
+      });
+    } catch (error) {
+      console.log(error);
       return res.status(400).render("lesson/newlesson", {
-        title: "Create Lesson",
-        title: "Create Lesson",
-        errors: errors,
+        title: "Creating lesson failed",
+        error,
         hasErrors: true,
-        title: title,
+        lessonTitle,
         description: description,
+        moduleTitle,
+        text,
+        videoLink,
+        createdBy: null,
       });
     }
+    // const creatorId =
+    //   res.session.user.firstName + " " + res.session.user.lastName;
+    // let title = req.body.titleInput;
+    // let description = req.body.descriptionInput;
+    // let moduleTitle = req.body.contents.moduleTitle;
+    // let text = req.body.contents.text;
+    // let videoLink = req.body.contents.videoLink;
+    // let errors = [];
+    // let createdBy;
 
-    //call data function
-    try {
-      await lessonsData.createLesson(title, description, contents);
-      //if successful, render lesson/:id
-    } catch (e) {
-      errors.push(e);
-      return res.status(400).render("lesson/newlesson", {
-        title: "Create Lesson",
-        errors: errors,
-        hasErrors: true,
-        title: title,
-        description: description,
-        createdBy: createdBy,
-      });
-    }
-    res
-      .status(500)
-      .render("/error", { error: "Internal Server Error", title: "Error" });
-  })
-  .put(async (req, res) => {});
+    // try {
+    //   await lessonsData.createLesson(title, description, contents);
+    //   //if successful, render lesson/:id
+    // } catch (e) {
+    //   errors.push(e);
+    //   return res.status(400).render("lesson/newlesson", {
+    //     title: "Create Lesson",
+    //     errors: errors,
+    //     hasErrors: true,
+    //     title: title,
+    //     description: description,
+    //     createdBy: createdBy,
+    //   });
+    // }
+    // res
+    //   .status(500)
+    //   .render("/error", { error: "Internal Server Error", title: "Error" });
+  });
 
 router
-  .route("/newlesson/publish")
+  .route("/lesson/addmodule")
   .get(async (req, res) => {
-    //Lesson 'home' list of all lessons, unrestricted
-    const lessons = await lessonsData.getAllLessons(); //and project this draft???
-
-    res.render("lesson/publish", {
+    const lessonId = req.params["lesson-id"];
+    return res.render("lesson/publish", {
       title: "Publish Lesson",
-      lessons: lessons,
+      lessonId,
     });
   })
   .post(async (req, res) => {
-    if (!req.session.authenticated) {
-      //and admin
-      return res.redirect("/user/login");
+    try {
+      const { lessonId, moduleTitle, text, videoLink, order } = req.body;
+      console.log(req.body);
+
+      const orderId = parseInt(order);
+
+      const response = await lessonsData.createModule(
+        lessonId,
+        orderId,
+        moduleTitle,
+        text,
+        videoLink
+      );
+      const lesson = await lessonsData.getLessonById(lessonId);
+
+      console.log(response);
+
+      return res.render("lesson/publish", {
+        title: "Publish Lesson",
+        lessonId: lessonId,
+        lesson,
+      });
+    } catch (error) {
+      return res.status(400).render("lesson/publish", {
+        title: "Edit Lesson",
+        errors: error,
+        hasErrors: true,
+        moduleTitle: "",
+        text: "",
+        videoLink: "",
+      });
     }
+  });
+
+router
+  .route("/newlesson/publish/:id")
+  .get(async (req, res) => {
+    const lessonId = req.params.id;
+    const lesson = await lessonsData.getLessonById(lessonId);
+
+    res.render("lesson/publish", {
+      title: "Publish Lesson",
+      lesson,
+      lessonId,
+    });
+  })
+  .post(async (req, res) => {
+    // if (!req.session.authenticated) {
+      
+    //   return res.redirect("/user/login");
+    // }
     const firstName = res.session.user.firstName;
     const lastName = res.session.user.lastName;
     let moduleTitle = req.body.contents.moduleTitle;
-    const creatorId = `${firstName} ${lastName}`
+    const creatorId = `${firstName} ${lastName}`;
     let text = req.body.contents.text;
     let videoLink = req.body.contents.videoLink;
     let errors = [];
@@ -149,7 +211,7 @@ router
       : createdBy == "user";
 
     if (errors.length > 0) {
-      return res.status(400).render("lesson/publish", {
+      return res.status(400).render("partials/publish", {
         title: "Edit Lesson",
         title: "Edit Lesson",
         errors: errors,
@@ -176,7 +238,7 @@ router
         description,
         order,
         moduleTitle,
-        creatorId: `${firstName} ${lastName}`,
+        creatorId,
         videoLink,
         text,
       });

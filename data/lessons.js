@@ -8,7 +8,7 @@ let exportedLessonsMethods = {
   async createLesson(
     lessonTitle,
     description,
-    contents,
+    contents = null,
     moduleTitle,
     text,
     videoLink
@@ -122,7 +122,7 @@ let exportedLessonsMethods = {
         votedUsers: [],
         count: 0,
       },
-      createdByRole: ""
+      createdByRole: "",
     };
     const lessonWithNewModule = await lessonsCollection.updateOne(
       { _id: new ObjectId(id) },

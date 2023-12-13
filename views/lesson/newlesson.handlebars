@@ -5,7 +5,7 @@
     <form id="lesson-form" method="POST" action="/lessons/lesson/newlesson" class="form">
         <div>
             <label for="titleInput">Lesson Title:</label>
-            <input type="text" id="titleInput" name="title" value="{{lessonTitle}}">
+            <input type="text" id="titleInput" name="lessonTitle" value="{{lessonTitle}}">
         </div>
         <div>
             <label for="descriptionInput">Lesson Description:</label>
@@ -13,19 +13,19 @@
         </div>
         <div>
             <label for="moduleTitleInput">Module Title:</label>
-            <input type="text" id="moduleTitleInput" name="moduleTitle" value="{{contents.moduleTitle}}">
+            <input type="text" id="moduleTitleInput" name="moduleTitle" value="{{moduleTitle}}">
         </div>
         <div>
             <label for="textInput">Module Content:</label>
-            <input type="text" id="textInput" name="text" value="{{contents.text}}">
+            <input type="text" id="textInput" name="text" value="{{text}}">
         </div>
         <div>
             <label for="videoLinkInput">Module Video Link:</label>
-            <input type="videoLink" id="videoLinkInput" name="videoLink" value="{{contents.videoLink}}">
+            <input type="videoLink" id="videoLinkInput" name="videoLink" value="{{videoLink}}">
         </div>
 
         <div class="buttons">
-            <button type="submit" action="/lessons/lesson/newlesson">Save and Preview</button>
+            <button type="submit">Save and Preview</button>
         </div>
 
 

@@ -1,58 +1,74 @@
-.errors li, .errors, #error {
-	color: #ff0000;
-	text-align: center;
+.errors li,
+.errors,
+#error {
+  color: #ff0000;
+  text-align: center;
 }
 
-.form{
-	background: #fff;
-    padding: 20px;
-    margin: 20px 0;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+.hide-id {
+  display: none;
+}
+
+.form {
+  background: #fff;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 form div {
-    margin-bottom: 10px;
-	justify-content: center;
-    display: flex; 
-    align-items: center;
+  margin-bottom: 10px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
 }
 
 .form-errors {
-    margin-bottom: 0px;
-	justify-content: center;
-    display: flex; 
-    align-items: center;
+  margin-bottom: 0px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
 }
 
 form label {
-    margin-right: 5px;
+  margin-right: 5px;
 }
 
-a, p, footer, h1 {
-	text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10px;
+a,
+p,
+footer,
+h1 {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
 }
 
 .form-footer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center; 
-    margin-top: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-top: 5px;
 }
 
-.user-photo {
-    text-align: center;
-    flex-direction: column;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 10px;
+.user-photo,
+#photoDisplay {
+  text-align: center;
+  flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 img {
-    margin-bottom: 5px;
+  border-radius: 50%; /* Makes the image circular */
+  object-fit: cover;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5px;
 }

@@ -54,10 +54,10 @@ if (moduleForm) {
   moduleForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    let order = orderInput.value.trim();
-    let moduleTitle = moduleTitleInput.value.trim();
-    let text = textInput.value.trim();
-    let videoLink = videoLinkInput.value.trim();
+    let order = orderInput.value?.trim();
+    let moduleTitle = moduleTitleInput.value?.trim();
+    let text = textInput.value?.trim();
+    let videoLink = videoLinkInput.value?.trim();
     let errorList = "";
     errorContainer.hidden = true;
 

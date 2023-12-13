@@ -5,7 +5,7 @@ import qaData from "../data/qa.js";
 import lessonData from "../data/lessons.js";
 
 const db = await dbConnection();
-//await db.dropDatabase();
+await db.dropDatabase();
 
 let newUser = undefined;
 let newlesson = undefined;
@@ -19,7 +19,7 @@ let newQaResponse = undefined;
 // try {
 //   for (let i = 1; i < 4; i++) {
 //     let newLesson = await lessonData.createLesson(
-//       "JavaScript: Lesson " + i,
+//       "Lesson " + i + ": JavaScript",
 //       "Data Structures: " + i,
 //       [
 //         {
@@ -81,11 +81,11 @@ let newQaResponse = undefined;
 //   console.log(e);
 // }
 
-try {
-  let mistakeLesson = await lessonData.removeLesson("6574eb035458b7cde4ca1b81")
-} catch (e) {
-  console.log(e);
-}
+// try {
+//   let mistakeLesson = await lessonData.removeLesson("6574eb035458b7cde4ca1b81")
+// } catch (e) {
+//   console.log(e);
+// }
 
 // try {
 //   let correctedLesson = await lessonData.updateLesson(

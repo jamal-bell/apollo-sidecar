@@ -13,5 +13,8 @@
     <script src="/public/js/form.js"></script>
     <script src="/public/js/lesson.js"></script>
     <footer>TOGETHER WE KNOW, TOGETHER WE GROW</footer>
+    {{#if (lookup . 'style_partial')}}
+        {{> (lookup . 'style_partial') }}
+    {{/if}}
 </body>
 </html>
