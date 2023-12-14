@@ -96,3 +96,11 @@ table td a {
     display: block;
     text-align: left;
 }
+
+#lessons, #qas {
+  text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}

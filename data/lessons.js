@@ -1,9 +1,9 @@
 import { lessons } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import validation from "./validation.js";
-import { usersData } from "./index.js";
+import usersData from "./users.js";
 
-let exportedLessonsMethods = {
+const exportedLessonsMethods = {
   //Creates a lesson + 1 module
   //Option to create additional modules via createModule()
   async createLesson(
@@ -43,7 +43,7 @@ let exportedLessonsMethods = {
 
     // Prevent duplicate entries
     const dup = await lessonsCollection.findOne({ lessonTitle: lessonTitle });
-    if (dup) throw "Lesson already exists with this title."
+    if (dup) throw "Lesson already exists with this title.";
 
     let newLessonInfo = {
       lessonTitle: lessonTitle, //string

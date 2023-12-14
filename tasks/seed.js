@@ -1,27 +1,28 @@
 import { MongoExpiredSessionError } from "mongodb";
 import { dbConnection, closeConnection } from "../config/mongoConnection.js";
+import { users, lessons, qa } from "../config/mongoCollections.js";
 import userData from "../data/users.js";
 import qaData from "../data/qa.js";
-import lessonData from "../data/lessons.js";
+import lessonsData from "../data/lessons.js";
 
 const db = await dbConnection();
 await db.dropDatabase();
 
 let newUser = undefined;
-let newlesson = undefined;
+let newLesson = undefined;
 let newQaPost = undefined;
 let newQaResponse = undefined;
 
 //-----------------Create Users---------------------//
 try {
-  newUser = await users.registerUser(
+  newUser = await userData.registerUser(
     "Haonan",
     "Guan",
     "guanhn1214@gmail.com",
     "qwe123QWE!@#",
     "admin"
   );
-  newUser = await users.registerUser(
+  newUser = await userData.registerUser(
     "Apollo",
     "Sidecar",
     "hguan6@stevens.edu",
@@ -37,7 +38,7 @@ try {
 
 try {
   for (let i = 1; i < 4; i++) {
-    let newLesson = await lessonData.createLesson(
+    newLesson = await lessonsData.createLesson(
       "Lesson " + i + ": JavaScript",
       "Data Structures: " + i,
       [
