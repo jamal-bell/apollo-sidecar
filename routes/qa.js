@@ -5,7 +5,9 @@ import validation from '../data/validation.js';
 import { Router, text } from 'express';
 const router = Router();
 import express from 'express';
+import xss from 'xss';
 const app = express();
+const xss = xss();
 
 router.route('/').get(async (req, res) => {
   let admin = false;
@@ -26,13 +28,18 @@ router.route('/').get(async (req, res) => {
     }
 
     recentQaArray = await qaMethods.getRecentQAs();
-    res.render('qa/home', { recentQaArray, creatorQuestions, lessonQuestions, admin, user });
+    res.render('qa/home', {
+      recentQaArray,
+      creatorQuestions,
+      lessonQuestions,
+      admin,
+      user,
+    });
   } catch (e) {
     let error = e.message;
     res.status(500).render('error', { title: error, error });
   }
 });
-
 
 router
   .route('/:id')
@@ -44,6 +51,7 @@ router
     let owner = false;
     let admin = false;
     let lessonCreatorId;
+    let lessonRelatedId;
     try {
       qaId = validation.checkId(req.params.id, 'QA ID');
     } catch (e) {
@@ -69,23 +77,21 @@ router
         .status(404)
         .render('qa/view', { title: 'No QA found!', qaTarget, admin });
     }
-    if (req.session.user){
+    if (req.session.user) {
       try {
-        const lessonRelatedId = await lessonMethods.getLessonById(qaTarget.lessonId);
+        lessonRelatedId = await lessonMethods.getLessonById(qaTarget.lessonId);
         lessonCreatorId = lessonRelatedId.creatorId;
-        }
-        catch(e) {
-          error = e.message;
-          return res.status(500).render('error', error);
-        }
-        if (req.session.user.role === 'admin' && creatorId === lessonCreatorId) {
-          admin = true;
-        } else {
-          admin = false;
-        }
-
+      } catch (e) {
+        error = e.message;
+        return res.status(500).render('error', error);
+      }
+      if (req.session.user.role === 'admin' && creatorId === lessonCreatorId) {
+        admin = true;
+      } else {
+        admin = false;
+      }
       if (req.session.user.sessionId === qaTarget.creatorId.toString()) {
-        owner = true;  
+        owner = true;
       }
     }
     return res
@@ -103,23 +109,25 @@ router
     const creatorId = req.session.user.sessionId;
 
     try {
+      qaId = validation.checkId(qaId, 'QA ID');
       qaTarget = await qaMethods.getQa(qaId);
     } catch (e) {
       return res.status(500).render('error', error);
     }
     try {
-      const lessonRelatedId = await lessonMethods.getLessonById(qaTarget.lessonId);
+      const lessonRelatedId = await lessonMethods.getLessonById(
+        qaTarget.lessonId
+      );
       lessonCreatorId = lessonRelatedId.creatorId;
-      }
-      catch(e) {
-        error = e.message;
-        return res.status(500).render('error', error);
-      }
-      if (req.session.user.role === 'admin' && creatorId === lessonCreatorId) {
-        admin = true;
-      } else {
-        admin = false;
-      }
+    } catch (e) {
+      error = e.message;
+      return res.status(500).render('error', error);
+    }
+    if (req.session.user.role === 'admin' && creatorId === lessonCreatorId) {
+      admin = true;
+    } else {
+      admin = false;
+    }
     if (creatorId === qaTarget.creatorId.toString()) {
       owner = true;
     } else {
@@ -158,30 +166,34 @@ router
     let owner;
     let admin;
     let lessonCreatorId;
-    let qaId = req.params.id;
     let creatorId = req.session.user.sessionId;
-    let text = req.body.replyText;
+    let qaId;
+    let text;
     try {
+      qaId = validation.checkId(qaId, 'QA ID');
+      creatorId = validation.checkId(creatorId, 'creator ID');
+
       qaTarget = await qaMethods.getQa(qaId);
     } catch (e) {
       return res.status(500).render('error', error);
     }
-    try { //rendering purpose only
-      const lessonRelatedId = await lessonMethods.getLessonById(qaTarget.lessonId);
-      lessonCreatorId = lessonRelatedId.creatorId;
-      }
-      catch(e) {
-        error = e.message;
-        return res.status(500).render('error', error);
-      }
-      if (req.session.user.role === 'admin' && creatorId === lessonCreatorId) {
-        admin = true;
-      } else {
-        admin = false;
-      }
     try {
-      qaId = validation.checkId(qaId, 'QA ID');
-      creatorId = validation.checkId(creatorId, 'creator ID');
+      //rendering purpose only
+      const lessonRelatedId = await lessonMethods.getLessonById(
+        qaTarget.lessonId
+      );
+      lessonCreatorId = lessonRelatedId.creatorId;
+    } catch (e) {
+      error = e.message;
+      return res.status(500).render('error', error);
+    }
+    if (req.session.user.role === 'admin' && creatorId === lessonCreatorId) {
+      admin = true;
+    } else {
+      admin = false;
+    }
+    try {
+      text = xss(req.body.replyText);
       text = validation.checkString(text, 'Answer text');
     } catch (e) {
       error = e.message;
@@ -224,26 +236,31 @@ router
   .route('/:id/answers/:aId')
   .post(async (req, res) => {
     //VOTING
+    let error;
     let qaTarget;
     let owner;
     let admin;
     let lessonCreatorId;
+    let lessonRelatedId;
     const qaId = req.params.id;
     const answerId = req.params.aId;
     const voterId = req.session.user.sessionId;
     try {
-      const lessonRelatedId = await lessonMethods.getLessonById(qaTarget.lessonId);
+      qaId = validation.checkId(qaId, 'QA ID');
+      answerId = validation.checkId(answerId, 'answer ID');
+      voterId = validation.checkId(voterId, 'voter ID');
+
+      lessonRelatedId = await lessonMethods.getLessonById(qaTarget.lessonId);
       lessonCreatorId = lessonRelatedId.creatorId;
-      }
-      catch(e) {
-        error = e.message;
-        return res.status(500).render('error', error);
-      }
-      if (req.session.user.role === 'admin' && creatorId === lessonCreatorId) {
-        admin = true;
-      } else {
-        admin = false;
-      }
+    } catch (e) {
+      error = e.message;
+      return res.status(500).render('error', error);
+    }
+    if (req.session.user.role === 'admin' && creatorId === lessonCreatorId) {
+      admin = true;
+    } else {
+      admin = false;
+    }
     try {
       await qaMethods.iqPoint(qaId, voterId, answerId);
     } catch (e) {
@@ -277,16 +294,20 @@ router
     let admin;
     let lessonCreatorId;
     try {
+      creatorId = validation.checkId(creatorId, 'creator ID');
+      qaId = validation.checkId(qaId, 'QA ID');
+      commentId = validation.checkId(commentId, 'comment ID');
       qaTarget = await qaMethods.getQa(qaId);
     } catch (e) {
       error = e.message;
       return res.status(500).render('error', error);
     }
     try {
-    const lessonRelatedId = await lessonMethods.getLessonById(qaTarget.lessonId);
-    lessonCreatorId = lessonRelatedId.creatorId;
-    }
-    catch(e) {
+      const lessonRelatedId = await lessonMethods.getLessonById(
+        qaTarget.lessonId
+      );
+      lessonCreatorId = lessonRelatedId.creatorId;
+    } catch (e) {
       error = e.message;
       return res.status(500).render('error', error);
     }
@@ -344,6 +365,7 @@ router
   .get(async (req, res) => {
     //CREATE QA WEBPAGE- CHRISTINE PUT href link to /qa/create/{{lessonId}} to create an Q&A based off lesson
     try {
+      lessonId = validation.checkId(lessonId, 'Lesson ID');
       originLesson = await lessonMethods.getLessonById(lessonId);
     } catch (e) {
       error = e.message;
@@ -353,25 +375,26 @@ router
   })
   .post(async (req, res) => {
     //CREATE QA DB SIDE
-    let admin;
     let title;
     let originLesson;
-    let lessonId;
     let contentId;
-    let creatorId;
+    let creatorId = req.session.user.sessionId;
     let newQaId;
     try {
+      lessonId = validation.checkId(lessonId, 'Lesson ID');
+      contentId = validation.checkId(contentId, 'content ID');
+      creatorId = validation.checkId(creatorId, 'creator ID');
+
       originLesson = await lessonMethods.getLessonById(lessonId);
     } catch (e) {
       error = e.message;
       return res.status(500).render('error', error);
     }
     try {
-      text = validation.checkString(req.body.qaText);
-      title = validation.checkString(req.body.qaTitle);
-      lessonId = validation.checkId(req.body.lessonId);
-      contentId = validation.checkId(req.body.contentId);
-      creatorId = validation.checkId(req.session.user.sessionId);
+      text = xss(req.body.qaText);
+      text = validation.checkString(text, 'main text');
+      title = xss(req.body.qaTitle);
+      title = validation.checkString(title, 'title text');
     } catch (e) {
       return res
         .status(400)
@@ -388,7 +411,7 @@ router
         .render('qa/create', { title: 'Error', originLesson });
     }
     try {
-      newQaId = await qaMethods.createQa( 
+      newQaId = await qaMethods.createQa(
         title,
         creatorId,
         lessonId,
