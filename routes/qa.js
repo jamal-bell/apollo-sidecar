@@ -7,7 +7,6 @@ const router = Router();
 import express from 'express';
 import xss from 'xss';
 const app = express();
-const xss = xss();
 
 router.route('/').get(async (req, res) => {
   let admin = false;

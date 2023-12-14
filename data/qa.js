@@ -4,7 +4,6 @@ import { lessons } from '../config/mongoCollections.js';
 import { ObjectId } from 'mongodb';
 import validation from './validation.js';
 import xss from 'xss';
-const xss = xss();
 
 const exportedMethods = {
   async createQa(title, creatorId, lessonId, contentId, text) {
