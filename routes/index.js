@@ -6,7 +6,7 @@ import userRoutes from "./user.js";
 const constructorMethod = (app) => {
   app.use("/", homeRoutes);
   app.use("/lessons", lessonRoutes);
-  app.use("/qaforum", qaRoutes);
+  app.use("/qa", qaRoutes);
   app.use("/user", userRoutes);
   app.use("/searchResults", userRoutes);
   app.use("*", (req, res) => {

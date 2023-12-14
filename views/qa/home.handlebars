@@ -1,6 +1,7 @@
 <h1>Welcome to QA central!</h1>
 <h2>Feeling helpful? Here are some of our most recent questions asked:</h2>
 <div class='errorSpace' id='errorSpace'></div>
+{{#if recentQaArray}}
 {{#each recentQaArray}}
   <a href='/{{this._id}}'>{{this.title}}</a>
   <p>Created at:
@@ -8,3 +9,4 @@
     by
     <a href='../user/{{this.author}}'>{{this.author}}</a></p>
 {{/each}}
+{{/if}}

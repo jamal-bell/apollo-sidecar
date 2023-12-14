@@ -8,6 +8,7 @@ import express from 'express';
 const app = express();
 
 router.route('/').get(async (req, res) => {
+  console.log('we in qa')
   let admin;
   if (req.session.user.role === 'admin') {
     admin = true;
