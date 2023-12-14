@@ -61,7 +61,6 @@ const exportedMethods = {
         { _id: ObjectId(creatorId) },
         { $set: { 'progress.qaPlatform.questions': qaList } }
       );
-      const lessonCollection = await lesson();
 
       return { insertedId }; // or return some meaningful response
     } catch (e) {
@@ -328,10 +327,51 @@ const exportedMethods = {
     }
   },
   async getRecentQAs() {
+    try {
     const qaCollection = await qa();
     const recentQaArray = qaCollection.find().sort({ createdAt: -1 }).limit(20);
-    return recentQaArray;
+    return recentQaArray; }
+    catch(e) {
+      throw new Error('Database pull error')
+    }
   },
+async getRecentQAsByLessonCreator(creatorId) {
+  try {
+  const qaCollection = await qa();
+  const lessonsCollection = await lessons();
+  const lessonIds = await lessonsCollection
+  .find({ "creatorId": ObjectId(creatorId) })
+  .project({ "lessonId": 1, "_id": 0 }) 
+  .toArray();
+  const questionPromises = lessonIds.map(async (lessonId) => {
+    return qaCollection
+      .find({ "lessonId": ObjectId(lessonId) })
+      .sort({ "createdAt": -1 }) 
+      .limit(20)
+      .toArray();
+  });
+  const questionsByLesson = await Promise.all(questionPromises);
+  const flattenedQuestions = questionsByLesson.flat();
+  return flattenedQuestions;
+}
+catch(e) {
+  throw new Error('Database pull error')
+}
+},
+async getRecentQAsByCreator(creatorId) {
+  try {
+    const qaCollection = await qa();
+    const recentQuestions = await qaCollection
+    .find({ "creatorId": ObjectId(creatorId) })
+    .sort({ "createdAt": -1 })
+    .limit(20)
+    .toArray();
+    return recentQuestions;
+    }
+  catch(e) {
+    throw new Error('Database pull error')
+  }
+}
 };
 
 export default exportedMethods;

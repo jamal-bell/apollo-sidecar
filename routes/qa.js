@@ -8,16 +8,31 @@ import express from 'express';
 const app = express();
 
 router.route('/').get(async (req, res) => {
-  console.log('we in qa')
-  let admin;
-  if (req.session.user.role === 'admin') {
-    admin = true;
-  } else {
-    admin = false;
+  let admin = false;
+  let user = false;
+  let creatorQuestions;
+  let lessonQuestions;
+  let recentQaArray;
+  try {
+    if (req.session.authenticated) {
+      user = true;
+      const userId = req.session.sessionId;
+      creatorQuestions = await qaMethods.getRecentQAsByCreator(userId);
+
+      if (req.session.user.role === 'admin') {
+        admin = true;
+        lessonQuestions = await qaMethods.getRecentQAsByLessonCreator(userId);
+      }
+    }
+
+    recentQaArray = await qaMethods.getRecentQAs();
+    res.render('qa/home', { recentQaArray, creatorQuestions, lessonQuestions, admin, user });
+  } catch (e) {
+    let error = e.message;
+    res.status(500).render('error', { title: error, error });
   }
-  recentQaArray = qaMethods.getRecentQAs();
-  return res.render('qa/home', recentQaArray);
 });
+
 
 router
   .route('/:id')
@@ -26,13 +41,9 @@ router
     let qaTarget;
     let error;
     let qaId;
-    let owner;
-    let admin;
-    if (req.session.user.role === 'admin') {
-      admin = true;
-    } else {
-      admin = false;
-    }
+    let owner = false;
+    let admin = false;
+    let lessonCreatorId;
     try {
       qaId = validation.checkId(req.params.id, 'QA ID');
     } catch (e) {
@@ -58,10 +69,24 @@ router
         .status(404)
         .render('qa/view', { title: 'No QA found!', qaTarget, admin });
     }
-    if (req.session.user.sessionId === qaTarget.creatorId.toString()) {
-      owner = true;
-    } else {
-      owner = false;
+    if (req.session.user){
+      try {
+        const lessonRelatedId = await lessonMethods.getLessonById(qaTarget.lessonId);
+        lessonCreatorId = lessonRelatedId.creatorId;
+        }
+        catch(e) {
+          error = e.message;
+          return res.status(500).render('error', error);
+        }
+        if (req.session.user.role === 'admin' && creatorId === lessonCreatorId) {
+          admin = true;
+        } else {
+          admin = false;
+        }
+
+      if (req.session.user.sessionId === qaTarget.creatorId.toString()) {
+        owner = true;  
+      }
     }
     return res
       .status(200)
@@ -74,17 +99,27 @@ router
     let owner;
     let admin;
     let qaTarget;
+    let lessonCreatorId;
     const creatorId = req.session.user.sessionId;
-    if (req.session.user.role === 'admin') {
-      admin = true;
-    } else {
-      admin = false;
-    }
+
     try {
       qaTarget = await qaMethods.getQa(qaId);
     } catch (e) {
       return res.status(500).render('error', error);
     }
+    try {
+      const lessonRelatedId = await lessonMethods.getLessonById(qaTarget.lessonId);
+      lessonCreatorId = lessonRelatedId.creatorId;
+      }
+      catch(e) {
+        error = e.message;
+        return res.status(500).render('error', error);
+      }
+      if (req.session.user.role === 'admin' && creatorId === lessonCreatorId) {
+        admin = true;
+      } else {
+        admin = false;
+      }
     if (creatorId === qaTarget.creatorId.toString()) {
       owner = true;
     } else {
@@ -122,6 +157,7 @@ router
     let qaTarget;
     let owner;
     let admin;
+    let lessonCreatorId;
     let qaId = req.params.id;
     let creatorId = req.session.user.sessionId;
     let text = req.body.replyText;
@@ -130,13 +166,19 @@ router
     } catch (e) {
       return res.status(500).render('error', error);
     }
-
-    if (req.session.user.role === 'admin') {
-      //rendering purposes only
-      admin = true;
-    } else {
-      admin = false;
-    }
+    try { //rendering purpose only
+      const lessonRelatedId = await lessonMethods.getLessonById(qaTarget.lessonId);
+      lessonCreatorId = lessonRelatedId.creatorId;
+      }
+      catch(e) {
+        error = e.message;
+        return res.status(500).render('error', error);
+      }
+      if (req.session.user.role === 'admin' && creatorId === lessonCreatorId) {
+        admin = true;
+      } else {
+        admin = false;
+      }
     try {
       qaId = validation.checkId(qaId, 'QA ID');
       creatorId = validation.checkId(creatorId, 'creator ID');
@@ -185,16 +227,23 @@ router
     let qaTarget;
     let owner;
     let admin;
+    let lessonCreatorId;
     const qaId = req.params.id;
     const answerId = req.params.aId;
     const voterId = req.session.user.sessionId;
-
-    if (req.session.user.role === 'admin') {
-      //rendering purposes only
-      admin = true;
-    } else {
-      admin = false;
-    }
+    try {
+      const lessonRelatedId = await lessonMethods.getLessonById(qaTarget.lessonId);
+      lessonCreatorId = lessonRelatedId.creatorId;
+      }
+      catch(e) {
+        error = e.message;
+        return res.status(500).render('error', error);
+      }
+      if (req.session.user.role === 'admin' && creatorId === lessonCreatorId) {
+        admin = true;
+      } else {
+        admin = false;
+      }
     try {
       await qaMethods.iqPoint(qaId, voterId, answerId);
     } catch (e) {
@@ -222,19 +271,29 @@ router
     let answerTarget;
     const creatorId = req.session.user.sessionId;
     const qaId = req.params.id;
-    const commentId = req.params.aid;
+    const commentId = req.params.aId;
     let owner;
     let answerOwner;
     let admin;
-    if (req.session.user.role === 'admin') {
-      admin = true;
-    } else {
-      admin = false;
-    }
+    let lessonCreatorId;
     try {
       qaTarget = await qaMethods.getQa(qaId);
     } catch (e) {
+      error = e.message;
       return res.status(500).render('error', error);
+    }
+    try {
+    const lessonRelatedId = await lessonMethods.getLessonById(qaTarget.lessonId);
+    lessonCreatorId = lessonRelatedId.creatorId;
+    }
+    catch(e) {
+      error = e.message;
+      return res.status(500).render('error', error);
+    }
+    if (req.session.user.role === 'admin' && creatorId === lessonCreatorId) {
+      admin = true;
+    } else {
+      admin = false;
     }
     try {
       answerTarget = await qaMethods.getAnswer(answerId);
