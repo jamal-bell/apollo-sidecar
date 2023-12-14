@@ -8,6 +8,7 @@ const app = express();
 import validation from "../data/validation.js";
 import cloudinary from "cloudinary";
 import dotenv from "dotenv";
+import xss from "xss";
 
 const cloudinaryConfig = cloudinary.config({
   cloud_name: "dcl4odxgu",
@@ -42,11 +43,11 @@ router
   })
   .post(async (req, res) => {
     //code here for POST
-    let firstName = req.body.firstNameInput;
-    let lastName = req.body.lastNameInput;
-    let emailAddress = req.body.emailAddressInput;
-    let password = req.body.passwordInput;
-    let role = req.body.roleInput;
+    let firstName = xss(req.body.firstNameInput);
+    let lastName = xss(req.body.lastNameInput);
+    let emailAddress = xss(req.body.emailAddressInput);
+    let password = xss(req.body.passwordInput);
+    let role = xss(req.body.roleInput);
     let errors = [];
 
     try {
@@ -140,8 +141,8 @@ router
   })
   .post(async (req, res) => {
     //code here for POST
-    let emailAddress = req.body.emailAddressInput;
-    let password = req.body.passwordInput;
+    let emailAddress = xss(req.body.emailAddressInput);
+    let password = xss(req.body.passwordInput);
 
     let errors = [];
 
@@ -309,11 +310,11 @@ router.route("/error").get(async (req, res) => {
 });
 
 router.route("/profile").post(async (req, res) => {
-  let firstName = req.body.firstName;
-  let lastName = req.body.lastName;
-  let emailAddress = req.body.emailAddress;
-  let bio = req.body.bio;
-  let github = req.body.github;
+  let firstName = xss(req.body.firstName);
+  let lastName = xss(req.body.lastName);
+  let emailAddress = xss(req.body.emailAddress);
+  let bio = xss(req.body.bio);
+  let github = xss(req.body.github);
   let errors = [];
 
   try {
@@ -397,12 +398,17 @@ router
   })
   .post(async (req, res) => {
     //code here for POST
-    const user = await users.getUserByEmail(req.session.user.emailAddress);
-    const emailAddress = user.emailAddress;
-    let currentPassword = req.body.currentPasswordInput;
-    let newPassword = req.body.newPasswordInput;
-    let confirmNewPassword = req.body.confirmPasswordInput;
+    let emailAddress = xss(req.user.emailAddress.trim());
+    let currentPassword = xss(req.body.currentPasswordInput);
+    let newPassword = xss(req.body.newPasswordInput);
+    let confirmNewPassword = xss(req.body.confirmPasswordInput);
     let errors = [];
+    try {
+      const user = await users.getUserByEmail(emailAddress);
+      emailAddress = user.emailAddress;
+    } catch (e) {
+      errors.push(e);
+    }
 
     try {
       currentPassword = await users.comparePassword(
@@ -503,13 +509,17 @@ router.route("/photo").post(async (req, res) => {
   if (!req.session.authenticated) {
     return res.redirect("/user/login");
   }
+  req.body.public_id = xss(req.body.public_id);
+  req.body.version = xss(req.body.version);
+  req.body.signature = xss(req.body.signature);
+  let emailAddress = xss(req.session.user.emailAddress.trim());
 
   const expectedSignature = cloudinary.utils.api_sign_request(
     { public_id: req.body.public_id, version: req.body.version },
     cloudinaryConfig.api_secret
   );
 
-  const user = await users.getUserByEmail(req.session.user.emailAddress);
+  const user = await users.getUserByEmail(emailAddress);
 
   let photoId = "";
   if (user.photo !== "/public/assets/no-photo.jpg") {
@@ -523,10 +533,7 @@ router.route("/photo").post(async (req, res) => {
   if (expectedSignature === req.body.signature) {
     try {
       const url = `https://res.cloudinary.com/${cloudinaryConfig.cloud_name}/image/upload/w_200,h_200,c_fill,q_100/${req.body.public_id}.jpg`;
-      const photoUpdated = await users.updatePhoto(
-        req.session.user.emailAddress,
-        url
-      );
+      const photoUpdated = await users.updatePhoto(emailAddress, url);
 
       if (photoUpdated) {
         cloudinary.uploader.destroy(photoId);
