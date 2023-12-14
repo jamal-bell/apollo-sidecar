@@ -32,12 +32,12 @@
             <tr>
                 <th>Account Created</th>
                 <td id="accountCreatedAt">{{{user.createdAt}}}</td>
-                <td class="centered-cell"><button id="uploadPhotoButton">Upload</button></td>
+                <td class="centered-cell"><input type="file" id="photoInput" accept="image/*" /></td>
             </tr>
             <tr>
                 <th>Last Login</th>
                 <td id="lastLogin">{{{user.lastLogin}}}</td>
-                <td class="centered-cell"><input type="file" id="photoInput" accept="image/*" /></td>
+                <td class="centered-cell"><button id="uploadPhotoButton">Upload</button></td>
             </tr>
         </table>
     </div>
@@ -97,16 +97,15 @@
     </div>
 </section>
 
-<section id="lessons">
-    <h2>Lessons Created</h2>
+<h2>Lessons Created</h2>
+<section class="lessons">
     {{#if hasLessons}}
         <ul>
-            {{#each userLessons}}
+            {{#each lessons}}
                 <li>
                     <h3>{{this.lessonTitle}}</h3>
-                    <p>Status: <span>Completed/In Progress</span></p>
                     <button type="button"
-                        onclick="location.href='/lessons/lesson/{{{this._id}}}'">Review/Continue</button>
+                        onclick="location.href='/lessons/lesson/{{{this._id}}}'">Edit Lesson</button>
                 </li>
             {{/each}}
         </ul>
@@ -119,7 +118,7 @@
     <h2>Q&A Contributions</h2>
     {{#if hasQas}}
         <ul>
-            {{#each userQas}}
+            {{#each adminQas}}
                 <li>
                     <h3>{{this.questionName}}</h3>
                     <p>Type: <span>{{this.questionType}}</span></p>
