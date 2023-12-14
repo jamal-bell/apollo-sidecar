@@ -3,6 +3,7 @@ import { ObjectId } from "mongodb";
 import validation from "../data/validation.js";
 import bcrypt from "bcryptjs";
 import cloudinary from "cloudinary";
+import { create } from "express-handlebars";
 
 function checkRole(role) {
   if (!role) throw "You must provide the role.";
@@ -296,8 +297,9 @@ const exportedusersMethods = {
   }, //end reactivateUser
 
   async addLesson(userId, lessonId, createdOrLearned) {
-    userId = validation.checkId(userId);
-    lessonId = validation.checkId(lessonId);
+    userId = validation.checkId(userId, "userId");
+    lessonId = validation.checkId(lessonId, "lessonId");
+    createdOrLearned = createdOrLearned.trim().toLowerCase();
 
     const usersCollection = await users();
     const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
@@ -307,9 +309,17 @@ const exportedusersMethods = {
     let lessons = user.lessons;
 
     if (createdOrLearned === "created") {
-      lessons.created.push(new ObjectId(lessonId));
+      if (lessons.created) {
+        lessons.created.push(lessonId);
+      } else {
+        lessons.created = [lessonId];
+      }
     } else if (createdOrLearned === "learned") {
-      lessons.learned.push(new ObjectId(lessonId));
+      if (lessons.created) {
+        lessons.learned.push(lessonId);
+      } else {
+        lessons.learned = [lessonId];
+      }
     } else {
       throw `Invalid argument for 'createdOrLearned'. Must be either 'created' or 'learned'`;
     }
@@ -330,8 +340,9 @@ const exportedusersMethods = {
   },
 
   async addQuestion(userId, questionId, createOrAnswered) {
-    userId = validation.checkId(userId);
-    questionId = validation.checkId(questionId);
+    userId = validation.checkId(userId, "userId");
+    questionId = validation.checkId(questionId, "questionId");
+    createOrAnswered = createOrAnswered.trim().toLowerCase();
 
     const usersCollection = await users();
     const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
@@ -341,9 +352,17 @@ const exportedusersMethods = {
     let qas = user.qas;
 
     if (createOrAnswered === "created") {
-      qas.created.push(new ObjectId(questionId));
+      if (lessons.created) {
+        qas.created.push(questionId);
+      } else {
+        qas.created = [questionId];
+      }
     } else if (createOrAnswered === "answered") {
-      qas.learned.push(new ObjectId(questionId));
+      if (lessons.created) {
+        qas.answered.push(questionId);
+      } else {
+        qas.answered = [questionId];
+      }
     } else {
       throw `Invalid argument for 'createOrAnswered'. Must be either 'created' or 'answered'`;
     }
@@ -365,7 +384,7 @@ const exportedusersMethods = {
 
   async updatePhoto(emailAddress, url) {
     emailAddress = validation.checkEmail(emailAddress);
-    if (url.length !== 0 && !new URL(url)) {
+    if (url.length === 0 || !new URL(url)) {
       throw "Invalid photo Link.";
     }
 
