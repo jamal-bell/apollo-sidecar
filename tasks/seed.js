@@ -11,7 +11,12 @@ let newUser = undefined;
 let newLesson = undefined;
 let newQaPost = undefined;
 let newQaResponse = undefined;
-
+let userCollection;
+try {
+  userCollection = await users();
+} catch (e) {
+  throw new Error('Error ');
+}
 try {
   await Promise.all([
     userData.registerUser(
@@ -145,30 +150,35 @@ console.log('Flattening IDs for random lesson creation completed!');
 try {
   const lessonsCollection = await lessons();
   const lessonTitlePrefix = 'Lesson';
-  await Promise.all(
-    Array.from({ length: 30 }, (_, index) => {
-      const randomUserId = userIds[Math.floor(Math.random() * userIds.length)];
-      const authorChosen = userCollection.findOne({ _id: randomUserId });
-      const newLessonInfo = {
-        lessonTitle: `${lessonTitlePrefix} ${index + 1}`,
-        description: `Description for Lesson ${index + 1}`,
-        creatorId: authorChosen._id,
-        contents: [
-          {
-            _id: new ObjectId(),
-            order: 1,
-            moduleTitle: `Module for Lesson ${index + 1}`,
-            creatorId: authorChosen._id,
-            author: authorChosen.handle,
-            text: `Text for Lesson ${index + 1}`,
-            videoLink: ['https://example.com/video'],
-            createdByRole: authorChosen.role,
-          },
-        ],
-      };
-      return lessonsCollection.insertOne(newLessonInfo);
-    })
-  );
+  userCollection = await users();
+  for (let index = 0; index < 30; index++) {
+    const randomUserId = userIds[Math.floor(Math.random() * userIds.length)];
+    const authorChosen = await userCollection.findOne({ _id: randomUserId });
+    const newLessonInfo = {
+      lessonTitle: `${lessonTitlePrefix} ${index + 1}`,
+      description: `Description for Lesson ${index + 1}`,
+      creatorId: authorChosen._id,
+      contents: [
+        {
+          _id: new ObjectId(),
+          order: 1,
+          moduleTitle: `Module for Lesson ${index + 1}`,
+          creatorId: authorChosen._id,
+          author: authorChosen.handle,
+          text: `Text for Lesson ${index + 1}`,
+          videoLink: ['https://example.com/video'],
+          createdByRole: authorChosen.role,
+        },
+      ],
+    };
+    const result = await lessonsCollection.insertOne(newLessonInfo);
+    console.log(result); // Log the inserted document
+    const result2 = await userCollection.updateOne(
+      { _id: authorChosen._id },
+      { $push: { 'lessons.created': result.insertedId } }
+    );
+    console.log(result2);
+  }
   console.log('Seeding Lessons Completed!');
   console.log('Seeding completed successfully!');
 } catch (e) {
