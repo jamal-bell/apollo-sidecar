@@ -9,6 +9,62 @@ import validation from "../data/validation.js";
 import cloudinary from "cloudinary";
 import dotenv from "dotenv";
 import xss from "xss";
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import crypto from "crypto";
+import { promisify } from "util";
+dotenv.config();
+
+const region = "us-east-1";
+const bucketName = "apollo-sidecar";
+const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+
+const s3 = new S3Client({
+  region,
+  credentials: {
+    accessKeyId,
+    secretAccessKey,
+  },
+});
+
+const randomBytes = promisify(crypto.randomBytes);
+
+const s3Function = {
+  async generateUploadURL() {
+    const rawBytes = await randomBytes(16);
+    const imageName = rawBytes.toString("hex");
+
+    const params = {
+      Bucket: bucketName,
+      Key: imageName,
+    };
+
+    const command = new PutObjectCommand(params);
+
+    const uploadURL = await getSignedUrl(s3, command, { expiresIn: 60 });
+
+    return uploadURL;
+  },
+
+  async deleteImageFromS3(imageKey) {
+    try {
+      const params = {
+        Bucket: bucketName,
+        Key: imageKey,
+      };
+
+      const command = new DeleteObjectCommand(params);
+      await s3.send(command);
+    } catch (e) {
+      throw `Error in file deletion: ${e}`;
+    }
+  },
+};
 
 const cloudinaryConfig = cloudinary.config({
   cloud_name: "dcl4odxgu",
@@ -505,49 +561,96 @@ router.route("/cancel").get(async (req, res) => {
   }
 });
 
-router.route("/photo").post(async (req, res) => {
+// //Cloudinary
+// router.route("/photo").post(async (req, res) => {
+//   if (!req.session.authenticated) {
+//     return res.redirect("/user/login");
+//   }
+//   req.body.public_id = xss(req.body.public_id);
+//   req.body.version = xss(req.body.version);
+//   req.body.signature = xss(req.body.signature);
+//   let emailAddress = xss(req.session.user.emailAddress.trim());
+
+//   const expectedSignature = cloudinary.utils.api_sign_request(
+//     { public_id: req.body.public_id, version: req.body.version },
+//     cloudinaryConfig.api_secret
+//   );
+
+//   const user = await users.getUserByEmail(emailAddress);
+
+//   let photoId = "";
+//   if (user.photo !== "/public/assets/no-photo.jpg") {
+//     const photoUrl = user.photo;
+//     photoId = photoUrl.substring(
+//       photoUrl.lastIndexOf("/") + 1,
+//       photoUrl.lastIndexOf(".")
+//     );
+//   }
+
+//   if (expectedSignature === req.body.signature) {
+//     try {
+//       const url = `https://res.cloudinary.com/${cloudinaryConfig.cloud_name}/image/upload/w_200,h_200,c_fill,q_100/${req.body.public_id}.jpg`;
+//       const photoUpdated = await users.updatePhoto(emailAddress, url);
+
+//       if (photoUpdated) {
+//         cloudinary.uploader.destroy(photoId);
+//         return res.json({
+//           updated: true,
+//           user: photoUpdated,
+//         });
+//       }
+//     } catch (e) {
+//       return res.json({
+//         updated: false,
+//         photoErrors: e,
+//       });
+//     }
+//   }
+//   return res.status(500).render("user/error", {
+//     error: "Internal Server Error",
+//     title: "Error",
+//   });
+// });
+
+// router.route("/s3Url").get(async (req, res) => {
+//   const url = await s3Function.generateUploadURL();
+//   res.json({ url });
+// });
+
+//AWS S3
+router.route("/s3").post(async (req, res) => {
   if (!req.session.authenticated) {
     return res.redirect("/user/login");
   }
-  req.body.public_id = xss(req.body.public_id);
-  req.body.version = xss(req.body.version);
-  req.body.signature = xss(req.body.signature);
-  let emailAddress = xss(req.session.user.emailAddress.trim());
+  const newUrl = xss(req.body.url).trim();
 
-  const expectedSignature = cloudinary.utils.api_sign_request(
-    { public_id: req.body.public_id, version: req.body.version },
-    cloudinaryConfig.api_secret
-  );
+  let emailAddress = xss(req.session.user.emailAddress.trim());
 
   const user = await users.getUserByEmail(emailAddress);
 
-  let photoId = "";
-  if (user.photo !== "/public/assets/no-photo.jpg") {
-    const photoUrl = user.photo;
-    photoId = photoUrl.substring(
-      photoUrl.lastIndexOf("/") + 1,
-      photoUrl.lastIndexOf(".")
-    );
-  }
+  let photoKey = "";
 
-  if (expectedSignature === req.body.signature) {
-    try {
-      const url = `https://res.cloudinary.com/${cloudinaryConfig.cloud_name}/image/upload/w_200,h_200,c_fill,q_100/${req.body.public_id}.jpg`;
-      const photoUpdated = await users.updatePhoto(emailAddress, url);
+  try {
+    if (newUrl.length === 0 || !new URL(newUrl)) throw "Invalid photo url";
+    if (user.photo !== "/public/assets/no-photo.jpg") {
+      const photoUrl = user.photo;
+      photoKey = photoUrl.substring(photoUrl.lastIndexOf("/") + 1);
+    }
 
-      if (photoUpdated) {
-        cloudinary.uploader.destroy(photoId);
-        return res.json({
-          updated: true,
-          user: photoUpdated,
-        });
-      }
-    } catch (e) {
+    const photoUpdated = await users.updatePhoto(emailAddress, newUrl);
+
+    if (photoUpdated) {
+      await s3Function.deleteImageFromS3(photoKey);
       return res.json({
-        updated: false,
-        photoErrors: e,
+        updated: true,
+        user: photoUpdated,
       });
     }
+  } catch (e) {
+    return res.json({
+      updated: false,
+      photoErrors: e,
+    });
   }
   return res.status(500).render("user/error", {
     error: "Internal Server Error",

@@ -20,6 +20,9 @@
   },
   "homepage": "https://github.com/jamal-bell/apollo-sidecar#readme",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.473.0",
+    "@aws-sdk/s3-request-presigner": "^3.473.0",
+    "aws-sdk": "^2.1518.0",
     "axios": "^1.5.1",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.41.0",
