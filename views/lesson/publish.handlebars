@@ -34,8 +34,10 @@
 
 
   <section>
-    <h1>Previeous lessons</h1>
-    <h1>Lesson name : {{this?.lesson?.lessonTitle}}</h1>
+    <h1>Preview</h1>
+    {{!-- <h1>Lesson name : {{this?.lesson?.lessonTitle}}</h1> --}}
+    <h1>Lesson name : {{lessonTitle}}</h1>
+
     <h1>Lesson Modules</h1>
     <div>
       {{#each this?.lesson?.contents}}
@@ -52,7 +54,7 @@
       <li>
 
         <h4>{{this.order}}: {{this.moduleTitle}}</h4>
-        <h5>Author: {{this.creatorId}}</h5>
+        <h5>Author: {{this.author}}</h5>
         <h5>Resources: {{this.videoLink}}</h5>
         <h5>{{this.text}}</h5>
         <button type="button" onclick="location.href='/user/profile'">Mark Complete!</button>
@@ -70,6 +72,13 @@
         {{this}}
       </li>
       {{/each}}
+      {{/if}}
+    </ul>
+  </div>
+  <div class="form-errors">
+    <ul id="errors" class="errors">
+      {{#if error}}
+      {{error}}
       {{/if}}
     </ul>
   </div>
