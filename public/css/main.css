@@ -1,0 +1,94 @@
+.errors li,
+.errors,
+#error {
+  color: #ff0000;
+  text-align: center;
+}
+
+.hide-id {
+  display: none;
+}
+
+.form {
+  background: #fff;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+form div, #userProfileContainer, #editButtons {
+    margin-bottom: 10px;
+	justify-content: center;
+    display: flex; 
+    align-items: center;
+}
+
+.form-errors {
+  margin-bottom: 0px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+
+form label {
+  margin-right: 5px;
+}
+
+
+a, p, footer, h1, h2 {
+	text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.form-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-top: 5px;
+}
+
+.user-photo{
+    text-align: center;
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+img {
+  border-radius: 50%; /* Makes the image circular */
+  object-fit: cover;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.centered-cell {
+    text-align: right;
+    vertical-align: middle;
+}
+
+#uploadPhotoButton {
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer; 
+    transition: all 0.3s;
+}
+#uploadPhotoButton:hover {
+    background-color: #45a049;
+}
+
+table td a {
+    display: block;
+    text-align: left;
+}
