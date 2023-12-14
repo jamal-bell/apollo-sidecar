@@ -14,6 +14,7 @@ router.route('/').get(async (req, res) => {
   let creatorQuestions;
   let lessonQuestions;
   let recentQaArray;
+  let error;
   try {
     if (req.session.authenticated) {
       user = true;
@@ -35,7 +36,7 @@ router.route('/').get(async (req, res) => {
       user,
     });
   } catch (e) {
-    let error = e.message;
+    error = e.message;
     res.status(500).render('error', { title: error, error });
   }
 });
@@ -143,7 +144,7 @@ router
     try {
       await qaMethods.deleteQA(qaId, creatorId, admin);
     } catch (e) {
-      let error = e.message;
+      error = e.message;
       if (error === 'NP') {
         return res.status(403).render('qa/view', {
           title: 'FORBIDDEN',
@@ -263,7 +264,7 @@ router
     try {
       await qaMethods.iqPoint(qaId, voterId, answerId);
     } catch (e) {
-      let error = e.message;
+      error = e.message;
       return res.status(500).render('error', { title: error, error });
     }
     try {
@@ -283,6 +284,7 @@ router
   })
   .delete(async (req, res) => {
     //DELETING AN ANSWER
+    let error;
     let qaTarget;
     let answerTarget;
     const creatorId = req.session.user.sessionId;
@@ -343,7 +345,7 @@ router
     try {
       await qaMethods.deleteAnswer(qaId, commentId, creatorId, admin);
     } catch (e) {
-      let error = e.message;
+      error = e.message;
       if (error === 'NP') {
         return res.status(403).render('qa/view', {
           title: 'FORBIDDEN',
@@ -363,6 +365,7 @@ router
   .route('/create/:lessonId')
   .get(async (req, res) => {
     //CREATE QA WEBPAGE- CHRISTINE PUT href link to /qa/create/{{lessonId}} to create an Q&A based off lesson
+    let error;
     try {
       lessonId = validation.checkId(lessonId, 'Lesson ID');
       originLesson = await lessonMethods.getLessonById(lessonId);
