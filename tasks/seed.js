@@ -1,163 +1,155 @@
-import { MongoExpiredSessionError } from "mongodb";
-import { dbConnection, closeConnection } from "../config/mongoConnection.js";
-import userData from "../data/users.js";
-import qaData from "../data/qa.js";
-import lessonData from "../data/lessons.js";
+import { MongoExpiredSessionError } from 'mongodb';
+import { dbConnection, closeConnection } from '../config/mongoConnection.js';
 
 const db = await dbConnection();
 await db.dropDatabase();
-
-let newUser = undefined;
-let newlesson = undefined;
-let newQaPost = undefined;
-let newQaResponse = undefined;
+import { users } from '../config/mongoCollections.js';
 
 //-----------------Create Users---------------------//
-try {
-  newUser = await users.registerUser(
-    "Haonan",
-    "Guan",
-    "guanhn1214@gmail.com",
-    "qwe123QWE!@#",
-    "admin"
-  );
-  newUser = await users.registerUser(
-    "Apollo",
-    "Sidecar",
-    "hguan6@stevens.edu",
-    "qwe123QWE!@#",
-    "user"
-  );
-} catch (e) {
-  console.log("Got an error!");
-  console.log(e);
-}
+const userCollection = await users();
+const userSeedData = [
+  {
+    firstName: 'Alice',
+    lastName: 'Johnson',
+    emailAddress: 'alice.j@example.com',
+    role: 'admin',
+    password: 'apple1A!',
+  },
+  {
+    firstName: 'Bob',
+    lastName: 'Smith',
+    emailAddress: 'bob.smith@example.com',
+    role: 'user',
+    password: 'banana2B!',
+  },
+  {
+    firstName: 'Charlie',
+    lastName: 'Brown',
+    emailAddress: 'charlie.b@example.com',
+    role: 'admin',
+    password: 'cherry3C!',
+  },
+  {
+    firstName: 'David',
+    lastName: 'Miller',
+    emailAddress: 'david.m@example.com',
+    role: 'user',
+    password: 'date4D!',
+  },
+  {
+    firstName: 'Emma',
+    lastName: 'Taylor',
+    emailAddress: 'emma.t@example.com',
+    role: 'admin',
+    password: 'elephant5E!',
+  },
+  {
+    firstName: 'Frank',
+    lastName: 'Wilson',
+    emailAddress: 'frank.w@example.com',
+    role: 'user',
+    password: 'frog6F!',
+  },
+  {
+    firstName: 'Grace',
+    lastName: 'Anderson',
+    emailAddress: 'grace.a@example.com',
+    role: 'admin',
+    password: 'grape7G!',
+  },
+  {
+    firstName: 'Henry',
+    lastName: 'Clark',
+    emailAddress: 'henry.c@example.com',
+    role: 'user',
+    password: 'horse8H!',
+  },
+  {
+    firstName: 'Ivy',
+    lastName: 'Robinson',
+    emailAddress: 'ivy.r@example.com',
+    role: 'admin',
+    password: 'icecream9I!',
+  },
+  {
+    firstName: 'Jack',
+    lastName: 'Moore',
+    emailAddress: 'jack.m@example.com',
+    role: 'user',
+    password: 'jacket10J!',
+  },
+  {
+    firstName: 'Kelly',
+    lastName: 'Carter',
+    emailAddress: 'kelly.c@example.com',
+    role: 'admin',
+    password: 'kiwi11K!',
+  },
+  {
+    firstName: 'Leo',
+    lastName: 'Davis',
+    emailAddress: 'leo.d@example.com',
+    role: 'user',
+    password: 'lemon12L!',
+  },
+  {
+    firstName: 'Mia',
+    lastName: 'Johnson',
+    emailAddress: 'mia.j@example.com',
+    role: 'admin',
+    password: 'melon13M!',
+  },
+  {
+    firstName: 'Nathan',
+    lastName: 'White',
+    emailAddress: 'nathan.w@example.com',
+    role: 'user',
+    password: 'nut14N!',
+  },
+  {
+    firstName: 'Olivia',
+    lastName: 'Hall',
+    emailAddress: 'olivia.h@example.com',
+    role: 'admin',
+    password: 'orange15O!',
+  },
+  {
+    firstName: 'Paul',
+    lastName: 'Baker',
+    emailAddress: 'paul.b@example.com',
+    role: 'user',
+    password: 'peach16P!',
+  },
+  {
+    firstName: 'Quinn',
+    lastName: 'Fisher',
+    emailAddress: 'quinn.f@example.com',
+    role: 'admin',
+    password: 'quokka17Q!',
+  },
+  {
+    firstName: 'Rachel',
+    lastName: 'Young',
+    emailAddress: 'rachel.y@example.com',
+    role: 'user',
+    password: 'rabbit18R!',
+  },
+  {
+    firstName: 'Sam',
+    lastName: 'Evans',
+    emailAddress: 'sam.e@example.com',
+    role: 'admin',
+    password: 'strawberry19S!',
+  },
+  {
+    firstName: 'Tom',
+    lastName: 'Hill',
+    emailAddress: 'tom.h@example.com',
+    role: 'user',
+    password: 'tiger20T!',
+  },
+];
 
-//-----------------Create Lessons---------------------//
-
-try {
-  for (let i = 1; i < 4; i++) {
-    let newLesson = await lessonData.createLesson(
-      "Lesson " + i + ": JavaScript",
-      "Data Structures: " + i,
-      [
-        {
-          moduleTitle: i + " Intro to Data Structures",
-          text: "This is an intro to Data Structures.",
-          videoLink: "https://www.youtube.com/watch?v=yourVideoId",
-        },
-      ]
-    );
-  }
-  //console.log(newLesson);
-} catch (e) {
-  console.log("Caught an error creating lesson from seed!");
-  console.log(e);
-}
-
-// try {
-//   let firstLesson = await lessonData.getLessonById("65732a03793ff6fd82b82acf")
-//   console.log(firstLesson);
-// } catch (e) {
-//   console.log(e);
-// }
-
-// try {
-//   let anotherLesson = await lessonData.getLessonByTitle("JavaScript: Lesson 1")
-//   console.log(anotherLesson);
-// } catch (e) {
-//   console.log(e);
-// }
-
-// try {
-//   const newModule = await lessonData.createModule(
-//     "6574eb035458b7cde4ca1b81",
-//     1,
-//     "Arrays JS 1",
-//     "Arrays are like lists...",
-//     "https://www.youtube.com/watch?v=yourVideoId"
-//   );
-// } catch (e) {
-//   console.log(e);
-// }
-
-// try {
-//   const newModule = await lessonData.createModule(
-//     "6574eb035458b7cde4ca1b84",
-//     "",
-//     "Lesson 2 new Module",
-//     "Arrays are like lists...",
-//     "https://www.youtube.com/watch?v=yourVideoId"
-//   );
-// } catch (e) {
-//   console.log(e);
-// }
-
-// try {
-//   const alllessons = await lessonData.getAllLessons();
-//   console.log(alllessons);
-// } catch (e) {
-//   console.log(e);
-// }
-
-// try {
-//   let mistakeLesson = await lessonData.removeLesson("6574eb035458b7cde4ca1b81")
-// } catch (e) {
-//   console.log(e);
-// }
-
-// try {
-//   let correctedLesson = await lessonData.updateLesson(
-//     "6574eb035458b7cde4ca1b81",
-//     "UPDATED JavaScript: Lesson ",
-//     "UPDATED Data Structures: "
-//   );
-//   console.log(correctedLesson);
-// } catch (e) {
-//   console.log("Caught an error updating lesson from seed!");
-//   console.log(e);
-// }
-
-// try {
-//   let correctedLesson = await lessonData.updateModule(
-//     "6574eb035458b7cde4ca1b84",
-//     "6574eb035458b7cde4ca1b82",
-//     "",
-//     "Changed Module",
-//     "UPDATED this module to make some changes: ",
-//     "same video link"
-//   );
-//   console.log(correctedLesson);
-// } catch (e) {
-//   console.log("Caught an error updating lesson from seed!");
-//   console.log(e);
-// }
+await userCollection.insertMany(userSeedData);
 
 await closeConnection();
-
-// Example to loop and seed database
-
-// try {
-//   for (let i = 0; i < 20; i++) {
-//   newUser = await userData.create(
-//     "Patrick's" + i + "Big End of Summer BBQ",
-//     "Come join us for our yearly end of summer bbq!",
-//     { streetAddress: "1 Castle Point Terrace", city: "Hoboken", state: "NJ", zip: "07030" },
-//     "phillip123@stevens.edu",
-//     30,
-//     0,
-//     "08/25/2024",
-//     "10:00 PM",
-//     "11:10 PM",
-//     false
-//   );
-// }
-//   console.log(newUser);
-// } catch (e) {
-//   console.log("Got an error!");
-//   console.log(e);
-// }
-
-// ADD for a new QA post
-
-// Add for new QA responses
