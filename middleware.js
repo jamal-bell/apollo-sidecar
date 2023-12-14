@@ -147,7 +147,7 @@ qa: (app) => {
   });
 },
   //   });
-  //new lesson middleware
+  // new lesson middleware
   // app.use("/lesson/newlesson", async (req, res, next) => {
   //   if (req.method == "GET" && !req.session.authenticated) {
   //     return res.redirect("/user/login");
@@ -155,7 +155,7 @@ qa: (app) => {
   //   next();
   // });
   // },
-  // //qa middleware
+  //qa middleware
   // qa: (app) => {},
   // //home middleware
   // home: (app) => {},

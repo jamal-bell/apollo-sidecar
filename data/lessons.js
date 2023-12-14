@@ -1,6 +1,7 @@
 import { lessons } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import validation from "./validation.js";
+import { usersData } from "./index.js";
 
 let exportedLessonsMethods = {
   //Creates a lesson + 1 module
@@ -37,6 +38,19 @@ let exportedLessonsMethods = {
       });
     }
 
+    const lessonsCollection = await lessons();
+    if (!lessonsCollection) throw "Could not get lessons. Try again";
+
+    // Prevent duplicate entries
+    // try {
+    //   const lesson = await this.getLessonByTitle(lessonTitle);
+    //   console.log("lesson returned from data: " + lesson)
+    // } catch (e) {
+    //   ;
+    // }
+    const dup = await lessonsCollection.findOne({ lessonTitle: lessonTitle });
+    if (dup) throw "Lesson already exists with this title."
+
     let newLessonInfo = {
       lessonTitle: lessonTitle, //string
       description: description, //string
@@ -47,18 +61,18 @@ let exportedLessonsMethods = {
           order: 1,
           moduleTitle: contents[0].moduleTitle, //string
           creatorId: new ObjectId(),
+          author: null,
           text: contents[0].text, //string
           videoLink: contents[0].videoLink, // array of string urls to the resource video
-          votes: {
-            votedUsers: [], // [{ userId: ObjectId, voteTime: "string" }] (timestamp from response header???)
-            count: 0, // total count for upVotes
-          },
+          // votes: {
+          //   votedUsers: [], // [{ userId: ObjectId, voteTime: "string" }] (timestamp from response header???)
+          //   count: 0, // total count for upVotes
+          // },
           createdByRole: "",
         },
       ],
     };
 
-    const lessonsCollection = await lessons();
     const lessonInfoToInsert = await lessonsCollection.insertOne(newLessonInfo);
     if (!lessonInfoToInsert.acknowledged || !lessonInfoToInsert.insertedId)
       throw "Could not add lesson. Try again.";

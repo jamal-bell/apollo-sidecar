@@ -1,5 +1,5 @@
-<h2>{{{title}}}</h2>
 <section id="profile">
+    <h2>Profile</h2>
     <div id="userProfileContainer">
         <table>
             <tr>
@@ -97,36 +97,40 @@
     </div>
 </section>
 
-{{#if hasLessons}}
 <section id="lessons">
     <h2>Lessons Created</h2>
-    <ul>
-        {{#each usserLessons}}
-            <li>
-                <h3>{{this.lessonlessonTitle}}</h3>
-                <p>Status: <span>Completed/In Progress</span></p>
-                <button type="button" onclick="location.href='/lessons/lesson/{{{this._id}}}'">Review/Continue</button>
-            </li>
-        {{/each}}
-    </ul>
+    {{#if hasLessons}}
+        <ul>
+            {{#each userLessons}}
+                <li>
+                    <h3>{{this.lessonTitle}}</h3>
+                    <p>Status: <span>Completed/In Progress</span></p>
+                    <button type="button"
+                        onclick="location.href='/lessons/lesson/{{{this._id}}}'">Review/Continue</button>
+                </li>
+            {{/each}}
+        </ul>
+    {{else}}
+        <p>No lessons created yet, start creating one <a href="/lessons/newLesson">here</a>!</p>
+    {{/if}}
 </section>
-{{/if}}
 
-
-{{#if hasQas}}
 <section id="qas">
     <h2>Q&A Contributions</h2>
-    <ul>
-        {{#each userQas}}
-            <li>
-                <h3>{{this.questionName}}</h3>
-                <p>Type: <span>{{this.questionType}}</span></p>
-                <p>Ans: <span>{{this.answers.sum}}</span></p>
-                <p>Upvotes: <span>{{this.votes.sum}}</span></p>
-                <p><span>{{this.createdAt}}</span></p>
-                <button type="button" onclick="location.href='/lesson/details'">Review/Continue</button>
-            </li>
-        {{/each}}
-    </ul>
+    {{#if hasQas}}
+        <ul>
+            {{#each userQas}}
+                <li>
+                    <h3>{{this.questionName}}</h3>
+                    <p>Type: <span>{{this.questionType}}</span></p>
+                    <p>Ans: <span>{{this.answers.sum}}</span></p>
+                    <p>Upvotes: <span>{{this.votes.sum}}</span></p>
+                    <p><span>{{this.createdAt}}</span></p>
+                    <button type="button" onclick="location.href='/lesson/details'">Review/Continue</button>
+                </li>
+            {{/each}}
+        </ul>
+    {{else}}
+        <p>No Q&A contributions yet.</p>
+    {{/if}}
 </section>
-{{/if}}
