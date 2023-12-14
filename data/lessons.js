@@ -42,12 +42,6 @@ let exportedLessonsMethods = {
     if (!lessonsCollection) throw "Could not get lessons. Try again";
 
     // Prevent duplicate entries
-    // try {
-    //   const lesson = await this.getLessonByTitle(lessonTitle);
-    //   console.log("lesson returned from data: " + lesson)
-    // } catch (e) {
-    //   ;
-    // }
     const dup = await lessonsCollection.findOne({ lessonTitle: lessonTitle });
     if (dup) throw "Lesson already exists with this title."
 
