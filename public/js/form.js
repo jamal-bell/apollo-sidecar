@@ -72,6 +72,7 @@ let updateForm = document.getElementById("update-form");
 let passwordForm = document.getElementById("password-form");
 let cancelAccount = document.getElementById("cancelAccountButton");
 let profile = document.getElementById("profile");
+let uploadPhotoButton = document.getElementById("uploadPhotoButton");
 
 if (loginForm) {
   const emailAddressInput = document.getElementById("emailAddressInput");
@@ -378,7 +379,7 @@ if (profile) {
   })(jQuery);
 }
 
-let uploadPhotoButton = document.getElementById("uploadPhotoButton");
+//Cloudinary Photo Uploading
 if (uploadPhotoButton) {
   const api_key = "913344915682151";
   const cloud_name = "dcl4odxgu";
@@ -428,5 +429,46 @@ if (uploadPhotoButton) {
       .catch(function (error) {
         alert("Error Updating Photo: " + error);
       });
+  });
+}
+
+//AWS S3 Photo Uploading
+if (uploadPhotoButton) {
+  const userPhotoDisplay = document.getElementById("userPhotoDisplay");
+  const file = document.getElementById("photoInput");
+
+  uploadPhotoButton.addEventListener("click", async function (event) {
+    event.preventDefault();
+
+    if (file.files.length === 0) {
+      return alert("Please choose a photo to upload");
+    }
+
+    let url;
+
+    try {
+      //get secure url from our servier
+      const response = await axios.get("/s3Url");
+      url = response.data.url;
+    } catch (e) {
+      console.error("Error fetching the S3 URL:", e);
+    }
+
+    try {
+      //post the image directly to the s3 bucket
+      const photo = await axios.put(url, file, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        body: file,
+      });
+      const imageUrl = url.split("?")[0];
+      //post request to my server to
+      const img = document.createElement("img");
+      img.src = imageUrl;
+      document.body.appendChild(img);
+    } catch (e) {
+      console.error("Error poisting the image to S3 bucket:", e);
+    }
   });
 }

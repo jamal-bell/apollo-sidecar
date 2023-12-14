@@ -46,7 +46,6 @@ router
   .route("/newlesson")
   //new lesson form
   .get(async (req, res) => {
-    console.log("Hitting get");
     try {
       return res.status(200).render("lesson/newlesson", {
         title: "Create Lesson",

@@ -68,7 +68,7 @@ const helperFunctions = {
   //   arr.forEach((c) =>  { //check contents, title and text
   //     this.checkStringObject(arr[c], "contents object in array")
   //   })
-    
+
   //   return arr;
   // },
 
@@ -84,15 +84,15 @@ const helperFunctions = {
   },
 
   checkEmail(email) {
-    if (!email) throw "You must provide contactEmail.";
+    if (!email) throw "You must provide the Email address.";
     if (typeof email !== "string" || email.trim().length === 0)
-      throw "Contact email must be valid strings.";
+      throw "Email must be valid strings.";
 
-    email = email.trim();
+    email = email.trim().toLowerCase();
 
     const emailPrefixFormat = /^[a-zA-Z0-9_.-]+$/;
     const emailDomainFormat = /^[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]{2,}$/;
-    if (!email.includes("@")) throw "Invalid email input.";
+    if (!email.includes("@")) throw "Invalid email.";
     const emailCheck = email.split("@");
     if (
       emailCheck.length !== 2 ||
@@ -100,18 +100,18 @@ const helperFunctions = {
       emailCheck[1].length === 0 ||
       !emailCheck[1].includes(".")
     )
-      throw "Invalid email input.";
+      throw "Invalid email.";
     if (
       !emailPrefixFormat.test(emailCheck[0]) ||
       !emailDomainFormat.test(emailCheck[1])
     )
-      throw "Invalid email input.";
+      throw "Invalid email.";
 
     return email;
   },
   checkPassword(password) {
     if (!password) throw "You must provide password.";
-    password = password;
+    password = password.trim();
     if (password.length === 0 || typeof password !== "string")
       throw "Passwrod must be a valid string.";
     if (password.length < 8) throw "Password must be at least 8 characters.";

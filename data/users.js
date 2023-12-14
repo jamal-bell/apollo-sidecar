@@ -329,7 +329,7 @@ const exportedusersMethods = {
     return true;
   },
 
-  async addQuestion(userId, questionId, createOranswered) {
+  async addQuestion(userId, questionId, createOrAnswered) {
     userId = validation.checkId(userId);
     questionId = validation.checkId(questionId);
 
@@ -340,12 +340,12 @@ const exportedusersMethods = {
 
     let qas = user.qas;
 
-    if (createdOrLearned === "created") {
+    if (createOrAnswered === "created") {
       qas.created.push(new ObjectId(questionId));
-    } else if (createdOrLearned === "answered") {
+    } else if (createOrAnswered === "answered") {
       qas.learned.push(new ObjectId(questionId));
     } else {
-      throw `Invalid argument for 'createdOrLearned'. Must be either 'created' or 'answered'`;
+      throw `Invalid argument for 'createOrAnswered'. Must be either 'created' or 'answered'`;
     }
     const updatedQas = {
       qas: qas,
