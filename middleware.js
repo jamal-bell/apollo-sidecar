@@ -125,6 +125,27 @@ const middleware = {
   //       ${authStatus}`
   //     );
 
+//qa middleware
+qa: (app) => {
+  app.use('qa/:id', async (req, res, next) => {
+    if (req.method !== 'GET' && !req.session.authenticated) {
+      return res.redirect('/user/login');
+    }
+    next();
+  });
+  app.use('qa/:id/answers', async (req, res, next) => {
+    if (!req.session.authenticated) {
+      return res.redirect('/user/login');
+    }
+    next();
+  });
+  app.use('qa/create/:lessonId', async (req, res, next) => {
+    if (!req.session.authenticated) {
+      return res.redirect('user/login');
+    }
+    next();
+  });
+},
   //   });
   //new lesson middleware
   // app.use("/lesson/newlesson", async (req, res, next) => {
