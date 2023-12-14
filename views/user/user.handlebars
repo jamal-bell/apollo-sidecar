@@ -128,23 +128,27 @@
 
 <seciton class="lessons">
     {{#if createdLessons}}
-    <main>
-        <h2>Lesson Created</h2>
-        <ul>
-            {{#each lessonCreated}}
-            <li>
-                <h3>{{this.lessonTitle}}</h3>
-                    <button type="button"
-                        onclick="location.href='/lessons/lesson/{{{this._id}}}'">Edit Lesson</button>
-            </li>
-            {{/each}}
-        </ul>
-    </main>
+        <main>
+            <h2>Lesson Created</h2>
+            <ul>
+                {{#each lessonCreated}}
+                    <li>
+                        <h3>{{this.lessonTitle}}</h3>
+                        <button type="button" onclick="location.href='/lessons/lesson/{{{this._id}}}'">Edit
+                            Lesson</button>
+                    </li>
+                {{/each}}
+            </ul>
+        </main>
     {{/if}}
 </seciton>
 
 <section id="qas">
-    <h2>Q&A Contributions</h2>
+    <main>
+        <h2>Q&A Contributions</h2>
+    </main>
+    <br/>
+    <br/>
     {{#if hasQas}}
         <ul>
             {{#each qas}}
@@ -159,6 +163,8 @@
             {{/each}}
         </ul>
     {{else}}
-        <p>No Q&A contributions yet.</p>
+        <main>
+            <p>No Q&A contributions yet.</p>
+        </main>
     {{/if}}
 </section>
