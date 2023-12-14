@@ -1,7 +1,7 @@
-import { lessons } from "../config/mongoCollections.js";
-import { ObjectId } from "mongodb";
-import validation from "./validation.js";
-import { usersData } from "./index.js";
+import { lessons } from '../config/mongoCollections.js';
+import { ObjectId } from 'mongodb';
+import validation from './validation.js';
+import usersData from './users.js';
 
 let exportedLessonsMethods = {
   //Creates a lesson + 1 module
@@ -14,10 +14,10 @@ let exportedLessonsMethods = {
     text,
     videoLink
   ) {
-    lessonTitle = validation.checkContent(lessonTitle, "lesson title", 3, 250);
+    lessonTitle = validation.checkContent(lessonTitle, 'lesson title', 3, 250);
     description = validation.checkContent(
       description,
-      "lesson description",
+      'lesson description',
       10,
       2500
     );
@@ -27,19 +27,19 @@ let exportedLessonsMethods = {
         if (c.moduleTitle)
           moduleTitle = validation.checkContent(
             c.moduleTitle,
-            "module title",
+            'module title',
             3,
             250
           );
         if (c.text)
-          text = validation.checkContent(c.text, "module text", 20, 60000);
+          text = validation.checkContent(c.text, 'module text', 20, 60000);
         if (c.videoLink)
-          videoLink = validation.checkString(c.videoLink, "src/video link");
+          videoLink = validation.checkString(c.videoLink, 'src/video link');
       });
     }
 
     const lessonsCollection = await lessons();
-    if (!lessonsCollection) throw "Could not get lessons. Try again";
+    if (!lessonsCollection) throw 'Could not get lessons. Try again';
 
     // Prevent duplicate entries
     // try {
@@ -49,7 +49,7 @@ let exportedLessonsMethods = {
     //   ;
     // }
     const dup = await lessonsCollection.findOne({ lessonTitle: lessonTitle });
-    if (dup) throw "Lesson already exists with this title."
+    if (dup) throw 'Lesson already exists with this title.';
 
     let newLessonInfo = {
       lessonTitle: lessonTitle, //string
@@ -68,14 +68,14 @@ let exportedLessonsMethods = {
           //   votedUsers: [], // [{ userId: ObjectId, voteTime: "string" }] (timestamp from response header???)
           //   count: 0, // total count for upVotes
           // },
-          createdByRole: "",
+          createdByRole: '',
         },
       ],
     };
 
     const lessonInfoToInsert = await lessonsCollection.insertOne(newLessonInfo);
     if (!lessonInfoToInsert.acknowledged || !lessonInfoToInsert.insertedId)
-      throw "Could not add lesson. Try again.";
+      throw 'Could not add lesson. Try again.';
 
     const newLesson = await this.getLessonById(
       lessonInfoToInsert.insertedId.toString()
@@ -89,15 +89,15 @@ let exportedLessonsMethods = {
     id = validation.checkId(id);
     const lessonsCollection = await lessons();
     const lesson = await lessonsCollection.findOne({ _id: new ObjectId(id) });
-    if (!lesson) throw "Error: Lesson not found";
+    if (!lesson) throw 'Error: Lesson not found';
     return lesson;
   },
 
   async getLessonByTitle(title) {
-    title = validation.checkContent(title, "lesson title", 3, 250);
+    title = validation.checkContent(title, 'lesson title', 3, 250);
     const lessonsCollection = await lessons();
     const lesson = await lessonsCollection.findOne({ title: title });
-    if (!lesson) throw "Error: Lesson not found";
+    if (!lesson) throw 'Error: Lesson not found';
     return lesson;
   },
 
@@ -110,19 +110,19 @@ let exportedLessonsMethods = {
     if (!order) {
       order = lesson.contents.length + 1;
     } else {
-      order = validation.checkIsPositiveNum(order, "order");
+      order = validation.checkIsPositiveNum(order, 'order');
     }
-    validation.checkContent(moduleTitle, "module title", 3, 250);
-    validation.checkContent(text, "module content", 20, 60000);
+    validation.checkContent(moduleTitle, 'module title', 3, 250);
+    validation.checkContent(text, 'module content', 20, 60000);
 
     const lessonsCollection = await lessons();
-    if (!lessonsCollection) throw "Could not get lessons. Try again";
+    if (!lessonsCollection) throw 'Could not get lessons. Try again';
 
     // Prevent duplicate entries
     lesson.contents.forEach((c) => {
       const duplicate = c.moduleTitle == moduleTitle;
       if (duplicate) {
-        throw "A module with this name already exists";
+        throw 'A module with this name already exists';
       }
     });
 
@@ -136,14 +136,14 @@ let exportedLessonsMethods = {
         votedUsers: [],
         count: 0,
       },
-      createdByRole: "",
+      createdByRole: '',
     };
     const lessonWithNewModule = await lessonsCollection.updateOne(
       { _id: new ObjectId(id) },
       { $push: { contents: newModule } }
     );
     if (!lessonWithNewModule.modifiedCount)
-      throw "attendee with that email address is already registered";
+      throw 'attendee with that email address is already registered';
     console.log(lessonWithNewModule.modifiedCount);
     console.log(newModule);
 
@@ -168,16 +168,16 @@ let exportedLessonsMethods = {
       _id: new ObjectId(id),
     });
     if (!deletionInfo) throw `Error: Could not delete lesson with id of ${id}`;
-    console.log("Lesson Removed");
+    console.log('Lesson Removed');
     return { ...deletionInfo, deleted: true };
   },
   //Updates lesson headers, not modules
   async updateLesson(id, title, description) {
     id = validation.checkId(id);
-    title = validation.checkContent(title, "lesson title", 3, 100);
+    title = validation.checkContent(title, 'lesson title', 3, 100);
     description = validation.checkContent(
       description,
-      "lesson description",
+      'lesson description',
       3,
       2500
     );
@@ -192,7 +192,7 @@ let exportedLessonsMethods = {
     const updateInfo = await lessonsCollection.findOneAndUpdate(
       { _id: new ObjectId(id) },
       { $set: lessonUpdateInfo },
-      { returnDocument: "after" }
+      { returnDocument: 'after' }
     );
     if (!updateInfo)
       throw `Error: Update failed, could not find a lesson with id of ${id} or overwrite unsuccessful`;
@@ -209,10 +209,10 @@ let exportedLessonsMethods = {
     if (!order) {
       order = lesson.contents.length + 1;
     } else {
-      order = validation.checkIsPositiveNum(order, "order");
+      order = validation.checkIsPositiveNum(order, 'order');
     }
-    moduleTitle = validation.checkContent(moduleTitle, "lesson title", 3, 250);
-    text = validation.checkContent(text, "module content", 3, 2500);
+    moduleTitle = validation.checkContent(moduleTitle, 'lesson title', 3, 250);
+    text = validation.checkContent(text, 'module content', 3, 2500);
     //contents = validation.checkObjInArr(contents, "lesson contents");
 
     const moduleUpdateInfo = {
@@ -225,9 +225,9 @@ let exportedLessonsMethods = {
     };
 
     const updatedModule = await lessonsCollection.findOneAndUpdate(
-      { "contents._id": new ObjectId(id) },
-      { $set: { "contents.$": moduleUpdateInfo } },
-      { returnDocument: "after" }
+      { 'contents._id': new ObjectId(id) },
+      { $set: { 'contents.$': moduleUpdateInfo } },
+      { returnDocument: 'after' }
       //{arrayFilters: []}
     );
     if (!updatedModule)

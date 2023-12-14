@@ -1,155 +1,265 @@
 import { MongoExpiredSessionError } from 'mongodb';
 import { dbConnection, closeConnection } from '../config/mongoConnection.js';
-
+import { users, lessons, qa } from '../config/mongoCollections.js';
+import userData from '../data/users.js';
+import qaData from '../data/qa.js';
+import lessonsData from '../data/lessons.js';
 const db = await dbConnection();
 await db.dropDatabase();
-import { users } from '../config/mongoCollections.js';
+let newUser = undefined;
+let newLesson = undefined;
+let newQaPost = undefined;
+let newQaResponse = undefined;
 
-//-----------------Create Users---------------------//
-const userCollection = await users();
-const userSeedData = [
-  {
-    firstName: 'Alice',
-    lastName: 'Johnson',
-    emailAddress: 'alice.j@example.com',
-    role: 'admin',
-    password: 'apple1A!',
-  },
-  {
-    firstName: 'Bob',
-    lastName: 'Smith',
-    emailAddress: 'bob.smith@example.com',
-    role: 'user',
-    password: 'banana2B!',
-  },
-  {
-    firstName: 'Charlie',
-    lastName: 'Brown',
-    emailAddress: 'charlie.b@example.com',
-    role: 'admin',
-    password: 'cherry3C!',
-  },
-  {
-    firstName: 'David',
-    lastName: 'Miller',
-    emailAddress: 'david.m@example.com',
-    role: 'user',
-    password: 'date4D!',
-  },
-  {
-    firstName: 'Emma',
-    lastName: 'Taylor',
-    emailAddress: 'emma.t@example.com',
-    role: 'admin',
-    password: 'elephant5E!',
-  },
-  {
-    firstName: 'Frank',
-    lastName: 'Wilson',
-    emailAddress: 'frank.w@example.com',
-    role: 'user',
-    password: 'frog6F!',
-  },
-  {
-    firstName: 'Grace',
-    lastName: 'Anderson',
-    emailAddress: 'grace.a@example.com',
-    role: 'admin',
-    password: 'grape7G!',
-  },
-  {
-    firstName: 'Henry',
-    lastName: 'Clark',
-    emailAddress: 'henry.c@example.com',
-    role: 'user',
-    password: 'horse8H!',
-  },
-  {
-    firstName: 'Ivy',
-    lastName: 'Robinson',
-    emailAddress: 'ivy.r@example.com',
-    role: 'admin',
-    password: 'icecream9I!',
-  },
-  {
-    firstName: 'Jack',
-    lastName: 'Moore',
-    emailAddress: 'jack.m@example.com',
-    role: 'user',
-    password: 'jacket10J!',
-  },
-  {
-    firstName: 'Kelly',
-    lastName: 'Carter',
-    emailAddress: 'kelly.c@example.com',
-    role: 'admin',
-    password: 'kiwi11K!',
-  },
-  {
-    firstName: 'Leo',
-    lastName: 'Davis',
-    emailAddress: 'leo.d@example.com',
-    role: 'user',
-    password: 'lemon12L!',
-  },
-  {
-    firstName: 'Mia',
-    lastName: 'Johnson',
-    emailAddress: 'mia.j@example.com',
-    role: 'admin',
-    password: 'melon13M!',
-  },
-  {
-    firstName: 'Nathan',
-    lastName: 'White',
-    emailAddress: 'nathan.w@example.com',
-    role: 'user',
-    password: 'nut14N!',
-  },
-  {
-    firstName: 'Olivia',
-    lastName: 'Hall',
-    emailAddress: 'olivia.h@example.com',
-    role: 'admin',
-    password: 'orange15O!',
-  },
-  {
-    firstName: 'Paul',
-    lastName: 'Baker',
-    emailAddress: 'paul.b@example.com',
-    role: 'user',
-    password: 'peach16P!',
-  },
-  {
-    firstName: 'Quinn',
-    lastName: 'Fisher',
-    emailAddress: 'quinn.f@example.com',
-    role: 'admin',
-    password: 'quokka17Q!',
-  },
-  {
-    firstName: 'Rachel',
-    lastName: 'Young',
-    emailAddress: 'rachel.y@example.com',
-    role: 'user',
-    password: 'rabbit18R!',
-  },
-  {
-    firstName: 'Sam',
-    lastName: 'Evans',
-    emailAddress: 'sam.e@example.com',
-    role: 'admin',
-    password: 'strawberry19S!',
-  },
-  {
-    firstName: 'Tom',
-    lastName: 'Hill',
-    emailAddress: 'tom.h@example.com',
-    role: 'user',
-    password: 'tiger20T!',
-  },
-];
+// Example user registration calls with random data and strong passwords
+try {
+  await userData.registerUser(
+    'Alice',
+    'Johnson',
+    'alice.j@example.com',
+    'Password123!',
+    'user'
+  );
+  await userData.registerUser(
+    'Bob',
+    'Smith',
+    'bob.smith@example.com',
+    'Secure789!',
+    'user'
+  );
+  await userData.registerUser(
+    'Charlie',
+    'Brown',
+    'charlie.b@example.com',
+    'StrongPass1!',
+    'user'
+  );
+  await userData.registerUser(
+    'David',
+    'Miller',
+    'david.m@example.com',
+    'SafePassword42#',
+    'user'
+  );
+  await userData.registerUser(
+    'Emma',
+    'Taylor',
+    'emma.t@example.com',
+    'Secret123@',
+    'user'
+  );
+  await userData.registerUser(
+    'Frank',
+    'Wilson',
+    'frank.w@example.com',
+    'Hidden567$',
+    'user'
+  );
+  await userData.registerUser(
+    'Grace',
+    'Anderson',
+    'grace.a@example.com',
+    'Protected1@',
+    'user'
+  );
+  await userData.registerUser(
+    'Henry',
+    'Clark',
+    'henry.c@example.com',
+    'Guarded987#',
+    'user'
+  );
+  await userData.registerUser(
+    'Ivy',
+    'Robinson',
+    'ivy.r@example.com',
+    'Locked654!',
+    'user'
+  );
+  await userData.registerUser(
+    'Jack',
+    'Moore',
+    'jack.m@example.com',
+    'Shielded123$',
+    'admin'
+  );
+  await userData.registerUser(
+    'Karen',
+    'Lee',
+    'karen.lee@example.com',
+    'SecretPass12!',
+    'admin'
+  );
+  await userData.registerUser(
+    'Liam',
+    'Garcia',
+    'liam.g@example.com',
+    'SecureCode123!',
+    'user'
+  );
+  await userData.registerUser(
+    'Mia',
+    'Wright',
+    'mia.w@example.com',
+    'HiddenKey789!',
+    'user'
+  );
+  await userData.registerUser(
+    'Noah',
+    'Fisher',
+    'noah.f@example.com',
+    'Guardian789!',
+    'user'
+  );
+  await userData.registerUser(
+    'Olivia',
+    'Baker',
+    'olivia.b@example.com',
+    'SafeLock1@',
+    'user'
+  );
+  await userData.registerUser(
+    'Peter',
+    'King',
+    'peter.k@example.com',
+    'Defender456!',
+    'user'
+  );
+  await userData.registerUser(
+    'Quinn',
+    'Evans',
+    'quinn.e@example.com',
+    'SecureWord1!',
+    'user'
+  );
+  await userData.registerUser(
+    'Rachel',
+    'Young',
+    'rachel.y@example.com',
+    'ProtectedABC!',
+    'user'
+  );
+  await userData.registerUser(
+    'Sam',
+    'Hill',
+    'sam.h@example.com',
+    'GuardedXYZ1@',
+    'admin'
+  );
+  await userData.registerUser(
+    'Tom',
+    'Fisher',
+    'tom.f@example.com',
+    'SecurePass123@',
+    'user'
+  );
+  await userData.registerUser(
+    'Mario',
+    'Plumber',
+    'mario.plumber@example.com',
+    'Luigi123!',
+    'user'
+  );
+  await userData.registerUser(
+    'Luigi',
+    'Green',
+    'luigi.green@example.com',
+    'Mario456!',
+    'user'
+  );
+  await userData.registerUser(
+    'Princess',
+    'Peach',
+    'princess.peach@example.com',
+    'Toadstool789!',
+    'user'
+  );
+  await userData.registerUser(
+    'Bowser',
+    'King',
+    'bowser.king@example.com',
+    'Koopa1234!',
+    'user'
+  );
+  await userData.registerUser(
+    'Yoshi',
+    'Dino',
+    'yoshi.dino@example.com',
+    'EggEater567!',
+    'user'
+  );
+  await userData.registerUser(
+    'Wario',
+    'Greedy',
+    'wario.greedy@example.com',
+    'GoldCoins789!',
+    'user'
+  );
+  await userData.registerUser(
+    'Toad',
+    'Mushroom',
+    'toad.mushroom@example.com',
+    'SporeGuard1@',
+    'user'
+  );
+  await userData.registerUser(
+    'Koopa',
+    'Troopa',
+    'koopa.troopa@example.com',
+    'ShellShield456!',
+    'user'
+  );
+  await userData.registerUser(
+    'Donkey',
+    'Kong',
+    'donkey.kong@example.com',
+    'BananaGuard1@',
+    'admin'
+  );
+  await userData.registerUser(
+    'Princess',
+    'Daisy',
+    'princess.daisy@example.com',
+    'FlowerPower123@',
+    'user'
+  );
+} catch (e) {
+  throw new Error('Seeding failed');
+}
 
-await userCollection.insertMany(userSeedData);
+const userIds = await userCollection
+  .find()
+  .map((user) => user._id)
+  .toArray();
+
+const lessonsCollection = await lessons();
+
+const lessonTitlePrefix = 'Lesson'; // You can adjust this as needed
+
+const newLessonInfos = Array.from({ length: 30 }, (_, index) => {
+  const randomUserId = userIds[Math.floor(Math.random() * userIds.length)];
+
+  return {
+    lessonTitle: `${lessonTitlePrefix} ${index + 1}`, // Add a lesson index to the title
+    description: `Description for Lesson ${index + 1}`, // Example description
+    creatorId: randomUserId,
+    contents: [
+      {
+        _id: new ObjectId(),
+        order: 1,
+        moduleTitle: `Module for Lesson ${index + 1}`, // Example module title
+        creatorId: randomUserId,
+        author: null,
+        text: `Text for Lesson ${index + 1}`, // Example text
+        videoLink: ['https://example.com/video'], // Example video link
+        createdByRole: '',
+      },
+    ],
+  };
+});
+
+await lessonsCollection.insertMany(newLessonInfos);
+
+console.log(newLessonInfos);
 
 await closeConnection();
