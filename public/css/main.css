@@ -97,7 +97,7 @@ table td a {
     text-align: left;
 }
 
-#lessons, #qas {
+.lessons, #qas {
   text-align: center;
     display: flex;
     justify-content: center;

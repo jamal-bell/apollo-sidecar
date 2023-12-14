@@ -295,10 +295,10 @@ router.route("/user").get(async (req, res) => {
       } catch (e) {
         return res.status(400).render("user/error", { error: e });
       }
-      adminLessons.push(currLesson);
+      lessonCreated.push(currLesson);
     }
   } else {
-    lessonCreated = false;
+    createdLessons = false;
   }
 
   const userQas = [];
@@ -329,6 +329,8 @@ router.route("/user").get(async (req, res) => {
     user: user,
     lessons: userLessons,
     hasLessons: hasLessons,
+    lessonCreated: lessonCreated,
+    createdLessons: createdLessons,
     qas: userQas,
     hasQas: hasQas,
   });
