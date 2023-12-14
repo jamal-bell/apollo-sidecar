@@ -32,27 +32,15 @@
             <tr>
                 <th>Account Created</th>
                 <td id="accountCreatedAt">{{{user.createdAt}}}</td>
-                <td>
-                    <input type="file" id="photoInput" accept="image/*" />
-                </td>
+                <td class="centered-cell"><button id="uploadPhotoButton">Upload</button></td>
             </tr>
             <tr>
                 <th>Last Login</th>
                 <td id="lastLogin">{{{user.lastLogin}}}</td>
-                <td><button id="uploadPhotoButton">Upload</button></td>
+                <td class="centered-cell"><input type="file" id="photoInput" accept="image/*" /></td>
             </tr>
         </table>
     </div>
-
-    {{!-- <form id="photo-form">
-        <div id="photoDisplay">
-            <img id="userPhotoDisplay" src="{{{user.photo}}}" alt="User Photo" width="100" height="100">
-        </div>
-        <div>
-            <input type="file" id="photoInput" accept="image/*" />
-            <button id="uploadPhotoButton">Upload</button>
-        </div>
-    </form> --}}
 
     <form id="profile-form">
         <div>
@@ -109,33 +97,36 @@
     </div>
 </section>
 
+{{#if hasLessons}}
 <section id="lessons">
     <h2>Lessons Created</h2>
     <ul>
-        {{#each lessons}}
+        {{#each usserLessons}}
             <li>
-                <h3>{{this.lessonName}}</h3>
+                <h3>{{this.lessonlessonTitle}}</h3>
                 <p>Status: <span>Completed/In Progress</span></p>
-                <button type="button" onclick="location.href='/lesson/details'">Review/Continue</button>
+                <button type="button" onclick="location.href='/lessons/lesson/{{{this._id}}}'">Review/Continue</button>
             </li>
         {{/each}}
     </ul>
 </section>
+{{/if}}
 
-<!-- Q&A Contributions Section -->
+
+{{#if hasQas}}
 <section id="qas">
     <h2>Q&A Contributions</h2>
     <ul>
-        <!-- Repeat this list item for each Q&A contribution -->
-        {{#each qas}}
+        {{#each userQas}}
             <li>
-                <h3>{{qa.questionName}}</h3>
-                <p>Type: <span>{{qa.questionType}}</span></p>
-                <p>Ans: <span>{{qa.answers.sum}}</span></p>
-                <p>Upvotes: <span>{{qa.votes.sum}}</span></p>
-                <p><span>{{qa.createdAt}}</span></p>
+                <h3>{{this.questionName}}</h3>
+                <p>Type: <span>{{this.questionType}}</span></p>
+                <p>Ans: <span>{{this.answers.sum}}</span></p>
+                <p>Upvotes: <span>{{this.votes.sum}}</span></p>
+                <p><span>{{this.createdAt}}</span></p>
                 <button type="button" onclick="location.href='/lesson/details'">Review/Continue</button>
             </li>
         {{/each}}
     </ul>
 </section>
+{{/if}}

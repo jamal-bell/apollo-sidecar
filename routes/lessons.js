@@ -76,7 +76,7 @@ router
         text,
         videoLink
       );
-      
+
       // const user = await usersData.getUserByEmail(
       //   req.session.user.emailAddress
       // );
@@ -90,8 +90,8 @@ router
       // const author = user.firstName + user.lastName;
 
       const { _id } = lesson;
-      user.lessons.created.push(_id.toString());
-      console.log(user);
+      // user.lessons.created.push(_id.toString());
+      // console.log(user);
 
       return res.status(200).render(`lesson/lessonById`, {
         title: "Create Lesson",
@@ -103,11 +103,11 @@ router
         text,
         videoLink,
         createdBy: null,
-        creatorId,
-        author,
+        //creatorId,
+        //author,
       });
     } catch (error) {
-      console.log(error);
+      //console.log(error);
       return res.status(400).render("lesson/newlesson", {
         title: "Creating lesson failed",
         error: error,
@@ -173,7 +173,7 @@ router
       );
       const lesson = await lessonsData.getLessonById(lessonId);
 
-      console.log(response);
+      //console.log("response: " + response);
 
       return res.render("lesson/publish", {
         title: "Publish Lesson",
@@ -219,7 +219,7 @@ router
     let createdBy;
 
     try {
-      title = validation.checkContent(text, "lesson title", 3, 250);
+      text = validation.checkContent(text, "lesson title", 3, 250);
     } catch (e) {
       errors.push(e);
     }
@@ -232,7 +232,7 @@ router
     if (errors.length > 0) {
       return res.status(400).render("partials/publish", {
         title: "Edit Lesson",
-        title: "Edit Lesson",
+
         errors: errors,
         hasErrors: true,
         moduleTitle: moduleTitle,

@@ -1,5 +1,3 @@
-
-
 const validation = {
   checkString(strVal, varName) {
     if (!strVal) throw `You must supply a ${varName}!`;
@@ -227,7 +225,6 @@ if (cancelAccount) {
       "Are you sure you want to cancel your account?"
     );
     if (confirmCancel) {
-      // User clicked 'Yes', navigate to the cancel account URL
       window.location.href = "/user/cancel";
     }
   });

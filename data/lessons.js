@@ -38,6 +38,19 @@ let exportedLessonsMethods = {
       });
     }
 
+    const lessonsCollection = await lessons();
+    if (!lessonsCollection) throw "Could not get lessons. Try again";
+
+    // Prevent duplicate entries
+    // try {
+    //   const lesson = await this.getLessonByTitle(lessonTitle);
+    //   console.log("lesson returned from data: " + lesson)
+    // } catch (e) {
+    //   ;
+    // }
+    const dup = await lessonsCollection.findOne({ lessonTitle: lessonTitle });
+    if (dup) throw "Lesson already exists with this title."
+
     let newLessonInfo = {
       lessonTitle: lessonTitle, //string
       description: description, //string
@@ -60,7 +73,6 @@ let exportedLessonsMethods = {
       ],
     };
 
-    const lessonsCollection = await lessons();
     const lessonInfoToInsert = await lessonsCollection.insertOne(newLessonInfo);
     if (!lessonInfoToInsert.acknowledged || !lessonInfoToInsert.insertedId)
       throw "Could not add lesson. Try again.";

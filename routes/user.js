@@ -159,7 +159,6 @@ router
     try {
       const user = await users.loginUser(emailAddress, password);
       if (user) {
-        console.log(user);
         req.session.authenticated = true;
         req.session.sessionId = user._id;
         req.session.user = {
@@ -201,26 +200,42 @@ router.route("/user").get(async (req, res) => {
     });
   }
 
-  const lessons = [];
+  const userLessons = [];
   let hasLessons;
   if (user.lessons.length !== 0) {
     hasLessons = true;
-    user.lessons.forEach((lessonId) => {
+    for (let i = user.lessons.length; i > 0; i--) {
+      let currLesson;
       try {
-        lessonId = validation.checkId(lessonId);
-      } catch (e) {}
-
-      lessons.push(lessons);
-    });
+        let lessonId = validation.checkId(user.lessons[i]);
+        currLesson = await lessons.getLessonById(lessonId);
+        currLesson._id = currLesson._id.toString();
+      } catch (e) {
+        return res.status(400).render("user/error", { error: e });
+      }
+      userLessons.push(currLesson);
+    }
   } else {
     hasLessons = false;
   }
 
-  const qas = [];
+  const userQas = [];
   let hasQas;
   if (user.qas.length !== 0) {
     hasQas = true;
-    user.qas.forEach((qaId) => {});
+    let count = 0;
+    for (let i = user.qas.length; i > 0; i--) {
+      let currQa;
+      try {
+        const qaId = validation.checkId(user.qas[i]);
+        currQa = await qa.get;
+      } catch (e) {
+        return res.status(400).render("user/error", { error: e });
+      }
+      userQas.push(currQa);
+      count++;
+      if (count === 3) break;
+    }
   } else {
     hasQas = false;
   }
@@ -229,9 +244,10 @@ router.route("/user").get(async (req, res) => {
     title: "Overview",
     style_partial: "overview",
     user: user,
-    lessons: "",
+    lessons: userLessons,
     hasLessons: hasLessons,
-    qas: "",
+    qas: userQas,
+    hasQas: hasQas,
   });
 });
 
@@ -482,22 +498,6 @@ router.route("/cancel").get(async (req, res) => {
     return res.render("user/error", { title: "Failed to delete account" });
   }
 });
-
-// router.route("/signature").get(async (req, res) => {
-//   //code here for GET
-//   if (!req.session.authenticated) {
-//     return res.redirect("/user/login");
-//   }
-
-//   const timestamp = Math.round(new Date().getTime() / 1000);
-//   const signature = cloudinary.utils.api_sign_request(
-//     {
-//       timestamp: timestamp,
-//     },
-//     cloudinaryConfig.api_secret
-//   );
-//   return res.json({ timestamp, signature });
-// });
 
 router.route("/photo").post(async (req, res) => {
   if (!req.session.authenticated) {

@@ -34,7 +34,7 @@
 
 
   <section>
-    <h1>Previeous lessons</h1>
+    <h1>Preview</h1>
     <h1>Lesson name : {{this?.lesson?.lessonTitle}}</h1>
     <h1>Lesson Modules</h1>
     <div>
@@ -70,6 +70,13 @@
         {{this}}
       </li>
       {{/each}}
+      {{/if}}
+    </ul>
+  </div>
+  <div class="form-errors">
+    <ul id="errors" class="errors">
+      {{#if error}}
+      {{error}}
       {{/if}}
     </ul>
   </div>
