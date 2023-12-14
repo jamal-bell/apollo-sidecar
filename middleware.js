@@ -133,7 +133,7 @@ const middleware = {
       }
       next();
     });
-    app.use('qa/:id/answers', async (req, res, next) => {
+    app.use('qa/:id/', async (req, res, next) => {
       if (!req.session.authenticated) {
         return res.redirect('/user/login');
       }
