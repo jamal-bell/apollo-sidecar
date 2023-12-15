@@ -6,7 +6,7 @@ const router = Router();
 import express from "express";
 const app = express();
 import validation from "../data/validation.js";
-import cloudinary from "cloudinary";
+// import cloudinary from "cloudinary";
 import dotenv from "dotenv";
 import xss from "xss";
 import {
@@ -405,8 +405,6 @@ router.route("/admin").get(async (req, res) => {
     user: user,
     lessons: adminLessons,
     hasLessons: hasLessons,
-    lessonCreated: lessonCreated,
-    createdLessons: createdLessons,
     qas: adminQas,
     hasQas: hasQas,
   });
