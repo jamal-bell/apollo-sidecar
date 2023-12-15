@@ -1,228 +1,351 @@
-
 (function ($) {
-let lessonForm = document.getElementById("lesson-form");
-let moduleForm = document.getElementById("module-form");
+  let lessonForm = document.getElementById("lesson-form");
+  let moduleForm = document.getElementById("module-form");
 
-if (lessonForm) {
-  const titleInput = document.getElementById("titleInput");
-  const descriptionInput = document.getElementById("descriptionInput");
-  const errorContainer = document.getElementById("errors");
+  if (lessonForm) {
+    const titleInput = document.getElementById("titleInput");
+    const descriptionInput = document.getElementById("descriptionInput");
+    const moduleTitleInput = document.getElementById("moduleTitleInput");
+    const textInput = document.getElementById("textInput");
+    const videoLinkInput = document.getElementById("videoLinkInput");
+    const errorContainer = document.getElementById("errors");
 
-  lessonForm.addEventListener("submit", (e) => {
-    e.preventDefault();
+    lessonForm.addEventListener("submit", (e) => {
+      e.preventDefault();
 
-    let title = titleInput.value.trim();
-    let description = descriptionInput.value.trim();
-    let errorList = "";
-    errorContainer.hidden = true;
+      let title = titleInput.value.trim();
+      let description = descriptionInput.value.trim();
+      let moduleTitle = moduleTitleInput.value.trim();
+      let text = textInput.value.trim();
+      let videoLink = videoLinkInput.value.trim();
 
-    //call checks and append to errorList surrounded by try/catch
-    try {
-      title = helpers.checkContent(title, "lesson title", 3, 250);
-    } catch (e) {
-      errorList += `<li>${e}</li>`;
-    }
-
-    try {
-      description = helpers.checkContent(
-        description,
-        "lesson description",
-        10,
-        2500
-      );
-    } catch (e) {
-      errorList += `<li>${e}</li>`;
-    }
-
-    if (errorList !== "") {
-      errorContainer.innerHTML = errorList;
-      errorContainer.hidden = false;
-      lessonForm.reset();
-    } else {
+      let errorList = "";
       errorContainer.hidden = true;
-      lessonForm.submit();
-    }
-  });
-}
 
-if (moduleForm) {
-  const orderInput = document.getElementById("orderInput");
-  const moduleTitleInput = document.getElementById("moduleTitleInput");
-  const textInput = document.getElementById("textInput");
-  const videoLinkInput = document.getElementById("videoLinkInput");
-  const errorContainer = document.getElementById("errors");
+      //call checks and append to errorList surrounded by try/catch
+      try {
+        title = helpers.checkContent(title, "lesson title", 3, 250);
+      } catch (e) {
+        errorList += `<li>${e}</li>`;
+      }
 
-  moduleForm.addEventListener("submit", (e) => {
-    e.preventDefault();
+      try {
+        description = helpers.checkContent(
+          description,
+          "lesson description",
+          10,
+          2500
+        );
+      } catch (e) {
+        errorList += `<li>${e}</li>`;
+      }
 
-    let order = orderInput.value?.trim();
-    let moduleTitle = moduleTitleInput.value?.trim();
-    let text = textInput.value?.trim();
-    let videoLink = videoLinkInput.value?.trim();
-    let errorList = "";
-    errorContainer.hidden = true;
+      if (moduleTitle !== "") {
+        try {
+          moduleTitle = helpers.checkContent(
+            moduleTitle,
+            "module title",
+            10,
+            250
+          );
+        } catch (e) {
+          errorList += `<li>${e}</li>`;
+        }
+        try {
+          text = helpers.checkContent(text, "module content", 10, 60000);
+        } catch (e) {
+          errorList += `<li>${e}</li>`;
+        }
+        try {
+          videoLink = helpers.checkString(videoLink, "video link");
+        } catch (e) {
+          errorList += `<li>${e}</li>`;
+        }
+      }
 
-    //call checks and append to errorList surrounded by try/catch
-    try {
-      if (order) order = helpers.checkIsPositiveNum(order, "order");
-    } catch (e) {
-      errorList += `<li>${e}</li>`;
-    }
+      if (errorList !== "") {
+        errorContainer.innerHTML = errorList;
+        errorContainer.hidden = false;
+        lessonForm.reset();
+      } else {
+        errorContainer.hidden = true;
+        lessonForm.submit();
+      }
+    });
+  }
 
-    try {
-      moduleTitle = helpers.checkContent(moduleTitle, "module title", 10, 250);
-    } catch (e) {
-      errorList += `<li>${e}</li>`;
-    }
-    //TODO finish checks
-    if (errorList !== "") {
-      errorContainer.innerHTML = errorList;
-      errorContainer.hidden = false;
-      moduleForm.reset();
-    } else {
+  if (moduleForm) {
+    const orderInput = document.getElementById("orderInput");
+    const moduleTitleInput = document.getElementById("moduleTitleInput");
+    const textInput = document.getElementById("textInput");
+    const videoLinkInput = document.getElementById("videoLinkInput");
+    const errorContainer = document.getElementById("errorsDiv");
+    const newModuleButton = document.getElementById("newModuleButton");
+    const publishButton = document.getElementById("newModuleButton");
+    const lessonIdInput = document.getElementById("lessonId");
+
+    newModuleButton.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      let order = orderInput.value?.trim();
+      let moduleTitle = moduleTitleInput.value?.trim();
+      let text = textInput.value?.trim();
+      let videoLink = videoLinkInput.value?.trim();
+      let errorList = "";
       errorContainer.hidden = true;
-      moduleForm.submit();
-    }
-  });
-}
-//TODO implemnent for updating lessons/modules
-// if (profileForm) {
-//   
-//     const editProfileButton = $("#editProfileButton");
-//     const saveProfileButton = $("#saveProfileButton");
-//     const firstNameInput = $("#firstNameInput");
-//     const lastNameInput = $("#lastNameInput");
-//     const emailAddressInput = $("#emailAddressInput");
-//     const bioInput = $("#bioInput");
-//     const githubInput = $("#githubInput");
-//     const errorContainer = $("#errors");
+      let lessonId = lessonIdInput.value;
 
-//     function activeInput(input) {
-//       input.attr("disabled", false);
-//     }
+      //call checks and append to errorList surrounded by try/catch
+      try {
+        moduleTitle = helpers.checkContent(
+          moduleTitle,
+          "module title",
+          10,
+          250
+        );
+      } catch (e) {
+        errorList += `${e}`;
+      }
+     
+      try {
+        if (text) text = helpers.checkContent(text, "module content", 10, 60000);
+      } catch (e) {
+        errorList += `${e}`;
+      }
 
-//     function deactiveInput(input) {
-//       input.attr("disabled", true);
-//     }
+      try {
+        if (order) order = helpers.checkIsPositiveNum(order, "order");
+      } catch (e) {
+        errorList += `${e}`;
+      }
 
-//     function saveProfileClick(event) {
-//       event.preventDefault();
-//       let errorList = "";
+      try {
+        if (videoLink) videoLink = helpers.checkString(videoLink, "video link");
+      } catch (e) {
+        errorList += `${e}`;
+      }
 
-//       let firstName = firstNameInput.val().trim();
-//       let lastName = lastNameInput.val().trim();
-//       let emailAddress = emailAddressInput.val().trim();
-//       let bio = bioInput.val().trim();
-//       let github = githubInput.val().trim();
+      if (errorList !== "") {
+        errorContainer.innerHTML = errorList;
+        errorContainer.hidden = false;
+        moduleForm.reset();
+      } else {
+        errorContainer.hidden = true;
+      }
 
-//       try {
-//         firstName = validation.checkString(firstName, "First Name");
-//       } catch (e) {
-//         errorList += `<li>${e}</li>`;
-//       }
+      let requestConfig = {
+        lessonId: lessonId,
+        method: "POST",
+        url: `/lessons/addmodule/${lessonId}`,
 
-//       try {
-//         lastName = validation.checkString(lastName, "Last Name");
-//       } catch (e) {
-//         errorList += `<li>${e}</li>`;
-//       }
+        contentType: "application/json",
+        data: JSON.stringify({
+          lessonId: lessonId,
+          moduleTitle: moduleTitle,
+          text: text,
+          videoLink: videoLink,
+          order: order,
+        }),
+      };
+      $.ajax(requestConfig)
+        .then(function (response) {
+          if (response.hasErrors) {
+            errorContainer.html(response.errors);
+            errorContainer.show();
+          } else if (response.updated) {
+            moduleTitle = response.moduleTitle;
+            text = response.text;
+            order = response.order;
+            videoLink = response.videoLink;
 
-//       try {
-//         emailAddress = validation.checkEmail(emailAddress);
-//       } catch (e) {
-//         errorList += `<li>${e}</li>`;
-//       }
+            //   const contentsList = document.getElementById("contentList");
+            //   let li = document.createElement("li");
 
-//       try {
-//         if (github.length !== 0 && !new URL(github)) {
-//           throw "Invalid Github Link.";
-//         }
-//       } catch (e) {
-//         errorList += `<li>${e}</li>`;
-//       }
+            //   li.textContent = `{{{<h4>${order}: ${moduleTitle}</h4>
+            //   <h5>Resources:${videoLink}</h5>
+            //   <h5>Content: ${text}</h5>
+            // }}}`;
+            //   contentsList.appendChild(li);
 
-//       if (errorList !== "") {
-//         errorContainer.html(errorList);
-//         errorContainer.show();
-//       } else {
-//         errorContainer.hide();
+            const contentsList = document.getElementById("contentList");
+            const li = document.createElement("li");
 
-//         let requestConfig = {
-//           method: "POST",
-//           url: "/user/profile",
-//           contentType: "application/json",
-//           data: JSON.stringify({
-//             firstName: firstName,
-//             lastName: lastName,
-//             emailAddress: emailAddress,
-//             bio: bio,
-//             github: github,
-//           }),
-//         };
+            // Assuming you have a Handlebars template with placeholders like {{order}}, {{moduleTitle}}, etc.
+            const template = `
+            <h4>{{order}}: {{this.moduleTitle}}</h4>
+            <h5>Resources: {{this.videoLink}}</h5>
+            <h5>Content: {{this.text}}</h5>
+          `;
 
-//         $.ajax(requestConfig)
-//           .then(function (response) {
-//             if (response.hasErrors) {
-//               errorContainer.html(response.errors);
-//               errorContainer.show();
-//             } else if (response.updated) {
-//               firstName = response.user.firstName;
-//               lastName = response.user.lastName;
-//               email = response.user.emailAddress;
-//               bio = response.user.bio;
-//               github = response.user.github;
+            const templateFunction = Handlebars.compile(template);
 
-//               firstNameInput.val(firstName);
-//               lastNameInput.val(lastName);
-//               emailAddressInput.val(email);
-//               bioInput.val(bio);
-//               githubInput.val(github);
+            // Replace the placeholders with your actual data
+            const html = templateFunction({
+              order: order, // replace with your actual order variable
+              moduleTitle: moduleTitle, // replace with your actual moduleTitle variable
+              videoLink: videoLink, // replace with your actual videoLink variable
+              text: text, // replace with your actual text variable
+            });
+            console.log("html template: " + html);
+            // Set the compiled HTML as the content of the list item
+            li.innerHTML = html;
 
-//               deactiveInput(firstNameInput);
-//               deactiveInput(lastNameInput);
-//               deactiveInput(emailAddressInput);
-//               deactiveInput(bioInput);
-//               deactiveInput(githubInput);
+            // Append the list item to the contentList
+            contentsList.appendChild(li);
 
-//               editProfileButton.show();
-//               saveProfileButton.hide();
-//               alert("Profile Updated!");
-//             }
-//           })
-//           .catch(function (error) {
-//             errorList.push(`<li>${e}</li>`);
-//             errorContainer.show();
-//           });
-//       }
-//     }
-//     function editProfileClick(event) {
-//       event.preventDefault();
-//       errorContainer.hide();
-//       activeInput(firstNameInput);
-//       activeInput(lastNameInput);
-//       activeInput(emailAddressInput);
-//       activeInput(bioInput);
-//       activeInput(githubInput);
+            orderInput.value = "";
+            moduleTitleInput.value = "";
+            textInput.value = "";
+            videoLinkInput.value = "";
 
-//       editProfileButton.hide();
-//       saveProfileButton.show();
-//     }
+            errorContainer.empty();
+            errorContainer.appendChild(`<p>Module Created!</p>`);
+          }
+        })
+        .catch(function (e) {
+          errorList.push(`${e}`);
+          errorContainer.show();
+        });
+    });
+  }
 
-//     editProfileButton.click(function (event) {
-//       event.preventDefault();
-//       errorContainer.hide();
-//       editProfileClick.call(this, event);
-//     });
+  //TODO implemnent for updating lessons/modules
+  // if (profileForm) {
+  //
+  //     const editProfileButton = $("#editProfileButton");
+  //     const saveProfileButton = $("#saveProfileButton");
+  //     const firstNameInput = $("#firstNameInput");
+  //     const lastNameInput = $("#lastNameInput");
+  //     const emailAddressInput = $("#emailAddressInput");
+  //     const bioInput = $("#bioInput");
+  //     const githubInput = $("#githubInput");
+  //     const errorContainer = $("#errors");
 
-//     saveProfileButton.click(function (event) {
-//       event.preventDefault();
-//       errorContainer.hide();
-//       saveProfileClick.call(this, event);
-//     });
-   })(jQuery);
+  //     function activeInput(input) {
+  //       input.attr("disabled", false);
+  //     }
+
+  //     function deactiveInput(input) {
+  //       input.attr("disabled", true);
+  //     }
+
+  //     function saveProfileClick(event) {
+  //       event.preventDefault();
+  //       let errorList = "";
+
+  //       let firstName = firstNameInput.val().trim();
+  //       let lastName = lastNameInput.val().trim();
+  //       let emailAddress = emailAddressInput.val().trim();
+  //       let bio = bioInput.val().trim();
+  //       let github = githubInput.val().trim();
+
+  //       try {
+  //         firstName = validation.checkString(firstName, "First Name");
+  //       } catch (e) {
+  //         errorList += `<li>${e}</li>`;
+  //       }
+
+  //       try {
+  //         lastName = validation.checkString(lastName, "Last Name");
+  //       } catch (e) {
+  //         errorList += `<li>${e}</li>`;
+  //       }
+
+  //       try {
+  //         emailAddress = validation.checkEmail(emailAddress);
+  //       } catch (e) {
+  //         errorList += `<li>${e}</li>`;
+  //       }
+
+  //       try {
+  //         if (github.length !== 0 && !new URL(github)) {
+  //           throw "Invalid Github Link.";
+  //         }
+  //       } catch (e) {
+  //         errorList += `<li>${e}</li>`;
+  //       }
+
+  //       if (errorList !== "") {
+  //         errorContainer.html(errorList);
+  //         errorContainer.show();
+  //       } else {
+  //         errorContainer.hide();
+
+  //         let requestConfig = {
+  //           method: "POST",
+  //           url: "/user/profile",
+  //           contentType: "application/json",
+  //           data: JSON.stringify({
+  //             firstName: firstName,
+  //             lastName: lastName,
+  //             emailAddress: emailAddress,
+  //             bio: bio,
+  //             github: github,
+  //           }),
+  //         };
+
+  //         $.ajax(requestConfig)
+  //           .then(function (response) {
+  //             if (response.hasErrors) {
+  //               errorContainer.html(response.errors);
+  //               errorContainer.show();
+  //             } else if (response.updated) {
+  //               firstName = response.user.firstName;
+  //               lastName = response.user.lastName;
+  //               email = response.user.emailAddress;
+  //               bio = response.user.bio;
+  //               github = response.user.github;
+
+  //               firstNameInput.val(firstName);
+  //               lastNameInput.val(lastName);
+  //               emailAddressInput.val(email);
+  //               bioInput.val(bio);
+  //               githubInput.val(github);
+
+  //               deactiveInput(firstNameInput);
+  //               deactiveInput(lastNameInput);
+  //               deactiveInput(emailAddressInput);
+  //               deactiveInput(bioInput);
+  //               deactiveInput(githubInput);
+
+  //               editProfileButton.show();
+  //               saveProfileButton.hide();
+  //               alert("Profile Updated!");
+  //             }
+  //           })
+  //           .catch(function (error) {
+  //             errorList.push(`<li>${e}</li>`);
+  //             errorContainer.show();
+  //           });
+  //       }
+  //     }
+  //     function editProfileClick(event) {
+  //       event.preventDefault();
+  //       errorContainer.hide();
+  //       activeInput(firstNameInput);
+  //       activeInput(lastNameInput);
+  //       activeInput(emailAddressInput);
+  //       activeInput(bioInput);
+  //       activeInput(githubInput);
+
+  //       editProfileButton.hide();
+  //       saveProfileButton.show();
+  //     }
+
+  //     editProfileButton.click(function (event) {
+  //       event.preventDefault();
+  //       errorContainer.hide();
+  //       editProfileClick.call(this, event);
+  //     });
+
+  //     saveProfileButton.click(function (event) {
+  //       event.preventDefault();
+  //       errorContainer.hide();
+  //       saveProfileClick.call(this, event);
+  //     });
+})(jQuery);
 // }
 
-  
 const helpers = {
   checkId(id, varName) {
     if (!id) throw `Error: You must provide a ${varName}`;
