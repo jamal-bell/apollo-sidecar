@@ -51,13 +51,17 @@ a, p, footer, h1, h2 {
   margin-top: 5px;
 }
 
-.user-photo{
+#userPhotoDisplay{
     text-align: center;
     flex-direction: column;
     display: flex;
     justify-content: center;
     align-items: center;
     margin-bottom: 10px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 img {
@@ -92,3 +96,12 @@ table td a {
     display: block;
     text-align: left;
 }
+
+.lessons, #qas {
+  text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+

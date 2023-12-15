@@ -3,6 +3,7 @@ import { ObjectId } from "mongodb";
 import validation from "../data/validation.js";
 import bcrypt from "bcryptjs";
 import cloudinary from "cloudinary";
+import { create } from "express-handlebars";
 
 function checkRole(role) {
   if (!role) throw "You must provide the role.";
@@ -65,8 +66,23 @@ const exportedusersMethods = {
           comment_vote: true,
         },
       },
-      lessons: { created: [], learned: [] },
-      qas: { created: [], answered: [] },
+      progress: {
+        lessonsTaken: 0,
+        lessonsComplete: 0,
+        lessonCreated: 0,
+        voteCount: 0,
+        qaAnswerCount: 0,
+        qaQuestionCount: 0,
+        completedLessonId: [],
+        inProgressLessonId: [],
+        createdLessonId: [],
+        currentLesson: [],
+        qaPlatform: {
+          questions: [],
+          answers: [],
+          votes: [],
+        },
+      },
     };
 
     const usersCollection = await users();
@@ -298,37 +314,39 @@ const exportedusersMethods = {
   async addLesson(userId, lessonId, createdOrLearned) {
     userId = validation.checkId(userId, "userId");
     lessonId = validation.checkId(lessonId, "lessonId");
+    createdOrLearned = createdOrLearned.trim().toLowerCase();
 
     const usersCollection = await users();
     const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
 
     if (!user) throw "User not found in the system.";
 
-    let lessons = user.lessons;
+    let progress = user.progress;
+    process.lessonCreated = process.lessonCreated + 1;
 
     if (createdOrLearned === "created") {
-      if (lessons.created) {
-        lessons.created.push(lessonId);
+      if (progress.createdLessonId) {
+        progress.createdLessonId.push({ lessonId: lessonId });
       } else {
-        lessons.created = [lessonId];
-      };
+        lessons.created = [{ lessonId: lessonId }];
+      }
     } else if (createdOrLearned === "learned") {
-      if (lessons.learned) {
-        lessons.learned.push(lessonId);
+      if (lessons.inProgressLessonId) {
+        lessons.inProgressLessonId.push({ lessonId: lessonId });
       } else {
-        lessons.created = [lessonId];
-      };
+        lessons.inProgressLessonId = [{ lessonId: lessonId }];
+      }
     } else {
       throw `Invalid argument for 'createdOrLearned'. Must be either 'created' or 'learned'`;
     }
-    const updatedLessons = {
-      lessons: lessons,
+    const updatedprogress = {
+      progress: progress,
       updatedAt: new Date(),
     };
 
     const updatedUser = await usersCollection.findOneAndUpdate(
       { _id: new ObjectId(userId) },
-      { $set: updatedLessons },
+      { $set: updatedprogress },
       { returnDocument: "after" }
     );
 
@@ -340,6 +358,7 @@ const exportedusersMethods = {
   async addQuestion(userId, questionId, createOrAnswered) {
     userId = validation.checkId(userId, "userId");
     questionId = validation.checkId(questionId, "questionId");
+    createOrAnswered = createOrAnswered.trim().toLowerCase();
 
     const usersCollection = await users();
     const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
@@ -349,9 +368,17 @@ const exportedusersMethods = {
     let qas = user.qas;
 
     if (createOrAnswered === "created") {
-      qas.created.push(new ObjectId(questionId));
+      if (lessons.created) {
+        qas.created.push(questionId);
+      } else {
+        qas.created = [questionId];
+      }
     } else if (createOrAnswered === "answered") {
-      qas.learned.push(new ObjectId(questionId));
+      if (lessons.created) {
+        qas.answered.push(questionId);
+      } else {
+        qas.answered = [questionId];
+      }
     } else {
       throw `Invalid argument for 'createOrAnswered'. Must be either 'created' or 'answered'`;
     }
@@ -373,7 +400,7 @@ const exportedusersMethods = {
 
   async updatePhoto(emailAddress, url) {
     emailAddress = validation.checkEmail(emailAddress);
-    if (url.length !== 0 && !new URL(url)) {
+    if (url.length === 0 || !new URL(url)) {
       throw "Invalid photo Link.";
     }
 

@@ -99,40 +99,73 @@
     </div>
 </section>
 
-<section id="lessons">
-    <h2>My Lessons</h2>
-    {{#if hasLessons}}
-        <ul>
-            {{#each userLessons}}
-                <li>
-                    <h3>{{this.lessonTitle}}</h3>
-                    <p>Status: <span>Completed/In Progress</span></p>
-                    <button type="button"
-                        onclick="location.href='/lessons/lesson/{{{this._id}}}'">Review/Continue</button>
-                </li>
-            {{/each}}
-        </ul>
-    {{else}}
-        <p>Start learning <a href="/lessons/lessons">here</a>!</p>
-    {{/if}}
+<h2>My Lessons</h2>
+<section class="lessons">
+    <main>
+        {{#if hasLessons}}
+            <ul>
+                {{#each lessons}}
+                    <li>
+                        <h3>{{this.lessonTitle}}</h3>
+                        <table>
+                            <tr>
+                                <th>Progress: </th>
+                                <td id="lessonProcess"><progress value="90{{{this.progress}}}" max="100"></progress>
+                                </td>
+                                <td id="lessonButton"><button type="button"
+                                        onclick="location.href='/lessons/lesson/{{{this._id}}}'">Review/Continue</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </li>
+                {{/each}}
+            </ul>
+        {{else}}
+            <p>Start learning <a href="/lessons/lessons">here</a>!</p>
+        {{/if}}
+    </main>
 </section>
 
+<seciton class="lessons">
+    {{#if createdLessons}}
+        <main>
+            <h2>Lesson Created</h2>
+            <ul>
+                {{#each lessonCreated}}
+                    <li>
+                        <h3>{{this.lessonTitle}}</h3>
+                        <button type="button" onclick="location.href='/lessons/lesson/{{{this._id}}}'">Edit
+                            Lesson</button>
+                    </li>
+                {{/each}}
+            </ul>
+        </main>
+    {{/if}}
+</seciton>
+
+<br />
+<br />
+
+<h2>Q&A Contributions</h2>
 <section id="qas">
-    <h2>Q&A Contributions</h2>
     {{#if hasQas}}
+    <main>
         <ul>
-            {{#each userQas}}
+            {{#each qas}}
                 <li>
                     <h3>{{this.questionName}}</h3>
                     <p>Type: <span>{{this.questionType}}</span></p>
                     <p>Ans: <span>{{this.answers.sum}}</span></p>
                     <p>Upvotes: <span>{{this.votes.sum}}</span></p>
                     <p><span>{{this.createdAt}}</span></p>
-                    <button type="button" onclick="location.href='/lesson/details'">Review/Continue</button>
+                    <button type="button" onclick="location.href='/qa/{{{this._id}}}'">Review/Continue</button>
                 </li>
             {{/each}}
         </ul>
+    </main>
     {{else}}
-        <p>No Q&A contributions yet.</p>
+        <main>
+            <p>No Q&A contributions yet.</p>
+        </main>
     {{/if}}
 </section>

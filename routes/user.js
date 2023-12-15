@@ -6,16 +6,72 @@ const router = Router();
 import express from "express";
 const app = express();
 import validation from "../data/validation.js";
-import cloudinary from "cloudinary";
+// import cloudinary from "cloudinary";
 import dotenv from "dotenv";
 import xss from "xss";
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import crypto from "crypto";
+import { promisify } from "util";
+dotenv.config();
 
-const cloudinaryConfig = cloudinary.config({
-  cloud_name: "dcl4odxgu",
-  api_key: "913344915682151",
-  api_secret: "m-sXkAU8THL0ky6meEXfy4DL0M4",
-  secure: true,
+const region = "us-east-1";
+const bucketName = "apollo-sidecar";
+const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+
+const s3 = new S3Client({
+  region,
+  credentials: {
+    accessKeyId,
+    secretAccessKey,
+  },
 });
+
+const randomBytes = promisify(crypto.randomBytes);
+
+const s3Function = {
+  async generateUploadURL() {
+    const rawBytes = await randomBytes(16);
+    const imageName = rawBytes.toString("hex");
+
+    const params = {
+      Bucket: bucketName,
+      Key: imageName,
+    };
+
+    const command = new PutObjectCommand(params);
+
+    const uploadURL = await getSignedUrl(s3, command, { expiresIn: 600 });
+
+    return uploadURL;
+  },
+
+  async deleteImageFromS3(imageKey) {
+    try {
+      const params = {
+        Bucket: bucketName,
+        Key: imageKey,
+      };
+
+      const command = new DeleteObjectCommand(params);
+      await s3.send(command);
+    } catch (e) {
+      throw `Error in file deletion: ${e}`;
+    }
+  },
+};
+
+// const cloudinaryConfig = cloudinary.config({
+//   cloud_name: "dcl4odxgu",
+//   api_key: "913344915682151",
+//   api_secret: "m-sXkAU8THL0ky6meEXfy4DL0M4",
+//   secure: true,
+// });
 
 function checkRole(role) {
   if (!role) throw "You must provide the role.";
@@ -203,12 +259,15 @@ router.route("/user").get(async (req, res) => {
 
   const userLessons = [];
   let hasLessons;
-  if (user.lessons.length !== 0) {
+  if (user.progress.inProgressLessonId.length !== 0) {
     hasLessons = true;
-    for (let i = user.lessons.length; i > 0; i--) {
+    for (let i = user.progress.inProgressLessonId.length - 1; i >= 0; i--) {
       let currLesson;
       try {
-        let lessonId = validation.checkId(user.lessons[i]);
+        let lessonId = validation.checkId(
+          user.progress.inProgressLessonId[i].lessonId,
+          "lessonId"
+        );
         currLesson = await lessons.getLessonById(lessonId);
         currLesson._id = currLesson._id.toString();
       } catch (e) {
@@ -220,16 +279,39 @@ router.route("/user").get(async (req, res) => {
     hasLessons = false;
   }
 
+  const lessonCreated = [];
+  let createdLessons;
+  if (user.progress.createdLessonId.length !== 0) {
+    createdLessons = true;
+    for (let i = user.progress.createdLessonId.length - 1; i >= 0; i--) {
+      let currLesson;
+      try {
+        let lessonId = validation.checkId(
+          user.progress.createdLessonId[i].lessonId,
+          "lessonId"
+        );
+        currLesson = await lessons.getLessonById(lessonId);
+        currLesson._id = currLesson._id.toString();
+      } catch (e) {
+        return res.status(400).render("user/error", { error: e });
+      }
+      lessonCreated.push(currLesson);
+    }
+  } else {
+    createdLessons = false;
+  }
+
   const userQas = [];
   let hasQas;
-  if (user.qas.length !== 0) {
+  if (user.progress.qaPlatform.questions.length !== 0) {
     hasQas = true;
     let count = 0;
-    for (let i = user.qas.length; i > 0; i--) {
+    for (let i = user.progress.qaPlatform.questions.length - 1; i >= 0; i--) {
       let currQa;
       try {
-        const qaId = validation.checkId(user.qas[i]);
-        currQa = await qa.get;
+        const qaId = validation.checkId(user.progress.qaPlatform.questions[i]);
+        currQa = await qa.getQaById(qaId);
+        currQa._id = currQa._id.toString();
       } catch (e) {
         return res.status(400).render("user/error", { error: e });
       }
@@ -247,6 +329,8 @@ router.route("/user").get(async (req, res) => {
     user: user,
     lessons: userLessons,
     hasLessons: hasLessons,
+    lessonCreated: lessonCreated,
+    createdLessons: createdLessons,
     qas: userQas,
     hasQas: hasQas,
   });
@@ -265,12 +349,64 @@ router.route("/admin").get(async (req, res) => {
       errors: "No access to such user's account page.",
     });
   }
+
+  if (req.session.sessionId !== user._id.toString()) {
+    return res.render("user/error", {
+      errors: "No access to such user's account page.",
+    });
+  }
+
+  const adminLessons = [];
+  let hasLessons;
+  if (user.progress.createdLessonId.length !== 0) {
+    hasLessons = true;
+    for (let i = user.progress.createdLessonId.length - 1; i >= 0; i--) {
+      let currLesson;
+      try {
+        let lessonId = validation.checkId(
+          user.progress.createdLessonId[i].lessonId,
+          "lessonId"
+        );
+        currLesson = await lessons.getLessonById(lessonId);
+        currLesson._id = currLesson._id.toString();
+      } catch (e) {
+        return res.status(400).render("user/error", { error: e });
+      }
+      adminLessons.push(currLesson);
+    }
+  } else {
+    hasLessons = false;
+  }
+
+  const adminQas = [];
+  let hasQas;
+  if (user.progress.qaPlatform.answers.length !== 0) {
+    hasQas = true;
+    let count = 0;
+    for (let i = user.progress.qaPlatform.answers.length - 1; i >= 0; i--) {
+      let currQa;
+      try {
+        const qaId = validation.checkId(user.progress.qaPlatform.answers[i]);
+        currQa = await qa.getQaById(qaId);
+        currQa._id = currQa._id.toString();
+      } catch (e) {
+        return res.status(400).render("user/error", { error: e });
+      }
+      adminQas.push(currQa);
+      count++;
+      if (count === 3) break;
+    }
+  } else {
+    hasQas = false;
+  }
   return res.render("user/admin", {
     title: "Overview",
     style_partial: "overview",
     user: user,
-    lessons: "",
-    qas: "",
+    lessons: adminLessons,
+    hasLessons: hasLessons,
+    qas: adminQas,
+    hasQas: hasQas,
   });
 });
 
@@ -505,49 +641,98 @@ router.route("/cancel").get(async (req, res) => {
   }
 });
 
-router.route("/photo").post(async (req, res) => {
+// //Cloudinary
+// router.route("/photo").post(async (req, res) => {
+//   if (!req.session.authenticated) {
+//     return res.redirect("/user/login");
+//   }
+//   req.body.public_id = xss(req.body.public_id);
+//   req.body.version = xss(req.body.version);
+//   req.body.signature = xss(req.body.signature);
+//   let emailAddress = xss(req.session.user.emailAddress.trim());
+
+//   const expectedSignature = cloudinary.utils.api_sign_request(
+//     { public_id: req.body.public_id, version: req.body.version },
+//     cloudinaryConfig.api_secret
+//   );
+
+//   const user = await users.getUserByEmail(emailAddress);
+
+//   let photoId = "";
+//   if (user.photo !== "/public/assets/no-photo.jpg") {
+//     const photoUrl = user.photo;
+//     photoId = photoUrl.substring(
+//       photoUrl.lastIndexOf("/") + 1,
+//       photoUrl.lastIndexOf(".")
+//     );
+//   }
+
+//   if (expectedSignature === req.body.signature) {
+//     try {
+//       const url = `https://res.cloudinary.com/${cloudinaryConfig.cloud_name}/image/upload/w_200,h_200,c_fill,q_100/${req.body.public_id}.jpg`;
+//       const photoUpdated = await users.updatePhoto(emailAddress, url);
+
+//       if (photoUpdated) {
+//         cloudinary.uploader.destroy(photoId);
+//         return res.json({
+//           updated: true,
+//           user: photoUpdated,
+//         });
+//       }
+//     } catch (e) {
+//       return res.json({
+//         updated: false,
+//         photoErrors: e,
+//       });
+//     }
+//   }
+//   return res.status(500).render("user/error", {
+//     error: "Internal Server Error",
+//     title: "Error",
+//   });
+// });
+
+router.route("/s3Url").get(async (req, res) => {
+  const url = await s3Function.generateUploadURL();
+  res.json({ url });
+});
+
+//AWS S3
+router.route("/s3").post(async (req, res) => {
   if (!req.session.authenticated) {
     return res.redirect("/user/login");
   }
-  req.body.public_id = xss(req.body.public_id);
-  req.body.version = xss(req.body.version);
-  req.body.signature = xss(req.body.signature);
-  let emailAddress = xss(req.session.user.emailAddress.trim());
+  const newUrl = xss(req.body.url).trim();
 
-  const expectedSignature = cloudinary.utils.api_sign_request(
-    { public_id: req.body.public_id, version: req.body.version },
-    cloudinaryConfig.api_secret
-  );
+  let emailAddress = xss(req.session.user.emailAddress.trim());
 
   const user = await users.getUserByEmail(emailAddress);
 
-  let photoId = "";
-  if (user.photo !== "/public/assets/no-photo.jpg") {
-    const photoUrl = user.photo;
-    photoId = photoUrl.substring(
-      photoUrl.lastIndexOf("/") + 1,
-      photoUrl.lastIndexOf(".")
-    );
-  }
+  let photoKey = "";
 
-  if (expectedSignature === req.body.signature) {
-    try {
-      const url = `https://res.cloudinary.com/${cloudinaryConfig.cloud_name}/image/upload/w_200,h_200,c_fill,q_100/${req.body.public_id}.jpg`;
-      const photoUpdated = await users.updatePhoto(emailAddress, url);
+  try {
+    if (newUrl.length === 0 || !new URL(newUrl)) throw "Invalid photo url";
+    if (user.photo !== "/public/assets/no-photo.jpg") {
+      const photoUrl = user.photo;
+      photoKey = photoUrl.substring(photoUrl.lastIndexOf("/") + 1);
+    }
 
-      if (photoUpdated) {
-        cloudinary.uploader.destroy(photoId);
-        return res.json({
-          updated: true,
-          user: photoUpdated,
-        });
+    const photoUpdated = await users.updatePhoto(emailAddress, newUrl);
+
+    if (photoUpdated) {
+      if (photoKey !== "") {
+        await s3Function.deleteImageFromS3(photoKey);
       }
-    } catch (e) {
       return res.json({
-        updated: false,
-        photoErrors: e,
+        updated: true,
+        user: photoUpdated,
       });
     }
+  } catch (e) {
+    return res.json({
+      updated: false,
+      photoErrors: e,
+    });
   }
   return res.status(500).render("user/error", {
     error: "Internal Server Error",

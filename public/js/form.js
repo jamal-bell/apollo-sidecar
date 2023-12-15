@@ -379,58 +379,58 @@ if (profile) {
   })(jQuery);
 }
 
-//Cloudinary Photo Uploading
-if (uploadPhotoButton) {
-  const api_key = "913344915682151";
-  const cloud_name = "dcl4odxgu";
-  const userPhotoDisplay = document.getElementById("userPhotoDisplay");
+// //Cloudinary Photo Uploading
+// if (uploadPhotoButton) {
+//   const api_key = "913344915682151";
+//   const cloud_name = "dcl4odxgu";
+//   const userPhotoDisplay = document.getElementById("userPhotoDisplay");
 
-  uploadPhotoButton.addEventListener("click", async function (event) {
-    event.preventDefault();
-    const file = document.getElementById("photoInput");
-    if (file.files.length === 0) {
-      return alert("Please choose a photo to upload");
-    }
+//   uploadPhotoButton.addEventListener("click", async function (event) {
+//     event.preventDefault();
+//     const file = document.getElementById("photoInput");
+//     if (file.files.length === 0) {
+//       return alert("Please choose a photo to upload");
+//     }
 
-    const data = new FormData();
-    data.append("file", file.files[0]);
-    data.append("upload_preset", "bll8wiq3");
-    data.append("cloud_name", cloud_name);
-    data.append("api_key", api_key);
+//     const data = new FormData();
+//     data.append("file", file.files[0]);
+//     data.append("upload_preset", "bll8wiq3");
+//     data.append("cloud_name", cloud_name);
+//     data.append("api_key", api_key);
 
-    const config = {
-      headers: { "X-Requested-With": "XMLHttpRequest" },
-      onUploadProgress: function (e) {
-        console.log(e.loaded / e.total);
-      },
-    };
+//     const config = {
+//       headers: { "X-Requested-With": "XMLHttpRequest" },
+//       onUploadProgress: function (e) {
+//         console.log(e.loaded / e.total);
+//       },
+//     };
 
-    const url = `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`;
+//     const url = `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`;
 
-    await axios
-      .post(url, data, config)
-      .then(async function (res) {
-        const photoData = {
-          public_id: res.data.public_id,
-          version: res.data.version,
-          signature: res.data.signature,
-        };
+//     await axios
+//       .post(url, data, config)
+//       .then(async function (res) {
+//         const photoData = {
+//           public_id: res.data.public_id,
+//           version: res.data.version,
+//           signature: res.data.signature,
+//         };
 
-        const photoUpdated = await axios.post("/user/photo", photoData);
+//         const photoUpdated = await axios.post("/user/photo", photoData);
 
-        if (photoUpdated.data.updated) {
-          userPhotoDisplay.src = photoUpdated.data.user.photo;
-          alert("Photo Updated!");
-        } else {
-          alert("Error Updating Photo: " + photoUpdated.data.photoErrors);
-        }
-        file.value = "";
-      })
-      .catch(function (error) {
-        alert("Error Updating Photo: " + error);
-      });
-  });
-}
+//         if (photoUpdated.data.updated) {
+//           userPhotoDisplay.src = photoUpdated.data.user.photo;
+//           alert("Photo Updated!");
+//         } else {
+//           alert("Error Updating Photo: " + photoUpdated.data.photoErrors);
+//         }
+//         file.value = "";
+//       })
+//       .catch(function (error) {
+//         alert("Error Updating Photo: " + error);
+//       });
+//   });
+// }
 
 //AWS S3 Photo Uploading
 if (uploadPhotoButton) {
@@ -448,7 +448,7 @@ if (uploadPhotoButton) {
 
     try {
       //get secure url from our servier
-      const response = await axios.get("/s3Url");
+      const response = await axios.get("/user/s3Url");
       url = response.data.url;
     } catch (e) {
       console.error("Error fetching the S3 URL:", e);
@@ -456,19 +456,26 @@ if (uploadPhotoButton) {
 
     try {
       //post the image directly to the s3 bucket
-      const photo = await axios.put(url, file, {
+      await axios.put(url, file.files[0], {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-        body: file,
+        body: file.files[0],
       });
       const imageUrl = url.split("?")[0];
-      //post request to my server to
-      const img = document.createElement("img");
-      img.src = imageUrl;
-      document.body.appendChild(img);
+      //post url server to save into database
+
+      const photoUpdated = await axios.post("/user/s3", {url: imageUrl});
+
+      if (photoUpdated.data.updated) {
+        userPhotoDisplay.src = photoUpdated.data.user.photo;
+        alert("Photo Updated!");
+      } else {
+        alert("Error Updating Photo: " + photoUpdated.data.photoErrors);
+      }
+      file.value = "";
     } catch (e) {
-      console.error("Error poisting the image to S3 bucket:", e);
+      alert("Error poisting the image to S3 bucket:" + e);
     }
   });
 }
