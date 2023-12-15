@@ -46,7 +46,6 @@ router
   .route("/newlesson")
   //new lesson form
   .get(async (req, res) => {
-    console.log("Hitting get");
     try {
       return res.status(200).render("lesson/newlesson", {
         title: "Create Lesson",
@@ -77,9 +76,21 @@ router
         videoLink
       );
 
-      //Set this lesson in user profile
+      // const user = await usersData.getUserByEmail(
+      //   req.session.user.emailAddress
+      // );
+
+      // if (req.session.sessionId !== user._id.toString()) {
+      //   return res.render("error", {
+      //     errors: "Could not get user.",
+      //   });
+      // }
+      // const creatorId = user.id;
+      // const author = user.firstName + user.lastName;
+
       const { _id } = lesson;
-      usersData.addLesson(req.session.user._id, _id, "created");
+      // user.lessons.created.push(_id.toString());
+      // console.log(user);
 
       return res.status(200).render(`lesson/lessonById`, {
         title: "Create Lesson",
@@ -96,7 +107,6 @@ router
       });
     } catch (error) {
       //console.log(error);
-      
       return res.status(400).render("lesson/newlesson", {
         title: "Creating lesson failed",
         error: error,
@@ -108,9 +118,15 @@ router
         videoLink,
       });
     }
-    
+    // const creatorId =
+    //   res.session.user.firstName + " " + res.session.user.lastName;
+    // let title = req.body.titleInput;
+    // let description = req.body.descriptionInput;
+    // let moduleTitle = req.body.contents.moduleTitle;
+    // let text = req.body.contents.text;
+    // let videoLink = req.body.contents.videoLink;
     // let errors = [];
-    
+    // let createdBy;
 
     // try {
     //   await lessonsData.createLesson(title, description, contents);
@@ -224,6 +240,7 @@ router
       });
     }
 
+    //call data function
     try {
       const newlesson = await lessonsData.createModule(
         id,
