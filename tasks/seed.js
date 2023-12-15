@@ -9,7 +9,6 @@ const db = await dbConnection();
 await db.dropDatabase();
 let newUser = undefined;
 let newLesson = undefined;
-let newLesson = undefined;
 let newQaPost = undefined;
 let newQaResponse = undefined;
 let userCollection;
@@ -167,7 +166,7 @@ try {
           creatorId: authorChosen._id,
           author: authorChosen.handle,
           text: `Text for Lesson ${index + 1}`,
-          videoLink: ['https://example.com/video'],
+          videoLink: ['https://www.youtube.com/watch?v=dQw4w9WgXcQ'],
           createdByRole: authorChosen.role,
         },
       ],
@@ -176,7 +175,7 @@ try {
     console.log(result); // Log the inserted document
     const result2 = await userCollection.updateOne(
       { _id: authorChosen._id },
-      { $push: { 'lessons.created': result.insertedId } }
+      { $push: { 'progress.createdLessonId': result.insertedId } }
     );
     console.log(result2);
   }
