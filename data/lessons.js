@@ -1,7 +1,7 @@
 import { lessons } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import validation from "./validation.js";
-import { usersData } from "./index.js";
+import  usersData  from "./users.js";
 
 let exportedLessonsMethods = {
   //Creates a lesson + 1 module

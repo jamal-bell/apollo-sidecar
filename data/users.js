@@ -296,8 +296,8 @@ const exportedusersMethods = {
   }, //end reactivateUser
 
   async addLesson(userId, lessonId, createdOrLearned) {
-    userId = validation.checkId(userId);
-    lessonId = validation.checkId(lessonId);
+    userId = validation.checkId(userId, "userId");
+    lessonId = validation.checkId(lessonId, "lessonId");
 
     const usersCollection = await users();
     const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
@@ -307,9 +307,17 @@ const exportedusersMethods = {
     let lessons = user.lessons;
 
     if (createdOrLearned === "created") {
-      lessons.created.push(new ObjectId(lessonId));
+      if (lessons.created) {
+        lessons.created.push(lessonId);
+      } else {
+        lessons.created = [lessonId];
+      };
     } else if (createdOrLearned === "learned") {
-      lessons.learned.push(new ObjectId(lessonId));
+      if (lessons.learned) {
+        lessons.learned.push(lessonId);
+      } else {
+        lessons.created = [lessonId];
+      };
     } else {
       throw `Invalid argument for 'createdOrLearned'. Must be either 'created' or 'learned'`;
     }
@@ -330,8 +338,8 @@ const exportedusersMethods = {
   },
 
   async addQuestion(userId, questionId, createOrAnswered) {
-    userId = validation.checkId(userId);
-    questionId = validation.checkId(questionId);
+    userId = validation.checkId(userId, "userId");
+    questionId = validation.checkId(questionId, "questionId");
 
     const usersCollection = await users();
     const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
