@@ -1,4 +1,4 @@
-<h2>Publish Lesson</h2>
+<h2>Add Module \from publish.handlebars {{this.moduleTitle}}</h2>
 <h3 class="information">Create additional modules for this lesson. Click PUBLISH to make your lesson viewable to others.
 </h3>
 <section>
@@ -26,7 +26,7 @@
         <button type="submit">Add a New Module</button>
       </div>
 
-      <button type="button" action="/lessons/lesson/:id">Publish Lesson</button>
+      
     </form>
 
 
@@ -34,9 +34,9 @@
 
 
   <section>
-    <h1>Preview</h1>
+    <h1>PREVIEW /this is from publish.handlebars</h1>
     <h1>Lesson name : {{this?.lesson?.lessonTitle}}</h1>
-    <h1>Lesson Modules</h1>
+    <h1>Lesson Moduless</h1>
     <div>
       {{#each this?.lesson?.contents}}
       <h1>Module name : {{moduleTitle ?? ''}}</h1>
@@ -59,6 +59,7 @@
       </li>
       {{/each}}
     </ul>
+    <button type="button" action="/lessons/lesson/:id">Publish Lesson</button>
   </section>
 
 
@@ -80,10 +81,9 @@
       {{/if}}
     </ul>
   </div>
-
-
 </section>
 
+{{!-- not being used yet --}}
 <script>
   function duplicateModuleForm() {
     let formsContainer = document.getElementById("module-wrapper");

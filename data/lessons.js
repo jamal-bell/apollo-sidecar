@@ -41,13 +41,6 @@ const exportedLessonsMethods = {
     const lessonsCollection = await lessons();
     if (!lessonsCollection) throw 'Could not get lessons. Try again';
 
-    // Prevent duplicate entries
-    // try {
-    //   const lesson = await this.getLessonByTitle(lessonTitle);
-    //   console.log("lesson returned from data: " + lesson)
-    // } catch (e) {
-    //   ;
-    // }
     const dup = await lessonsCollection.findOne({ lessonTitle: lessonTitle });
     if (dup) throw 'Lesson already exists with this title.';
 
@@ -101,11 +94,11 @@ const exportedLessonsMethods = {
     return lesson;
   },
 
-  async createModule(id, order, moduleTitle, text, videoLink) {
+  async createModule(lessonId, order, moduleTitle, text, videoLink) {
     //TODO: finish input validation
-    const lesson = await this.getLessonById(id);
+    const lesson = await this.getLessonById(lessonId);
 
-    id = await validation.checkId(id);
+    lessonId = await validation.checkId(lessonId);
     //order optional
     if (!order) {
       order = lesson.contents.length + 1;

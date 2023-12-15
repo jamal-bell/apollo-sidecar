@@ -76,19 +76,19 @@
             <label for="lastLogin">Last Login:</label>
             <input type="text" id="lastLogin" name="lastLogin" value="{{{user.lastLogin}}}" disabled>
         </div>
-
-        <div class="form-errors">
-            <ul id="errors" class="errors">
-                {{#if hasErrors}}
-                    {{#each errors}}
-                        <li>
-                            {{this}}
-                        </li>
-                    {{/each}}
-                {{/if}}
-            </ul>
-        </div>
     </form>
+    <p id="photoMessage"></p>
+    <div class="form-errors">
+        <ul id="errors" class="errors">
+            {{#if hasErrors}}
+                {{#each errors}}
+                    <li>
+                        {{this}}
+                    </li>
+                {{/each}}
+            {{/if}}
+        </ul>
+    </div>
     <div id="editButtons" class="buttons">
         <button type="button" id="saveProfileButton" hidden>Save Profile</button>
         <button type="button" id="editProfileButton">Edit Profile</button>
@@ -97,34 +97,36 @@
     </div>
 </section>
 
-<br/>
-<br/>
+<br />
+<br />
 
 <h2>Lessons Created</h2>
 <section class="lessons">
     {{#if hasLessons}}
-        <ul>
-            {{#each lessons}}
-                <li>
-                    <h3>{{this.lessonTitle}}</h3>
-                    <button type="button"
-                        onclick="location.href='/lessons/lesson/{{{this._id}}}'">Edit Lesson</button>
-                </li>
-            {{/each}}
-        </ul>
+        <div>
+            <ul>
+                {{#each lessons}}
+                    <li>
+                        <h3>{{this.lessonTitle}}</h3>
+                        <button type="button" onclick="location.href='/lessons/lesson/{{{this._id}}}'">Edit
+                            Lesson</button>
+                    </li>
+                {{/each}}
+            </ul>
     {{else}}
         <p>No lessons created yet, start creating one <a href="/lessons/newLesson">here</a>!</p>
+        </div>
     {{/if}}
 </section>
 
-<br/>
-<br/>
+<br />
+<br />
 
 <h2>Q&A Contributions</h2>
 <section id="qas">
-    {{#if hasQas}}
+    {{#if hasQuestion}}
         <ul>
-            {{#each adminQas}}
+            {{#each answers}}
                 <li>
                     <h3>{{this.questionName}}</h3>
                     <p>Type: <span>{{this.questionType}}</span></p>
@@ -136,8 +138,30 @@
             {{/each}}
         </ul>
     {{else}}
-    <main>
-        <p>No Q&A contributions yet.</p>
-    </main>
+        <main>
+            <p>No Q&A contribution yet.</p>
+        </main>
+    {{/if}}
+</section>
+
+<h2>Question Asked</h2>
+<section id="qas">
+    {{#if hasAnswers}}
+        <ul>
+            {{#each questions}}
+                <li>
+                    <h3>{{this.questionName}}</h3>
+                    <p>Type: <span>{{this.questionType}}</span></p>
+                    <p>Ans: <span>{{this.answers.sum}}</span></p>
+                    <p>Upvotes: <span>{{this.votes.sum}}</span></p>
+                    <p><span>{{this.createdAt}}</span></p>
+                    <button type="button" onclick="location.href='/lesson/details'">Review/Continue</button>
+                </li>
+            {{/each}}
+        </ul>
+    {{else}}
+        <main>
+            <p>No question requested.</p>
+        </main>
     {{/if}}
 </section>

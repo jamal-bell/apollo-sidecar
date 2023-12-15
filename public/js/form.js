@@ -436,12 +436,15 @@ if (profile) {
 if (uploadPhotoButton) {
   const userPhotoDisplay = document.getElementById("userPhotoDisplay");
   const file = document.getElementById("photoInput");
+  const photoUploadMessage = document.getElementById("photoMessage");
 
   uploadPhotoButton.addEventListener("click", async function (event) {
     event.preventDefault();
 
     if (file.files.length === 0) {
-      return alert("Please choose a photo to upload");
+      photoUploadMessage.style.color = "red";
+      photoUploadMessage.textContent = "Please choose a photo to upload";
+      return;
     }
 
     let url;
@@ -465,17 +468,21 @@ if (uploadPhotoButton) {
       const imageUrl = url.split("?")[0];
       //post url server to save into database
 
-      const photoUpdated = await axios.post("/user/s3", {url: imageUrl});
+      const photoUpdated = await axios.post("/user/s3", { url: imageUrl });
 
       if (photoUpdated.data.updated) {
         userPhotoDisplay.src = photoUpdated.data.user.photo;
-        alert("Photo Updated!");
+        photoUploadMessage.style.color = "green";
+        photoUploadMessage.textContent = "Photo Updated!";
       } else {
-        alert("Error Updating Photo: " + photoUpdated.data.photoErrors);
+        photoUploadMessage.style.color = "red";
+        photoUploadMessage.textContent =
+          "Error Updating Photo: " + photoUpdated.data.photoErrors;
       }
       file.value = "";
     } catch (e) {
-      alert("Error poisting the image to S3 bucket:" + e);
+      photoUploadMessage.style.color = "red";
+      photoUploadMessage.textContent = "Error Updating Photo: " + e;
     }
   });
 }
