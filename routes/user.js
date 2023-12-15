@@ -405,8 +405,6 @@ router.route("/admin").get(async (req, res) => {
     user: user,
     lessons: adminLessons,
     hasLessons: hasLessons,
-    lessonCreated: lessonCreated,
-    createdLessons: createdLessons,
     qas: adminQas,
     hasQas: hasQas,
   });
