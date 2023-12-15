@@ -182,6 +182,7 @@ const exportedMethods = {
               creatorId: ObjectId(author._id), //_id of the answer creator
               author: author.handle, //handle of the user
               votes: votes, //contains an (array votedUsers[] containing the user who voted, timestamp) and value
+              createdAt: timestamp,
               locked: false, //locked - added after database proposal
             }, //END ANSWER SCHEMA
           },
