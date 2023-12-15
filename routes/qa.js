@@ -18,7 +18,7 @@ router.route('/').get(async (req, res) => {
   try {
     if (req.session.authenticated) {
       user = true;
-      const userId = newreq.session.sessionId;
+      const userId = req.session.sessionId;
       creatorQuestions = await qaMethods.getRecentQAsByCreator(userId);
 
       if (req.session.user.role === 'admin') {
