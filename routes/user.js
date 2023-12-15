@@ -265,7 +265,7 @@ router.route("/user").get(async (req, res) => {
       let currLesson;
       try {
         let lessonId = validation.checkId(
-          user.progress.inProgressLessonId[i].lessonId,
+          user.progress.inProgressLessonId[i].toString(),
           "lessonId"
         );
         currLesson = await lessons.getLessonById(lessonId);
@@ -287,7 +287,7 @@ router.route("/user").get(async (req, res) => {
       let currLesson;
       try {
         let lessonId = validation.checkId(
-          user.progress.createdLessonId[i].lessonId,
+          user.progress.createdLessonId[i].toString(),
           "lessonId"
         );
         currLesson = await lessons.getLessonById(lessonId);
@@ -309,7 +309,9 @@ router.route("/user").get(async (req, res) => {
     for (let i = user.progress.qaPlatform.questions.length - 1; i >= 0; i--) {
       let currQa;
       try {
-        const qaId = validation.checkId(user.progress.qaPlatform.questions[i]);
+        const qaId = validation.checkId(
+          user.progress.qaPlatform.questions[i].toString()
+        );
         currQa = await qa.getQaById(qaId);
         currQa._id = currQa._id.toString();
       } catch (e) {
@@ -331,7 +333,9 @@ router.route("/user").get(async (req, res) => {
     for (let i = user.progress.qaPlatform.answers.length - 1; i >= 0; i--) {
       let currQa;
       try {
-        const qaId = validation.checkId(user.progress.qaPlatform.answers[i]);
+        const qaId = validation.checkId(
+          user.progress.qaPlatform.answers[i].toString()
+        );
         currQa = await qa.getQaById(qaId);
         currQa._id = currQa._id.toString();
       } catch (e) {
@@ -388,7 +392,7 @@ router.route("/admin").get(async (req, res) => {
       let currLesson;
       try {
         let lessonId = validation.checkId(
-          user.progress.createdLessonId[i].lessonId,
+          user.progress.createdLessonId[i].toString(),
           "lessonId"
         );
         currLesson = await lessons.getLessonById(lessonId);
@@ -410,7 +414,9 @@ router.route("/admin").get(async (req, res) => {
     for (let i = user.progress.qaPlatform.questions.length - 1; i >= 0; i--) {
       let currQa;
       try {
-        const qaId = validation.checkId(user.progress.qaPlatform.questions[i]);
+        const qaId = validation.checkId(
+          user.progress.qaPlatform.questions[i].toString()
+        );
         currQa = await qa.getQaById(qaId);
         currQa._id = currQa._id.toString();
       } catch (e) {
@@ -432,7 +438,9 @@ router.route("/admin").get(async (req, res) => {
     for (let i = user.progress.qaPlatform.answers.length - 1; i >= 0; i--) {
       let currQa;
       try {
-        const qaId = validation.checkId(user.progress.qaPlatform.answers[i]);
+        const qaId = validation.checkId(
+          user.progress.qaPlatform.answers[i].toString()
+        );
         currQa = await qa.getQaById(qaId);
         currQa._id = currQa._id.toString();
       } catch (e) {

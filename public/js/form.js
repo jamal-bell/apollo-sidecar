@@ -442,7 +442,9 @@ if (uploadPhotoButton) {
     event.preventDefault();
 
     if (file.files.length === 0) {
-      return alert("Please choose a photo to upload");
+      photoUploadMessage.style.color = "red";
+      photoUploadMessage.textContent = "Please choose a photo to upload";
+      return;
     }
 
     let url;
@@ -470,13 +472,17 @@ if (uploadPhotoButton) {
 
       if (photoUpdated.data.updated) {
         userPhotoDisplay.src = photoUpdated.data.user.photo;
+        photoUploadMessage.style.color = "green";
         photoUploadMessage.textContent = "Photo Updated!";
       } else {
-        alert("Error Updating Photo: " + photoUpdated.data.photoErrors);
+        photoUploadMessage.style.color = "red";
+        photoUploadMessage.textContent =
+          "Error Updating Photo: " + photoUpdated.data.photoErrors;
       }
       file.value = "";
     } catch (e) {
-      alert("Error poisting the image to S3 bucket:" + e);
+      photoUploadMessage.style.color = "red";
+      photoUploadMessage.textContent = "Error Updating Photo: " + e;
     }
   });
 }
