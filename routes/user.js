@@ -21,8 +21,8 @@ dotenv.config();
 
 const region = "us-east-1";
 const bucketName = "apollo-sidecar";
-const accessKeyId = "AKIAYEWV4XGUEOOQI4GQ";
-const secretAccessKey = "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";
+const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 
 const s3 = new S3Client({
   region,
