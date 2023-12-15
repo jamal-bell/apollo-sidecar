@@ -157,6 +157,7 @@ router
   .route("/addmodule")
   .get(async (req, res) => {
     const lessonId = req.params["lesson-id"];
+    console.log("req.params at addmodule route: "+req.params);
     return res.render("lesson/publish", {
       title: "Publish Lesson",
       lessonId,
@@ -249,7 +250,7 @@ router
     //call data function
     try {
       const newlesson = await lessonsData.createModule(
-        id,
+        lessonId, // I CHANGED THIS 
         order,
         moduleTitle,
         text,
@@ -265,6 +266,7 @@ router
         creatorId,
         videoLink,
         text,
+        author
       });
     } catch (e) {
       errors.push(e);
