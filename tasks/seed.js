@@ -9,6 +9,7 @@ const db = await dbConnection();
 await db.dropDatabase();
 let newUser = undefined;
 let newLesson = undefined;
+let newLesson = undefined;
 let newQaPost = undefined;
 let newQaResponse = undefined;
 let userCollection;

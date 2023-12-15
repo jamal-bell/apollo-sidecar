@@ -66,8 +66,23 @@ const exportedusersMethods = {
           comment_vote: true,
         },
       },
-      lessons: { created: [], learned: [] },
-      qas: { created: [], answered: [] },
+      progress: {
+        lessonsTaken: 0,
+        lessonsComplete: 0,
+        lessonCreated: 0,
+        voteCount: 0,
+        qaAnswerCount: 0,
+        qaQuestionCount: 0,
+        completedLessonId: [],
+        inProgressLessonId: [],
+        createdLessonId: [],
+        currentLesson: [],
+        qaPlatform: {
+          questions: [],
+          answers: [],
+          votes: [],
+        },
+      },
     };
 
     const usersCollection = await users();
@@ -306,31 +321,32 @@ const exportedusersMethods = {
 
     if (!user) throw "User not found in the system.";
 
-    let lessons = user.lessons;
+    let progress = user.progress;
+    process.lessonCreated = process.lessonCreated + 1;
 
     if (createdOrLearned === "created") {
-      if (lessons.created) {
-        lessons.created.push(lessonId);
+      if (progress.createdLessonId) {
+        progress.createdLessonId.push({ lessonId: lessonId });
       } else {
-        lessons.created = [lessonId];
+        lessons.created = [{ lessonId: lessonId }];
       }
     } else if (createdOrLearned === "learned") {
-      if (lessons.created) {
-        lessons.learned.push(lessonId);
+      if (lessons.inProgressLessonId) {
+        lessons.inProgressLessonId.push({ lessonId: lessonId });
       } else {
-        lessons.learned = [lessonId];
+        lessons.inProgressLessonId = [{ lessonId: lessonId }];
       }
     } else {
       throw `Invalid argument for 'createdOrLearned'. Must be either 'created' or 'learned'`;
     }
-    const updatedLessons = {
-      lessons: lessons,
+    const updatedprogress = {
+      progress: progress,
       updatedAt: new Date(),
     };
 
     const updatedUser = await usersCollection.findOneAndUpdate(
       { _id: new ObjectId(userId) },
-      { $set: updatedLessons },
+      { $set: updatedprogress },
       { returnDocument: "after" }
     );
 

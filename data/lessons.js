@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb';
 import validation from './validation.js';
 import usersData from './users.js';
 
-let exportedLessonsMethods = {
+const exportedLessonsMethods = {
   //Creates a lesson + 1 module
   //Option to create additional modules via createModule()
   async createLesson(
