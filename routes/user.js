@@ -312,7 +312,7 @@ router.route("/user").get(async (req, res) => {
         const qaId = validation.checkId(
           user.progress.qaPlatform.questions[i].toString()
         );
-        currQa = await qa.getQaById(qaId);
+        currQa = await qa.getQa(qaId);
         currQa._id = currQa._id.toString();
       } catch (e) {
         return res.status(400).render("user/error", { error: e });
@@ -336,7 +336,7 @@ router.route("/user").get(async (req, res) => {
         const qaId = validation.checkId(
           user.progress.qaPlatform.answers[i].toString()
         );
-        currQa = await qa.getQaById(qaId);
+        currQa = await qa.getQa(qaId);
         currQa._id = currQa._id.toString();
       } catch (e) {
         return res.status(400).render("user/error", { error: e });
@@ -417,7 +417,7 @@ router.route("/admin").get(async (req, res) => {
         const qaId = validation.checkId(
           user.progress.qaPlatform.questions[i].toString()
         );
-        currQa = await qa.getQaById(qaId);
+        currQa = await qa.getQa(qaId);
         currQa._id = currQa._id.toString();
       } catch (e) {
         return res.status(400).render("user/error", { error: e });
@@ -441,7 +441,7 @@ router.route("/admin").get(async (req, res) => {
         const qaId = validation.checkId(
           user.progress.qaPlatform.answers[i].toString()
         );
-        currQa = await qa.getQaById(qaId);
+        currQa = await qa.getQa(qaId);
         currQa._id = currQa._id.toString();
       } catch (e) {
         return res.status(400).render("user/error", { error: e });
