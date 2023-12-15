@@ -18,7 +18,7 @@ router.route('/').get(async (req, res) => {
   try {
     if (req.session.authenticated) {
       user = true;
-      const userId = req.session.sessionId;
+      const userId = newreq.session.sessionId;
       creatorQuestions = await qaMethods.getRecentQAsByCreator(userId);
 
       if (req.session.user.role === 'admin') {
@@ -79,13 +79,18 @@ router
     }
     if (req.session.user) {
       try {
-        lessonRelatedId = await lessonMethods.getLessonById(qaTarget.lessonId);
-        lessonCreatorId = lessonRelatedId.creatorId;
+        lessonRelatedId = await lessonMethods.getLessonById(
+          qaTarget.lessonId.toString()
+        );
+        lessonCreatorId = lessonRelatedId.creatorId.toString();
       } catch (e) {
         error = e.message;
         return res.status(500).render('error', error);
       }
-      if (req.session.user.role === 'admin' && creatorId === lessonCreatorId) {
+      if (
+        req.session.user.role === 'admin' &&
+        req.session.user.sessionId === lessonCreatorId
+      ) {
         admin = true;
       } else {
         admin = false;
@@ -116,9 +121,9 @@ router
     }
     try {
       const lessonRelatedId = await lessonMethods.getLessonById(
-        qaTarget.lessonId
+        qaTarget.lessonId.toString()
       );
-      lessonCreatorId = lessonRelatedId.creatorId;
+      lessonCreatorId = lessonRelatedId.creatorId.toString();
     } catch (e) {
       error = e.message;
       return res.status(500).render('error', error);
@@ -167,7 +172,7 @@ router
     let admin;
     let lessonCreatorId;
     let creatorId = req.session.user.sessionId;
-    let qaId;
+    let qaId = req.params.id;
     let text;
     try {
       qaId = validation.checkId(qaId, 'QA ID');
@@ -180,9 +185,9 @@ router
     try {
       //rendering purpose only
       const lessonRelatedId = await lessonMethods.getLessonById(
-        qaTarget.lessonId
+        qaTarget.lessonId.toString()
       );
-      lessonCreatorId = lessonRelatedId.creatorId;
+      lessonCreatorId = lessonRelatedId.creatorId.toString();
     } catch (e) {
       error = e.message;
       return res.status(500).render('error', error);
@@ -250,8 +255,10 @@ router
       answerId = validation.checkId(answerId, 'answer ID');
       voterId = validation.checkId(voterId, 'voter ID');
 
-      lessonRelatedId = await lessonMethods.getLessonById(qaTarget.lessonId);
-      lessonCreatorId = lessonRelatedId.creatorId;
+      lessonRelatedId = await lessonMethods.getLessonById(
+        qaTarget.lessonId.toString()
+      );
+      lessonCreatorId = lessonRelatedId.creatorId.toString();
     } catch (e) {
       error = e.message;
       return res.status(500).render('error', error);
@@ -282,6 +289,7 @@ router
       .status(200)
       .render('qaView', { title: qaTarget.title, qaTarget, admin, owner });
   })
+
   .delete(async (req, res) => {
     //DELETING AN ANSWER
     let error;
@@ -305,9 +313,9 @@ router
     }
     try {
       const lessonRelatedId = await lessonMethods.getLessonById(
-        qaTarget.lessonId
+        qaTarget.lessonId.toString()
       );
-      lessonCreatorId = lessonRelatedId.creatorId;
+      lessonCreatorId = lessonRelatedId.creatorId.toString();
     } catch (e) {
       error = e.message;
       return res.status(500).render('error', error);
@@ -366,6 +374,7 @@ router
   .get(async (req, res) => {
     //CREATE QA WEBPAGE- CHRISTINE PUT href link to /qa/create/{{lessonId}} to create an Q&A based off lesson
     let error;
+    let lessonId = req.params.lessonId;
     try {
       lessonId = validation.checkId(lessonId, 'Lesson ID');
       originLesson = await lessonMethods.getLessonById(lessonId);
@@ -381,8 +390,10 @@ router
     let originLesson;
     let contentId;
     let creatorId = req.session.user.sessionId;
+    let lessonId = req.params.lessonId;
     let newQaId;
     try {
+      contentId = xss(req.body.contentId);
       lessonId = validation.checkId(lessonId, 'Lesson ID');
       contentId = validation.checkId(contentId, 'content ID');
       creatorId = validation.checkId(creatorId, 'creator ID');
