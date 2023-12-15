@@ -436,6 +436,7 @@ if (profile) {
 if (uploadPhotoButton) {
   const userPhotoDisplay = document.getElementById("userPhotoDisplay");
   const file = document.getElementById("photoInput");
+  const photoUploadMessage = document.getElementById("photoMessage");
 
   uploadPhotoButton.addEventListener("click", async function (event) {
     event.preventDefault();
@@ -465,11 +466,11 @@ if (uploadPhotoButton) {
       const imageUrl = url.split("?")[0];
       //post url server to save into database
 
-      const photoUpdated = await axios.post("/user/s3", {url: imageUrl});
+      const photoUpdated = await axios.post("/user/s3", { url: imageUrl });
 
       if (photoUpdated.data.updated) {
         userPhotoDisplay.src = photoUpdated.data.user.photo;
-        alert("Photo Updated!");
+        photoUploadMessage.textContent = "Photo Updated!";
       } else {
         alert("Error Updating Photo: " + photoUpdated.data.photoErrors);
       }

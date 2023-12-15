@@ -148,21 +148,41 @@
 
 <h2>Q&A Contributions</h2>
 <section id="qas">
-    {{#if hasQas}}
-    <main>
+    {{#if hasQuestion}}
         <ul>
-            {{#each qas}}
+            {{#each answers}}
                 <li>
                     <h3>{{this.questionName}}</h3>
                     <p>Type: <span>{{this.questionType}}</span></p>
                     <p>Ans: <span>{{this.answers.sum}}</span></p>
                     <p>Upvotes: <span>{{this.votes.sum}}</span></p>
                     <p><span>{{this.createdAt}}</span></p>
-                    <button type="button" onclick="location.href='/qa/{{{this._id}}}'">Review/Continue</button>
+                    <button type="button" onclick="location.href='/lesson/details'">Review/Continue</button>
                 </li>
             {{/each}}
         </ul>
-    </main>
+    {{else}}
+        <main>
+            <p>No Q&A contributions yet.</p>
+        </main>
+    {{/if}}
+</section>
+
+<h2>Question Asked</h2>
+<section id="qas">
+    {{#if hasAnswers}}
+        <ul>
+            {{#each questions}}
+                <li>
+                    <h3>{{this.questionName}}</h3>
+                    <p>Type: <span>{{this.questionType}}</span></p>
+                    <p>Ans: <span>{{this.answers.sum}}</span></p>
+                    <p>Upvotes: <span>{{this.votes.sum}}</span></p>
+                    <p><span>{{this.createdAt}}</span></p>
+                    <button type="button" onclick="location.href='/lesson/details'">Review/Continue</button>
+                </li>
+            {{/each}}
+        </ul>
     {{else}}
         <main>
             <p>No Q&A contributions yet.</p>

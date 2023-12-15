@@ -34,10 +34,8 @@ form label {
   margin-right: 5px;
 }
 
-
 a, p, footer, h1, h2 {
 	text-align: center;
-    display: flex;
     justify-content: center;
     align-items: center;
     margin-top: 10px;

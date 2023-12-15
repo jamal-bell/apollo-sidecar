@@ -301,10 +301,10 @@ router.route("/user").get(async (req, res) => {
     createdLessons = false;
   }
 
-  const userQas = [];
-  let hasQas;
+  const userQuestions = [];
+  let hasQuestions;
   if (user.progress.qaPlatform.questions.length !== 0) {
-    hasQas = true;
+    hasQuestions = true;
     let count = 0;
     for (let i = user.progress.qaPlatform.questions.length - 1; i >= 0; i--) {
       let currQa;
@@ -315,12 +315,34 @@ router.route("/user").get(async (req, res) => {
       } catch (e) {
         return res.status(400).render("user/error", { error: e });
       }
-      userQas.push(currQa);
+      userQuestions.push(currQa);
       count++;
       if (count === 3) break;
     }
   } else {
-    hasQas = false;
+    hasQuestions = false;
+  }
+
+  const userAnswers = [];
+  let hasAnswers;
+  if (user.progress.qaPlatform.answers.length !== 0) {
+    hasAnswers = true;
+    let count = 0;
+    for (let i = user.progress.qaPlatform.answers.length - 1; i >= 0; i--) {
+      let currQa;
+      try {
+        const qaId = validation.checkId(user.progress.qaPlatform.answers[i]);
+        currQa = await qa.getQaById(qaId);
+        currQa._id = currQa._id.toString();
+      } catch (e) {
+        return res.status(400).render("user/error", { error: e });
+      }
+      userAnswers.push(currQa);
+      count++;
+      if (count === 3) break;
+    }
+  } else {
+    hasAnswers = false;
   }
 
   return res.render("user/user", {
@@ -331,8 +353,10 @@ router.route("/user").get(async (req, res) => {
     hasLessons: hasLessons,
     lessonCreated: lessonCreated,
     createdLessons: createdLessons,
-    qas: userQas,
-    hasQas: hasQas,
+    questions: userQuestions,
+    hasQuestions: hasQuestions,
+    answers: userAnswers,
+    hasAnswers: hasAnswers,
   });
 });
 
@@ -378,10 +402,32 @@ router.route("/admin").get(async (req, res) => {
     hasLessons = false;
   }
 
-  const adminQas = [];
-  let hasQas;
+  const adminQuestions = [];
+  let hasQuestions;
+  if (user.progress.qaPlatform.questions.length !== 0) {
+    hasQuestions = true;
+    let count = 0;
+    for (let i = user.progress.qaPlatform.questions.length - 1; i >= 0; i--) {
+      let currQa;
+      try {
+        const qaId = validation.checkId(user.progress.qaPlatform.questions[i]);
+        currQa = await qa.getQaById(qaId);
+        currQa._id = currQa._id.toString();
+      } catch (e) {
+        return res.status(400).render("user/error", { error: e });
+      }
+      adminQuestions.push(currQa);
+      count++;
+      if (count === 3) break;
+    }
+  } else {
+    hasQuestions = false;
+  }
+
+  const adminAnswers = [];
+  let hasAnswers;
   if (user.progress.qaPlatform.answers.length !== 0) {
-    hasQas = true;
+    hasAnswers = true;
     let count = 0;
     for (let i = user.progress.qaPlatform.answers.length - 1; i >= 0; i--) {
       let currQa;
@@ -392,21 +438,24 @@ router.route("/admin").get(async (req, res) => {
       } catch (e) {
         return res.status(400).render("user/error", { error: e });
       }
-      adminQas.push(currQa);
+      adminAnswers.push(currQa);
       count++;
       if (count === 3) break;
     }
   } else {
-    hasQas = false;
+    hasAnswers = false;
   }
+
   return res.render("user/admin", {
     title: "Overview",
     style_partial: "overview",
     user: user,
     lessons: adminLessons,
     hasLessons: hasLessons,
-    qas: adminQas,
-    hasQas: hasQas,
+    questions: adminQuestions,
+    hasQuestions: hasQuestions,
+    answers: adminAnswers,
+    hasAnswers: hasAnswers,
   });
 });
 
