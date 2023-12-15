@@ -116,9 +116,8 @@ const exportedMethods = {
     let qaTarget;
     try {
       qaId = validation.checkId(qaId, 'qa Id');
-      qaId = new ObjectId(qaId);
       const qaCollection = await qa();
-      qaTarget = await qaCollection.findOne({ _id: qaId });
+      qaTarget = await qaCollection.findOne({ _id: new ObjectId(qaId) });
     } catch (e) {
       throw new Error('QA Not Found!');
     }
