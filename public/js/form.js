@@ -343,7 +343,7 @@ if (profile) {
               location.reload();
             }
           })
-          .catch(function (error) {
+          .catch(function (e) {
             errorList.push(`<li>${e}</li>`);
             errorContainer.show();
           });

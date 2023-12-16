@@ -132,15 +132,15 @@ const exportedLessonsMethods = {
       createdByRole: '',
     };
     const lessonWithNewModule = await lessonsCollection.updateOne(
-      { _id: new ObjectId(id) },
+      { _id: new ObjectId(lessonId) },
       { $push: { contents: newModule } }
     );
     if (!lessonWithNewModule.modifiedCount)
       throw 'attendee with that email address is already registered';
-    console.log(lessonWithNewModule.modifiedCount);
-    console.log(newModule);
+    //console.log(lessonWithNewModule.modifiedCount);
+    //console.log(newModule);
 
-    const result = await this.getLessonById(id);
+    const result = await this.getLessonById(lessonId);
     return result;
   },
 
