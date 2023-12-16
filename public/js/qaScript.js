@@ -2,8 +2,6 @@ let errors = [];
 let answerForm = document.getElementById('addAnswerForm');
 let qaForm = document.getElementById('addQaForm');
 let deleteAnswerForm = document.getElementById('deleteAnswerForm');
-let deleteAnswerAdminForm = document.getElementById('deleteQaAnswerAdminForm');
-let deleteQaAdminForm = document.getElementById('deleteQaAdminForm');
 let deleteQaForm = document.getElementById('deleteQaFOrm');
 let errorSpace = document.getElementById('errorSpace');
 
@@ -12,7 +10,7 @@ if (answerForm) {
   let textInput = document.getElementById('replyText');
   answerForm.addEventListener('submit', (event) => {
     errorSpace.innerHTML = '';
-    let textInput_trimmed = textInput.trim();
+    let textInput_trimmed = textInput.value.value.trim();
     if (!textInput_trimmed) {
       answerFormErrors.push('Answer must have some text!');
     }
@@ -41,14 +39,14 @@ if (qaForm) {
   qaForm.addEventListener('submit', (event) => {
     errorSpace.innerHTML = '';
     let textInput = document.getElementById('qaText');
-    let titleInput = document.getElementById('qaTItle');
+    let titleInput = document.getElementById('qaTitle');
     let contentId = document.getElementById('contentId');
 
-    if (!contentId || !isObjectId(contentId)) {
+    if (!contentId) {
       qaFormErrors.push('Lesson content selected must be valid');
     }
-    const textInput_trimmed = textInput.trim();
-    const titleInput_trimmed = titleInput.trim();
+    const textInput_trimmed = textInput.value.trim();
+    const titleInput_trimmed = titleInput.value.trim();
     if (!titleInput_trimmed) {
       qaFormErrors.push('Title must be included');
     } else {
@@ -97,34 +95,7 @@ if (deleteAnswerForm) {
     }
   });
 }
-if (deleteAnswerAdminForm) {
-  deleteAnswerAdminForm.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const confirmation = confirm(
-      'Are you sure you want to delete this answer?'
-    );
-    if (confirmation) {
-      const response = await fetch(form.action, {
-        method: 'DELETE',
-      });
-    }
-  });
-}
 if (deleteQaForm) {
-  deleteQaForm.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const confirmation = confirm(
-      'Are you sure you want to delete this answer?'
-    );
-    if (confirmation) {
-      const response = await fetch(form.action, {
-        method: 'DELETE',
-      });
-    }
-  });
-}
-
-if (deleteQaAdminForm) {
   deleteQaForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     const confirmation = confirm(
