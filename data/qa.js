@@ -165,7 +165,16 @@ const exportedMethods = {
       }
       const commentId = new ObjectId();
       const currentDate = new Date();
-      const timestamp = currentDate.getTime();
+      const createdAt = currentDate.getTime();
+      const createdAtDate = new Date(createdAt);
+      const timeStamp = createdAtDate.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true,
+      });
       const votedUsers = [];
       const voteUserAndTime = { userId: author._id, voteTime: timestamp };
       votedUsers.push(voteUserAndTime);
@@ -182,7 +191,8 @@ const exportedMethods = {
               creatorId: author._id, //_id of the answer creator
               author: author.handle, //handle of the user
               votes: votes, //contains an (array votedUsers[] containing the user who voted, timestamp) and value
-              createdAt: timestamp,
+              createdAt: createdAt,
+              timeStamp: timeStamp,
               locked: false, //locked - added after database proposal
             }, //END ANSWER SCHEMA
           },

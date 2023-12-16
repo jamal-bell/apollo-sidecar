@@ -26,7 +26,7 @@
         </button>
       </form>
       {{/if}}
-      <div><a href='../../user/{{this.author}}'>{{this.author}}</a></div>
+      <div><a href='../../user/{{this.author}}'>{{this.author}}</a> at {{this.timeStamp}}</div>
       <div>{{this.text}}</div>
       {{#if admin}}
       <form id="deleteAnswerAdminForm" class="delete" action="/qa/{{../qaTarget._id}}/{{this._id}}" method="">
