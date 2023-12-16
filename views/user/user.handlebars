@@ -1,11 +1,11 @@
-<h2>{{{title}}}</h2>
 <section id="profile">
+    <h2>Profile</h2>
     <div id="userProfileContainer">
         <table>
             <tr>
                 <th>First Name</th>
                 <td id="firstName">{{{user.firstName}}}</td>
-                <td rowspan="6" class="photo-cell">
+                <td rowspan="7" class="photo-cell">
                     <img id="userPhotoDisplay" src="{{{user.photo}}}" alt="User Photo" id="user-Photo">
                 </td>
             </tr>
@@ -16,6 +16,10 @@
             <tr>
                 <th>Email Address</th>
                 <td id="email">{{{user.emailAddress}}}</td>
+            </tr>
+            <tr>
+                <th>Handle</th>
+                <td id="handle">{{{user.handle}}}</td>
             </tr>
             <tr>
                 <th>Bio</th>
@@ -32,14 +36,12 @@
             <tr>
                 <th>Account Created</th>
                 <td id="accountCreatedAt">{{{user.createdAt}}}</td>
-                <td>
-                    <input type="file" id="photoInput" accept="image/*" />
-                </td>
+                <td class="centered-cell"><input type="file" id="photoInput" accept="image/*" /></td>
             </tr>
             <tr>
                 <th>Last Login</th>
                 <td id="lastLogin">{{{user.lastLogin}}}</td>
-                <td><button id="uploadPhotoButton">Upload</button></td>
+                <td class="centered-cell"><button id="uploadPhotoButton">Upload</button></td>
             </tr>
         </table>
     </div>
@@ -47,24 +49,27 @@
     <form id="profile-form">
         <div>
             <label for="firstNameInput">First Name:</label>
-            <input type="text" id="firstNameInput" name="firstNameInput" value="{{{user.firstName}}}" disabled>
+            <input type="text" id="firstNameInput" name="firstNameInput" value="{{{user.firstName}}}">
         </div>
         <div>
             <label for="lastNameInput">Last Name:</label>
-            <input type="text" id="lastNameInput" name="lastNameInput" value="{{{user.lastName}}}" disabled>
+            <input type="text" id="lastNameInput" name="lastNameInput" value="{{{user.lastName}}}">
         </div>
         <div>
             <label for="emailAddressInput">Email:</label>
-            <input type="email" id="emailAddressInput" name="emailAddressInput" value="{{{user.emailAddress}}}"
-                disabled>
+            <input type="email" id="emailAddressInput" name="emailAddressInput" value="{{{user.emailAddress}}}">
+        </div>
+        <div>
+            <label for="handleInput">Handle:</label>
+            <input type="text" id="handleInput" name="handleInput" value="{{{user.handle}}}">
         </div>
         <div>
             <label for="bioInput">Bio:</label>
-            <textarea id="bioInput" name="bioInput" disabled>{{{user.bio}}}</textarea>
+            <textarea id="bioInput" name="bioInput">{{{user.bio}}}</textarea>
         </div>
         <div>
             <label for="githubInput">GitHub Link:</label>
-            <input type="url" id="githubInput" name="githubInput" value="{{{user.github}}}" disabled>
+            <input type="url" id="githubInput" name="githubInput" value="{{{user.github}}}">
         </div>
         <div>
             <label for="roleInput">User Type:</label>
@@ -78,19 +83,19 @@
             <label for="lastLogin">Last Login:</label>
             <input type="text" id="lastLogin" name="lastLogin" value="{{{user.lastLogin}}}" disabled>
         </div>
-
-        <div class="form-errors">
-            <ul id="errors" class="errors">
-                {{#if hasErrors}}
-                    {{#each errors}}
-                        <li>
-                            {{this}}
-                        </li>
-                    {{/each}}
-                {{/if}}
-            </ul>
-        </div>
     </form>
+    <p id="photoMessage"></p>
+    <div class="form-errors">
+        <ul id="errors" class="errors">
+            {{#if hasErrors}}
+                {{#each errors}}
+                    <li>
+                        {{this}}
+                    </li>
+                {{/each}}
+            {{/if}}
+        </ul>
+    </div>
     <div id="editButtons" class="buttons">
         <button type="button" id="saveProfileButton" hidden>Save Profile</button>
         <button type="button" id="editProfileButton">Edit Profile</button>
@@ -126,22 +131,24 @@
     </main>
 </section>
 
-<seciton class="lessons">
-    {{#if createdLessons}}
-        <main>
-            <h2>Lesson Created</h2>
-            <ul>
-                {{#each lessonCreated}}
-                    <li>
-                        <h3>{{this.lessonTitle}}</h3>
-                        <button type="button" onclick="location.href='/lessons/lesson/{{{this._id}}}'">Edit
-                            Lesson</button>
-                    </li>
-                {{/each}}
-            </ul>
-        </main>
-    {{/if}}
-</seciton>
+
+{{#if createdLessons}}
+    <seciton class="lessons"></seciton>
+    <main>
+        <h2>Lesson Created</h2>
+        <ul>
+            {{#each lessonCreated}}
+                <li>
+                    <h3>{{this.lessonTitle}}</h3>
+                    <button type="button" onclick="location.href='/lessons/lesson/{{{this._id}}}'">Edit
+                        Lesson</button>
+                </li>
+            {{/each}}
+        </ul>
+    </main>
+    </seciton>
+{{/if}}
+
 
 <br />
 <br />
@@ -168,9 +175,10 @@
     {{/if}}
 </section>
 
-<h2>Question Asked</h2>
-<section id="qas">
-    {{#if hasAnswers}}
+
+{{#if hasAnswers}}
+    <h2>Question Asked</h2>
+    <section id="qas">
         <ul>
             {{#each questions}}
                 <li>
@@ -183,9 +191,5 @@
                 </li>
             {{/each}}
         </ul>
-    {{else}}
-        <main>
-            <p>No Q&A contributions yet.</p>
-        </main>
-    {{/if}}
-</section>
+    </section>
+{{/if}}
