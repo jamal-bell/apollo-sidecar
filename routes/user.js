@@ -2,6 +2,7 @@ import { lessons, qa } from "../config/mongoCollections.js";
 import users from "../data/users.js";
 import lessonsData from "../data/lessons.js";
 import qaData from "../data/qa.js";
+import { ObjectId } from "mongodb";
 import { Router } from "express";
 const router = Router();
 import express from "express";
@@ -498,10 +499,17 @@ router.route("/admin").get(async (req, res) => {
         currLesson = await lessonsData.getLessonById(lessonId);
         currLesson._id = currLesson._id.toString();
 
-        currContent = await lessonsCollection.findOne({
-          _id: lessonId,
-          "contents._id": contentId,
-        });
+        currContent = await lessonsCollection.findOne(
+          {
+            _id: new ObjectId(lessonId),
+            "contents._id": new ObjectId(contentId),
+          },
+          {
+            projection: {
+              "contents.$": 1,
+            },
+          }
+        );
         currContent._id = currContent._id.toString();
       } catch (e) {
         return res.status(400).render("user/error", { error: e });
@@ -589,14 +597,14 @@ router.route("/admin").get(async (req, res) => {
   });
 });
 
-router.route("/public/:userId").get(async (req, res) => {
+router.route("/public/:handle").get(async (req, res) => {
   //code here for GET
   if (!req.session.authenticated) {
     return res.redirect("/user/login");
   }
 
   try {
-    req.params.userId = validation.checkId(req.params.userId, "User Id");
+    req.params.userId = validation.checkHandle(req.params.userId, "User Id");
   } catch (e) {
     return res.status(400).render("/user/error", { title: "Error", error: e });
   }
