@@ -57,10 +57,10 @@ const exportedLessonsMethods = {
           author: null,
           text: contents[0].text, //string
           videoLink: contents[0].videoLink, // array of string urls to the resource video
-          // votes: {
-          //   votedUsers: [], // [{ userId: ObjectId, voteTime: "string" }] (timestamp from response header???)
-          //   count: 0, // total count for upVotes
-          // },
+          votes: {
+            votedUsers: [], // [{ userId: ObjectId, voteTime: "string" }] (timestamp from response header???)
+            count: 0, // total count for upVotes
+          },
           createdByRole: '',
         },
       ],
@@ -220,7 +220,6 @@ const exportedLessonsMethods = {
     const updatedModule = await lessonsCollection.findOneAndUpdate(
       { 'contents._id': new ObjectId(id) },
       { $set: { 'contents.$': moduleUpdateInfo } },
-      
       { returnDocument: 'after' }
       //{arrayFilters: []}
     );

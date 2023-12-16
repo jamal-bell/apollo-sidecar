@@ -5,9 +5,9 @@ import userRoutes from "./user.js";
 
 const constructorMethod = (app) => {
   app.use("/", homeRoutes);
+  app.use("/user", userRoutes);
   app.use("/lessons", lessonRoutes);
   app.use("/qa", qaRoutes);
-  app.use("/user", userRoutes);
   app.use("/searchResults", userRoutes);
   app.use("*", (req, res) => {
     res.status(404).render("error", { errorMessage: `404` });

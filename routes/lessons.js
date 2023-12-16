@@ -96,8 +96,10 @@ router
         lessonId,
         "created"
       );
+      if (!addedToUser) throw "Could not add Lesson to user on create lesson."
 
-      if (!addedToUser) throw "Could not add Lesson to user.";
+
+      
 
       return res.status(200).render("lesson/publish", {
         title: "Create Lesson",
@@ -286,17 +288,25 @@ router
         videoLink
       );
 
+      const addedToUserAgain = await usersData.addLesson(
+        req.session.sessionId,
+        lessonId,
+        "learned"
+      );
+
+      if (!addedToUserAgain) throw "Could not add Lesson to user on launch lesson.";
       //if successful, render lesson/:id
-      return res.status(200).render("lesson/lessonById", {
-        lessonTitle,
-        description,
-        order,
-        moduleTitle,
-        creatorId,
-        videoLink,
-        text,
-        author,
-      });
+      return res.status(200).redirect("/user/user")
+      // return res.status(200).render("lesson/lessonById", {
+      //   lessonTitle,
+      //   description,
+      //   order,
+      //   moduleTitle,
+      //   creatorId,
+      //   videoLink,
+      //   text,
+      //   author,
+      // });
     } catch (e) {
       errors.push(e);
       return res.status(400).render("lesson/publish", {
