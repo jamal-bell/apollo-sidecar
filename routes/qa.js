@@ -47,20 +47,18 @@ router
     // VIEWING QA
     let qaTarget;
     let error;
-    let qaId;
+    let qaId = xss(req.params.id);
     let owner = false;
     let admin = false;
     let lessonCreatorId;
     let lessonRelatedId;
     try {
-      qaId = validation.checkId(req.params.id, 'QA ID');
+      qaId = validation.checkId(qaId, 'QA ID');
     } catch (e) {
       error = e.message;
-      return res.status(400).render('qa/view', {
-        title: 'Invalid Lesson ID?',
+      return res.status(404).render('error', {
+        title: 'Error 404: Invalid Lesson ID?',
         error,
-        admin,
-        owner,
       });
     }
     try {
@@ -106,7 +104,7 @@ router
   .delete(async (req, res) => {
     //DELETING QA
     let error;
-    let qaId = req.params.id;
+    let qaId = xss(req.params.id);
     let owner;
     let admin;
     let qaTarget;
@@ -167,12 +165,12 @@ router
   .post(async (req, res) => {
     //CREATING ANSWER
     let error;
+    let qaId = xss(req.params.id);
     let qaTarget;
     let owner;
     let admin;
     let lessonCreatorId;
     let creatorId = req.session.user.sessionId;
-    let qaId = req.params.id;
     let text;
     try {
       qaId = validation.checkId(qaId, 'QA ID');
@@ -247,8 +245,8 @@ router
     let admin;
     let lessonCreatorId;
     let lessonRelatedId;
-    const qaId = req.params.id;
-    const answerId = req.params.aId;
+    const qaId = xss(req.params.id);
+    const answerId = xss(req.params.aId);
     const voterId = req.session.user.sessionId;
     try {
       qaId = validation.checkId(qaId, 'QA ID');
@@ -289,15 +287,14 @@ router
       .status(200)
       .render('qaView', { title: qaTarget.title, qaTarget, admin, owner });
   })
-
   .delete(async (req, res) => {
     //DELETING AN ANSWER
     let error;
     let qaTarget;
     let answerTarget;
     const creatorId = req.session.user.sessionId;
-    const qaId = req.params.id;
-    const commentId = req.params.aId;
+    const qaId = xss(req.params.id);
+    const commentId = xss(req.params.aId);
     let owner;
     let answerOwner;
     let admin;
@@ -374,7 +371,7 @@ router
   .get(async (req, res) => {
     //CREATE QA WEBPAGE- CHRISTINE PUT href link to /qa/create/{{lessonId}} to create an Q&A based off lesson
     let error;
-    let lessonId = req.params.lessonId;
+    let lessonId = xss(req.params.lessonId);
     try {
       lessonId = validation.checkId(lessonId, 'Lesson ID');
       originLesson = await lessonMethods.getLessonById(lessonId);
@@ -390,7 +387,7 @@ router
     let originLesson;
     let contentId;
     let creatorId = req.session.user.sessionId;
-    let lessonId = req.params.lessonId;
+    let lessonId = xss(req.params.lessonId);
     let newQaId;
     try {
       contentId = xss(req.body.contentId);
