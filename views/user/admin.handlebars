@@ -5,7 +5,7 @@
             <tr>
                 <th>First Name</th>
                 <td id="firstName">{{{user.firstName}}}</td>
-                <td rowspan="6" class="photo-cell">
+                <td rowspan="7" class="photo-cell">
                     <img id="userPhotoDisplay" src="{{{user.photo}}}" alt="User Photo" id="user-Photo">
                 </td>
             </tr>
@@ -16,6 +16,10 @@
             <tr>
                 <th>Email Address</th>
                 <td id="email">{{{user.emailAddress}}}</td>
+            </tr>
+            <tr>
+                <th>Handle</th>
+                <td id="handle">{{{user.handle}}}</td>
             </tr>
             <tr>
                 <th>Bio</th>
@@ -45,24 +49,27 @@
     <form id="profile-form">
         <div>
             <label for="firstNameInput">First Name:</label>
-            <input type="text" id="firstNameInput" name="firstNameInput" value="{{{user.firstName}}}" disabled>
+            <input type="text" id="firstNameInput" name="firstNameInput" value="{{{user.firstName}}}">
         </div>
         <div>
             <label for="lastNameInput">Last Name:</label>
-            <input type="text" id="lastNameInput" name="lastNameInput" value="{{{user.lastName}}}" disabled>
+            <input type="text" id="lastNameInput" name="lastNameInput" value="{{{user.lastName}}}">
         </div>
         <div>
             <label for="emailAddressInput">Email:</label>
-            <input type="email" id="emailAddressInput" name="emailAddressInput" value="{{{user.emailAddress}}}"
-                disabled>
+            <input type="email" id="emailAddressInput" name="emailAddressInput" value="{{{user.emailAddress}}}">
+        </div>
+        <div>
+            <label for="handleInput">Handle:</label>
+            <input type="text" id="handleInput" name="handleInput" value="{{{user.handle}}}">
         </div>
         <div>
             <label for="bioInput">Bio:</label>
-            <textarea id="bioInput" name="bioInput" disabled>{{{user.bio}}}</textarea>
+            <textarea id="bioInput" name="bioInput">{{{user.bio}}}</textarea>
         </div>
         <div>
             <label for="githubInput">GitHub Link:</label>
-            <input type="url" id="githubInput" name="githubInput" value="{{{user.github}}}" disabled>
+            <input type="url" id="githubInput" name="githubInput" value="{{{user.github}}}">
         </div>
         <div>
             <label for="roleInput">User Type:</label>
@@ -96,9 +103,6 @@
         <button type="button" id="cancelAccountButton">Cancel Account</button>
     </div>
 </section>
-
-<br />
-<br />
 
 <h2>Lessons Created</h2>
 <section class="lessons">
@@ -139,14 +143,14 @@
         </ul>
     {{else}}
         <main>
-            <p>No Q&A contribution yet.</p>
+            <p>No Q&A contribution yet, help others now <a href="/qa">here</a>.</p>
         </main>
     {{/if}}
 </section>
 
-<h2>Question Asked</h2>
-<section id="qas">
-    {{#if hasAnswers}}
+{{#if hasAnswers}}
+    <h2>Question Asked</h2>
+    <section id="qas">
         <ul>
             {{#each questions}}
                 <li>
@@ -159,9 +163,5 @@
                 </li>
             {{/each}}
         </ul>
-    {{else}}
-        <main>
-            <p>No question requested.</p>
-        </main>
-    {{/if}}
-</section>
+    </section>
+{{/if}}
