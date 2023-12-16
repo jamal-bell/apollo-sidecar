@@ -33,7 +33,8 @@ router.route("/lesson/:id").get(async (req, res) => {
       .render("/error", { error: "Unknown url id param", title: "Error" });
   }
   const lessonFound = await lessonsData.getLessonById(req.params.id);
-  res.status(200).render("lesson/lessonById", {
+  return res.status(200).render("lesson/lessonById", {
+    lessonId: req.params.id,
     title: lessonFound.title,
     moduleTitle: lessonFound.moduleTitle,
     description: lessonFound.description,
@@ -48,9 +49,10 @@ router
     try {
       return res.status(200).render("lesson/newlesson", {
         title: "Create Lesson",
+        //style_partial: "lesson",//ERROR HERE?
       });
     } catch (e) {
-      res.status(500).json({ Error: e });
+      return res.status(500).json({ Error: e });
     }
   })
   .post(async (req, res) => {
@@ -94,7 +96,7 @@ router
         lessonId,
         "created"
       );
-      console.log(addedToUser);
+
       if (!addedToUser) throw "Could not add Lesson to user.";
 
       return res.status(200).render("lesson/publish", {
@@ -106,6 +108,7 @@ router
         moduleTitle,
         text,
         videoLink,
+        style_partial: "lesson",
         //createdBy: null,
         //creatorId,
         //author,
@@ -154,25 +157,32 @@ router
   });
 
 router
-  .route("/addmodule")
+  .route("/addmodule/:id")
   .get(async (req, res) => {
-    const lessonId = req.params["lesson-id"];
-    console.log("req.params at addmodule route: "+req.params);
-    return res.render("lesson/publish", {
+    let lessonId = req.params.id;
+    let lesson = {};
+    try {
+      lesson = await lessonsData.getLessonById(lessonId);
+    } catch (e) {
+      return res.status(500).json({ Error: e });
+    }
+    return res.status(200).render("lesson/publish", {
       title: "Publish Lesson",
       lessonId,
+      lesson,
+      style_partial: "lesson",
     });
   })
   .post(async (req, res) => {
     try {
-      const { lessonId, moduleTitle, text, videoLink, order } = req.body;
-      console.log(req.body);
+      let { lessonId, moduleTitle, text, videoLink, order } = req.body;
+      //console.log(order);
 
-      const orderId = parseInt(order);
+      order = "undefined" ? 1 : parseInt(order);
 
       const response = await lessonsData.createModule(
         lessonId,
-        orderId,
+        order,
         moduleTitle,
         text,
         videoLink
@@ -181,13 +191,17 @@ router
 
       //console.log("response: " + response);
 
-      return res.render("lesson/publish", {
+      return res.json({
+        updated: true,
         title: "Publish Lesson",
+        moduleTitle: moduleTitle,
         lessonId: lessonId,
-        lesson,
+        text: text,
+        order: order,
+        videoLink: videoLink,
       });
     } catch (error) {
-      return res.status(400).render("lesson/publish", {
+      return res.status(400).json({
         title: "Edit Lesson",
         errors: error,
         hasErrors: true,
@@ -225,11 +239,26 @@ router
     let createdBy;
 
     try {
-      text = validation.checkContent(text, "lesson title", 3, 250);
+      moduleTitle = validation.checkContent(
+        moduleTitle,
+        "lesson title",
+        3,
+        250
+      );
     } catch (e) {
       errors.push(e);
     }
-    //TODO other validation
+    try {
+      text = validation.checkContent(text, "lesson title", 10, 250);
+    } catch (e) {
+      errors.push(e);
+    }
+
+    try {
+      videoLink = validation.checkString(videoLink, "lesson title");
+    } catch (e) {
+      errors.push(e);
+    }
 
     req.session.user.role == "admin"
       ? createdBy == "admin"
@@ -238,19 +267,19 @@ router
     if (errors.length > 0) {
       return res.status(400).render("lesson/publish", {
         title: "Error Publishing - Try Again",
-
         errors: errors,
         hasErrors: true,
         moduleTitle: moduleTitle,
         text: text,
         videoLink: videoLink,
+        style_partial: "lesson",
       });
     }
 
     //call data function
     try {
       const newlesson = await lessonsData.createModule(
-        lessonId, // I CHANGED THIS 
+        lessonId, // I CHANGED THIS
         order,
         moduleTitle,
         text,
@@ -258,7 +287,7 @@ router
       );
 
       //if successful, render lesson/:id
-      res.status(200).render("lesson/lessonById", {
+      return res.status(200).render("lesson/lessonById", {
         lessonTitle,
         description,
         order,
@@ -266,7 +295,7 @@ router
         creatorId,
         videoLink,
         text,
-        author
+        author,
       });
     } catch (e) {
       errors.push(e);
@@ -277,6 +306,7 @@ router
         moduleTitle: moduleTitle,
         text: text,
         videoLink: videoLink,
+        style_partial: "lesson",
       });
     }
     res
