@@ -1,7 +1,6 @@
 import { lessonsData } from "../data/index.js";
 import { usersData } from "../data/index.js";
 import validation from "../data/validation.js";
-import lessons from "../data/lessons.js";
 import express from "express";
 import { Router } from "express";
 const app = express();
@@ -34,7 +33,8 @@ router.route("/lesson/:id").get(async (req, res) => {
       .render("/error", { error: "Unknown url id param", title: "Error" });
   }
   const lessonFound = await lessonsData.getLessonById(req.params.id);
-  res.status(200).render("lesson/lessonById", {
+  return res.status(200).render("lesson/lessonById", {
+    lessonId: req.params.id,
     title: lessonFound.title,
     moduleTitle: lessonFound.moduleTitle,
     description: lessonFound.description,
@@ -49,14 +49,14 @@ router
     try {
       return res.status(200).render("lesson/newlesson", {
         title: "Create Lesson",
+        //style_partial: "lesson",//ERROR HERE?
       });
     } catch (e) {
-      res.status(500).json({ Error: e });
+      return res.status(500).json({ Error: e });
     }
   })
   .post(async (req, res) => {
     const { lessonTitle, description, moduleTitle, text, videoLink } = req.body;
-    //console.log(req.body);
     try {
       const content = [
         {
@@ -89,26 +89,35 @@ router
       // const author = user.firstName + user.lastName;
 
       const { _id } = lesson;
-      // user.lessons.created.push(_id.toString());
-      // console.log(user);
+      const lessonId = _id.toString();
 
-      return res.status(200).render(`lesson/lessonById`, {
+      const addedToUser = await usersData.addLesson(
+        req.session.sessionId,
+        lessonId,
+        "created"
+      );
+
+      if (!addedToUser) throw "Could not add Lesson to user.";
+
+      return res.status(200).render("lesson/publish", {
         title: "Create Lesson",
         hasErrors: false,
         lessonTitle,
-        lessonId: _id.toString(),
+        lessonId: lessonId.toString(),
         description,
         moduleTitle,
         text,
         videoLink,
-        createdBy: null,
+        style_partial: "lesson",
+        //createdBy: null,
         //creatorId,
         //author,
       });
     } catch (error) {
       //console.log(error);
-      return res.status(400).render("lesson/newlesson", {
+      return res.status(400).render(`lesson/newlesson`, {
         title: "Creating lesson failed",
+        pageTitle: "Oops, Try again",
         error: error,
         hasErrors: true,
         lessonTitle,
@@ -148,24 +157,32 @@ router
   });
 
 router
-  .route("/addmodule")
+  .route("/addmodule/:id")
   .get(async (req, res) => {
-    const lessonId = req.params["lesson-id"];
-    return res.render("lesson/publish", {
+    let lessonId = req.params.id;
+    let lesson = {};
+    try {
+      lesson = await lessonsData.getLessonById(lessonId);
+    } catch (e) {
+      return res.status(500).json({ Error: e });
+    }
+    return res.status(200).render("lesson/publish", {
       title: "Publish Lesson",
       lessonId,
+      lesson,
+      style_partial: "lesson",
     });
   })
   .post(async (req, res) => {
     try {
-      const { lessonId, moduleTitle, text, videoLink, order } = req.body;
-      console.log(req.body);
+      let { lessonId, moduleTitle, text, videoLink, order } = req.body;
+      //console.log(order);
 
-      const orderId = parseInt(order);
+      order = "undefined" ? 1 : parseInt(order);
 
       const response = await lessonsData.createModule(
         lessonId,
-        orderId,
+        order,
         moduleTitle,
         text,
         videoLink
@@ -174,13 +191,17 @@ router
 
       //console.log("response: " + response);
 
-      return res.render("lesson/publish", {
+      return res.json({
+        updated: true,
         title: "Publish Lesson",
+        moduleTitle: moduleTitle,
         lessonId: lessonId,
-        lesson,
+        text: text,
+        order: order,
+        videoLink: videoLink,
       });
     } catch (error) {
-      return res.status(400).render("lesson/publish", {
+      return res.status(400).json({
         title: "Edit Lesson",
         errors: error,
         hasErrors: true,
@@ -192,13 +213,13 @@ router
   });
 
 router
-  .route("/newlesson/publish/:id")
+  .route("published/:id")
   .get(async (req, res) => {
     const lessonId = req.params.id;
     const lesson = await lessonsData.getLessonById(lessonId);
 
-    res.render("lesson/publish", {
-      title: "Publish Lesson",
+    res.render("lessonById", {
+      title: "Lesson Published!",
       lesson,
       lessonId,
     });
@@ -211,39 +232,54 @@ router
     const firstName = res.session.user.firstName;
     const lastName = res.session.user.lastName;
     let moduleTitle = req.body.contents.moduleTitle;
-    const creatorId = `${firstName} ${lastName}`;
+    const author = `${firstName} ${lastName}`;
     let text = req.body.contents.text;
     let videoLink = req.body.contents.videoLink;
     let errors = [];
     let createdBy;
 
     try {
-      text = validation.checkContent(text, "lesson title", 3, 250);
+      moduleTitle = validation.checkContent(
+        moduleTitle,
+        "lesson title",
+        3,
+        250
+      );
     } catch (e) {
       errors.push(e);
     }
-    //TODO other validation
+    try {
+      text = validation.checkContent(text, "lesson title", 10, 250);
+    } catch (e) {
+      errors.push(e);
+    }
+
+    try {
+      videoLink = validation.checkString(videoLink, "lesson title");
+    } catch (e) {
+      errors.push(e);
+    }
 
     req.session.user.role == "admin"
       ? createdBy == "admin"
       : createdBy == "user";
 
     if (errors.length > 0) {
-      return res.status(400).render("partials/publish", {
-        title: "Edit Lesson",
-
+      return res.status(400).render("lesson/publish", {
+        title: "Error Publishing - Try Again",
         errors: errors,
         hasErrors: true,
         moduleTitle: moduleTitle,
         text: text,
         videoLink: videoLink,
+        style_partial: "lesson",
       });
     }
 
     //call data function
     try {
       const newlesson = await lessonsData.createModule(
-        id,
+        lessonId, // I CHANGED THIS
         order,
         moduleTitle,
         text,
@@ -251,7 +287,7 @@ router
       );
 
       //if successful, render lesson/:id
-      res.status(200).render("lesson/lessonById", {
+      return res.status(200).render("lesson/lessonById", {
         lessonTitle,
         description,
         order,
@@ -259,6 +295,7 @@ router
         creatorId,
         videoLink,
         text,
+        author,
       });
     } catch (e) {
       errors.push(e);
@@ -269,6 +306,7 @@ router
         moduleTitle: moduleTitle,
         text: text,
         videoLink: videoLink,
+        style_partial: "lesson",
       });
     }
     res
