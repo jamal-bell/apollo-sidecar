@@ -145,78 +145,77 @@ const exportedMethods = {
     return answerTarget;
   },
   async createAnswer(creatorId, text, qaId) {
-    try {
-      creatorId = validation.checkId(creatorId, 'Author ID');
-      qaId = validation.checkId(qaId, 'QA ID');
-      text = xss(text);
-      text = validation.checkString(text, 'Body text');
-      if (text.length < 15 || text.length > 10000) {
-        throw new Error(
-          'Length must be at least 15 characters, and not absurdly long'
-        );
-      }
-      const usersCollection = await users();
-      const author = await usersCollection.findOne({
-        _id: new ObjectId(creatorId),
-      });
+    creatorId = validation.checkId(creatorId, 'Author ID');
+    qaId = validation.checkId(qaId, 'QA ID');
+    text = xss(text);
+    text = validation.checkString(text, 'Body text');
+    if (text.length < 15 || text.length > 10000) {
+      throw new Error(
+        'Length must be at least 15 characters, and not absurdly long'
+      );
+    }
+    const usersCollection = await users();
+    const author = await usersCollection.findOne({
+      _id: new ObjectId(creatorId),
+    });
 
-      if (!author) {
-        throw new Error('Author not found');
+    if (!author) {
+      throw new Error('Author not found');
+    }
+    const commentId = new ObjectId();
+    const currentDate = new Date();
+    const createdAt = currentDate.getTime();
+    const createdAtDate = new Date(createdAt);
+    const timeStamp = createdAtDate.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
+    });
+    const votedUsers = [];
+    const voteUserAndTime = {
+      userId: author._id.toString(),
+      voteTime: timeStamp,
+    };
+    votedUsers.push(voteUserAndTime);
+    const votes = { votedUsers: votedUsers, value: 1 };
+    const qaCollection = await qa();
+    const result = await qaCollection.updateOne(
+      { _id: new ObjectId(qaId) },
+      {
+        $push: {
+          answers: {
+            //BEGIN ANSWSER SCHEMA
+            _id: commentId, //id of the comment itself
+            text: text, //text of hte comment
+            creatorId: author._id, //_id of the answer creator
+            author: author.handle, //handle of the user
+            votes: votes, //contains an (array votedUsers[] containing the user who voted, timestamp) and value
+            createdAt: createdAt,
+            timeStamp: timeStamp,
+            locked: false, //locked - added after database proposal
+          }, //END ANSWER SCHEMA
+        },
       }
-      const commentId = new ObjectId();
-      const currentDate = new Date();
-      const createdAt = currentDate.getTime();
-      const createdAtDate = new Date(createdAt);
-      const timeStamp = createdAtDate.toLocaleString('en-US', {
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: true,
-      });
-      const votedUsers = [];
-      const voteUserAndTime = { userId: author._id, voteTime: timestamp };
-      votedUsers.push(voteUserAndTime);
-      const votes = { votedUsers: votedUsers, value: 1 };
-      const qaCollection = await qa();
-      const result = await qaCollection.updateOne(
-        { _id: new ObjectId(qaId) },
-        {
-          $push: {
-            answers: {
-              //BEGIN ANSWSER SCHEMA
-              _id: commentId, //id of the comment itself
-              text: text, //text of hte comment
-              creatorId: author._id, //_id of the answer creator
-              author: author.handle, //handle of the user
-              votes: votes, //contains an (array votedUsers[] containing the user who voted, timestamp) and value
-              createdAt: createdAt,
-              timeStamp: timeStamp,
-              locked: false, //locked - added after database proposal
-            }, //END ANSWER SCHEMA
+    );
+    if (result.modifiedCount === 0) {
+      throw new Error('QA not found or not updated');
+    }
+    const result2 = await usersCollection.updateOne(
+      { _id: new ObjectId(creatorId) },
+      {
+        $push: {
+          'progress.qaPlatform.answers': {
+            postId: new ObjectId(qaId),
+            answerId: new ObjectId(commentId),
           },
-        }
-      );
-      if (result.modifiedCount === 0) {
-        throw new Error('QA not found or not updated');
+        },
       }
-      const result2 = await usersCollection.updateOne(
-        { _id: new ObjectId(creatorId) },
-        {
-          $push: {
-            'progress.qaPlatform.answers': {
-              postId: new ObjectId(qaId),
-              answerId: new ObjectId(commentId),
-            },
-          },
-        }
-      );
-      if (result2.modifiedCount === 0) {
-        throw new Error('User not found or not updated');
-      }
-    } catch (e) {
-      throw new Error(`Error creating reply: ${e.message}`);
+    );
+    if (result2.modifiedCount === 0) {
+      throw new Error('User not found or not updated');
     }
   },
   async deleteAnswer(qaId, commentId, creatorId, admin) {

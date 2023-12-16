@@ -56,6 +56,7 @@ router
     let loggedIn = false;
     let lessonCreatorId;
     let lessonRelatedId;
+    let viewSuffix = '';
     try {
       qaId = validation.checkId(qaId, 'QA ID');
     } catch (e) {
@@ -75,12 +76,11 @@ router
     }
     if (!qaTarget) {
       qaTarget.text = 'No QA Found :(';
-      return res
-        .status(404)
-        .render('qa/view', { title: 'No QA found!', qaTarget, admin });
+      return res.status(404).render('error', { title: 'No QA found!', error });
     }
     if (req.session.user) {
       loggedIn = true;
+      viewSuffix = 'User';
       try {
         lessonRelatedId = await lessonMethods.getLessonById(
           qaTarget.lessonId.toString()
@@ -95,19 +95,14 @@ router
         req.session.sessionId === lessonCreatorId
       ) {
         admin = true;
+        viewSuffix = 'Admin';
       } else {
         admin = false;
       }
-      if (req.session.sessionId === qaTarget.creatorId.toString()) {
-        owner = true;
-      }
     }
-    return res.status(200).render('qa/view', {
+    return res.status(200).render(`qa/view${viewSuffix}`, {
       title: qaTarget.title,
       qaTarget,
-      admin,
-      owner,
-      loggedIn,
     });
   })
   .delete(async (req, res) => {
@@ -119,9 +114,11 @@ router
     let qaTarget;
     let lessonCreatorId;
     let loggedIn;
+    let viewSuffix;
     const creatorId = req.session.sessionId;
     if (req.session.user) {
       loggedIn = true;
+      viewSuffix = 'User';
     }
     try {
       qaId = validation.checkId(qaId, 'QA ID');
@@ -140,6 +137,7 @@ router
     }
     if (req.session.user.role === 'admin' && creatorId === lessonCreatorId) {
       admin = true;
+      viewSuffix = 'Admin';
     } else {
       admin = false;
     }
@@ -149,12 +147,9 @@ router
       owner = false;
     }
     if (owner === false && admin === false) {
-      return res.status(403).render('qa/view', {
+      return res.status(403).render(`qa/view${viewSuffix}`, {
         title: 'FORBIDDEN',
         qaTarget,
-        admin,
-        owner,
-        loggedIn,
       });
     }
     try {
@@ -162,16 +157,14 @@ router
     } catch (e) {
       error = e.message;
       if (error === 'NP') {
-        return res.status(403).render('qa/view', {
+        return res.status(403).render('error', {
           title: 'FORBIDDEN',
-          qaTarget,
-          admin,
-          owner,
-          loggedIn,
+          error,
         });
       }
       return res.status(500).render('error', { title: error, error });
     }
+    return res.redirect('../../');
   });
 router
   .route('/:id/answers')
@@ -187,8 +180,11 @@ router
     let creatorId = req.session.sessionId;
     let text;
     let loggedIn;
+    let viewSuffix;
+    req.session.previousUrl = req.get('referer') || '/';
     if (req.session.user) {
       loggedIn = true;
+      viewSuffix = 'User';
     }
     try {
       qaId = validation.checkId(qaId, 'QA ID');
@@ -210,6 +206,7 @@ router
     }
     if (req.session.user.role === 'admin' && creatorId === lessonCreatorId) {
       admin = true;
+      viewSuffix = 'Admin';
     } else {
       admin = false;
     }
@@ -218,25 +215,19 @@ router
       text = validation.checkString(text, 'Answer text');
     } catch (e) {
       error = e.message;
-      return res.status(400).render('qa/view', {
+      return res.status(400).render(`qa/view${viewSuffix}`, {
         title: 'Error',
         qaTarget,
         error,
-        admin,
-        owner,
-        loggedIn,
       });
     }
     if (text.length < 15 || text.length > 10000) {
       error =
         'Answer length should be at least 15 characters and not absurdly long';
-      return res.status(400).render('qa/view', {
+      return res.status(400).render(`qa/view${viewSuffix}`, {
         title: 'Error',
         qaTarget,
         error,
-        admin,
-        owner,
-        loggedIn,
       });
     }
     try {
@@ -249,19 +240,14 @@ router
     } catch (e) {
       return res.status(500).render('error', error);
     }
-    if (creatorId === qaTarget.creatorId.toString()) {
-      //rendering purposes only
-      owner = true;
-    } else {
-      owner = false;
-    }
-    return res.status(200).render('qa/view', {
+    return res.redirect(req.session.previousUrl);
+    /* return res.status(200).render('qa/view', {
       title: qaTarget.title,
       qaTarget,
       admin,
       owner,
       loggedIn,
-    });
+    }); */
   })
   .put(async (req, res) => {
     // Handle updating a reply
@@ -281,6 +267,7 @@ router
     const qaId = xss(req.params.id);
     const answerId = xss(req.params.aId);
     const voterId = req.session.sessionId;
+    req.session.previousUrl = req.get('referer') || '/';
     try {
       qaId = validation.checkId(qaId, 'QA ID');
       answerId = validation.checkId(answerId, 'answer ID');
@@ -313,18 +300,9 @@ router
     } catch (e) {
       return res.status(500).render('error', error);
     }
-    if (voterId === qaTarget.creatorId.toString()) {
-      //rendering purposes only
-      owner = true;
-    } else {
-      owner = false;
-    }
     return res.status(200).render('qa/view', {
       title: qaTarget.title,
       qaTarget,
-      admin,
-      owner,
-      loggedIn,
     });
   })
   .delete(async (req, res) => {
@@ -335,11 +313,10 @@ router
     const creatorId = req.session.sessionId;
     const qaId = xss(req.params.id);
     const commentId = xss(req.params.aId);
-    let owner;
-    let answerOwner;
     let admin;
     let lessonCreatorId;
     let loggedIn;
+    let viewSuffix;
     if (req.session.user) {
       loggedIn = true;
     }
@@ -371,25 +348,10 @@ router
     } catch (e) {
       return res.status(500).render('error', error);
     }
-    if (creatorId === answerTarget.creatorId.toString()) {
-      //check Answer ownership for purpose of allowing to delete
-      answerOwner = true;
-    } else {
-      answerOwner = false;
-    }
-    if (creatorId === qaTarget.creatorId.toString()) {
-      //check QA ownership for purpose of re-rendering with ownership
-      owner = true;
-    } else {
-      owner = false;
-    }
-    if (answerOwner === false && admin === false) {
+    if (!admin) {
       return res.status(403).render('qa/view', {
         title: 'FORBIDDEN',
         qaTarget,
-        admin,
-        owner,
-        loggedIn,
       });
     }
     try {
@@ -400,20 +362,11 @@ router
         return res.status(403).render('qa/view', {
           title: 'FORBIDDEN',
           qaTarget,
-          admin,
-          owner,
-          loggedIn,
         });
       }
       return res.status(500).render('error', { title: error, error });
     }
-    return res.status(200).render('qa/view', {
-      title: qaTarget.title,
-      qaTarget,
-      admin,
-      owner,
-      loggedIn,
-    });
+    return res.redirect(req.session.previousUrl);
   });
 
 router

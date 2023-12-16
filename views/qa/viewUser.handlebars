@@ -1,0 +1,36 @@
+<article id='qaMain'>
+  <h2>{{qaTarget.title}}</h2>
+  <p>{{qaTarget.text}}</p>
+  <p>by <a href='../../user/{{qaTarget.author}}'>{{qaTarget.author}}</a> at {{qaTarget.timeStamp}}</p>
+  <form id='addAnswerForm' action='/qa/{{qaTarget._id}}/answers' method='post'>
+    <input type='text' name='replyText' id='replyText' />
+    <input type='submit' />
+    <input type='reset' />
+  </form>
+  <div class="errorSpace" id="errorSpace"></div>
+  <script>
+</script>
+  {{#if qaTarget.answers}}
+    {{#each qaTarget.answers}}
+    
+    <div id="iqPoint" class="iqPoint">{{this.votes.value}}</div>
+      <form
+        class='vote'
+        action='/qa/{{../qaTarget._id}}/answers/{{this._id}}'
+        method='post'
+      >
+        <button type='submit'>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
+        <path d="M12 2L0 10l3 2v10h18v-10l3-2z"/>
+        </svg>
+        </button>
+      </form>
+    
+      <div><a href='../../user/{{this.author}}'>{{this.author}}</a> at {{this.timeStamp}}</div>
+      <div>{{this.text}}</div>
+    {{/each}}
+  {{else}}
+    <p>No replies yet.</p>
+  {{/if}}
+<script src="../../public/js/qaScript.js"></script>
+</article>
