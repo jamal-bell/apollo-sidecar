@@ -2,8 +2,6 @@ let errors = [];
 let answerForm = document.getElementById('addAnswerForm');
 let qaForm = document.getElementById('addQaForm');
 let deleteAnswerForm = document.getElementById('deleteAnswerForm');
-let deleteAnswerAdminForm = document.getElementById('deleteQaAnswerAdminForm');
-let deleteQaAdminForm = document.getElementById('deleteQaAdminForm');
 let deleteQaForm = document.getElementById('deleteQaFOrm');
 let errorSpace = document.getElementById('errorSpace');
 
@@ -97,34 +95,7 @@ if (deleteAnswerForm) {
     }
   });
 }
-if (deleteAnswerAdminForm) {
-  deleteAnswerAdminForm.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const confirmation = confirm(
-      'Are you sure you want to delete this answer?'
-    );
-    if (confirmation) {
-      const response = await fetch(form.action, {
-        method: 'DELETE',
-      });
-    }
-  });
-}
 if (deleteQaForm) {
-  deleteQaForm.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const confirmation = confirm(
-      'Are you sure you want to delete this answer?'
-    );
-    if (confirmation) {
-      const response = await fetch(form.action, {
-        method: 'DELETE',
-      });
-    }
-  });
-}
-
-if (deleteQaAdminForm) {
   deleteQaForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     const confirmation = confirm(

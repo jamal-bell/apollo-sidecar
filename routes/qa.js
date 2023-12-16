@@ -103,6 +103,7 @@ router
     return res.status(200).render(`qa/view${viewSuffix}`, {
       title: qaTarget.title,
       qaTarget,
+      owner,
     });
   })
   .delete(async (req, res) => {
@@ -150,6 +151,7 @@ router
       return res.status(403).render(`qa/view${viewSuffix}`, {
         title: 'FORBIDDEN',
         qaTarget,
+        owner,
       });
     }
     try {
@@ -218,6 +220,7 @@ router
       return res.status(400).render(`qa/view${viewSuffix}`, {
         title: 'Error',
         qaTarget,
+        owner,
         error,
       });
     }
@@ -227,6 +230,7 @@ router
       return res.status(400).render(`qa/view${viewSuffix}`, {
         title: 'Error',
         qaTarget,
+        owner,
         error,
       });
     }

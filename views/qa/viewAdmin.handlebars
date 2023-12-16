@@ -8,9 +8,6 @@
     <input type='reset' />
   </form>
   <div class="errorSpace" id="errorSpace"></div>
-  <script>
-  console.log("loggedIn:", {{loggedIn}});
-</script>
   {{#if qaTarget.answers}}
     {{#each qaTarget.answers}}
     
@@ -30,22 +27,12 @@
       <div><a href='../../user/{{this.author}}'>{{this.author}}</a> at {{this.timeStamp}}</div>
       <div>{{this.text}}</div>
 
-      <form id="deleteAnswerAdminForm" class="delete" action="/qa/{{../qaTarget._id}}/{{this._id}}" method="">
+      <form id="deleteAnswerForm" class="delete" action="/qa/{{../qaTarget._id}}/{{this._id}}" method="">
       <button type="submit">delete?</button>
       </form>
     {{/each}}
   {{else}}
     <p>No replies yet.</p>
-  {{/if}}
-  {{#if admin}}
-<form id="deleteQaAdminForm" class="delete" action="/qa/{{qaTarget._id}}" method="">
-      <input type="submit">ADMIN: delete this QA?</input>
-      </form>
-  {{/if}}
-{{#if owner}}
-<form id="deleteQaForm" class="delete" action="/qa/{{qaTarget._id}}" method="">
-      <input type="submit">OWNER: delete this QA?</input>
-      </form>
   {{/if}}
 <script src="../../public/js/qaScript.js"></script>
 </article>
