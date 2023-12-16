@@ -268,6 +268,7 @@ router.route("/user").get(async (req, res) => {
     });
   }
 
+  const ipPoints = user.progress.qaPlatform.iqPoints;
   const userLessons = [];
   let hasLessons;
   if (user.progress.inProgressLessonId.length !== 0) {

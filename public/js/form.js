@@ -190,6 +190,7 @@ if (registerForm) {
       errorContainer.hidden = false;
     } else {
       errorContainer.hidden = true;
+      alert("Account registered! Login now.");
       registerForm.submit();
     }
   });
