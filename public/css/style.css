@@ -626,6 +626,7 @@ margin-left: 50px;
   margin: 0 16.33%; 
   padding-left: 5%;
   padding-right: 5%;
+  display: block;
 }
 
 #lesson-page #right-nav, #lesson-page #close-left-nav, #lesson-page #close-left-nav {
