@@ -237,7 +237,7 @@ try {
 console.log('Flattening IDs for random qa creation completed!');
 
 try {
-  const numberOfQaEntries = 1; // Adjust as needed
+  const numberOfQaEntries = 100; // Adjust as needed
 
   for (let i = 0; i < numberOfQaEntries; i++) {
     // Randomly select a lesson object from allLessonIdsForQaSeeding
