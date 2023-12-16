@@ -93,13 +93,13 @@ router
       }
       if (
         req.session.user.role === 'admin' &&
-        req.session.user.sessionId === lessonCreatorId
+        req.session.sessionId === lessonCreatorId
       ) {
         admin = true;
       } else {
         admin = false;
       }
-      if (req.session.user.sessionId === qaTarget.creatorId.toString()) {
+      if (req.session.sessionId === qaTarget.creatorId.toString()) {
         owner = true;
       }
     }
@@ -120,7 +120,7 @@ router
     let qaTarget;
     let lessonCreatorId;
     let loggedIn;
-    const creatorId = req.session.user.sessionId;
+    const creatorId = req.session.sessionId;
     if (req.session.user) {
       loggedIn = true;
     }
@@ -185,7 +185,7 @@ router
     let owner;
     let admin;
     let lessonCreatorId;
-    let creatorId = req.session.user.sessionId;
+    let creatorId = req.session.sessionId;
     let text;
     let loggedIn;
     if (req.session.user) {
@@ -281,7 +281,7 @@ router
     let loggedIn;
     const qaId = xss(req.params.id);
     const answerId = xss(req.params.aId);
-    const voterId = req.session.user.sessionId;
+    const voterId = req.session.sessionId;
     try {
       qaId = validation.checkId(qaId, 'QA ID');
       answerId = validation.checkId(answerId, 'answer ID');
@@ -333,7 +333,7 @@ router
     let error;
     let qaTarget;
     let answerTarget;
-    const creatorId = req.session.user.sessionId;
+    const creatorId = req.session.sessionId;
     const qaId = xss(req.params.id);
     const commentId = xss(req.params.aId);
     let owner;
@@ -441,7 +441,7 @@ router
     let title;
     let originLesson;
     let contentId;
-    let creatorId = req.session.user.sessionId;
+    let creatorId = req.session.sessionId;
     let lessonId = xss(req.params.lessonId);
     let newQaId;
     let loggedIn;
