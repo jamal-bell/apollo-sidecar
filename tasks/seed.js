@@ -205,7 +205,7 @@ try {
 console.log('Flattening IDs for random qa creation completed!');
 
 try {
-  const numberOfQaEntries = 30; // Adjust as needed
+  const numberOfQaEntries = 1; // Adjust as needed
 
   for (let i = 0; i < numberOfQaEntries; i++) {
     // Randomly select a lesson object from allLessonIdsForQaSeeding
@@ -216,13 +216,23 @@ try {
 
     // Extract properties from the selected lesson object
     const { lessonId, contentId, creatorId } = randomLessonObject;
-
+    const lessonIdString = lessonId.toString();
+    const contentIdString = contentId.toString();
+    const creatorIdString = creatorId.toString();
     // Generate random title and text (you can replace these with your own logic)
     const title = `Q&A Entry ${i + 1} Title`;
-    const text = `Q&A Entry ${i + 1} Text`;
+    const text = `Q&A Entry ${
+      i + 1
+    } Text. It must be over 24 characters long or else the journey ends here. I like banana sprinkles and such.`;
 
     // Call the createQa function with the extracted properties
-    await qaData.createQa(title, creatorId, lessonId, contentId, text);
+    await qaData.createQa(
+      title,
+      creatorIdString,
+      lessonIdString,
+      contentIdString,
+      text
+    );
   }
 } catch (e) {
   console.error('Seeding failed at creating QAs:', e);

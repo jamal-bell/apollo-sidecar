@@ -10,7 +10,7 @@ const exportedMethods = {
       title = xss(title);
       title = validation.checkString(title, 'title');
       text = xss(text);
-      text = validation.checkString(bodyText, 'body text of QA submission');
+      text = validation.checkString(text, 'body text of QA submission');
       validation;
       creatorId = validation.checkId(creatorId, 'Author ID');
       lessonId = validation.checkId(lessonId, 'Lesson ID');
@@ -47,7 +47,7 @@ const exportedMethods = {
         answers: answers, //answers to the QA, refer to the database proposal
         createdAt: createdAt, //timestamp - added after DB proposal
       }); //END SCHEMA
-      const insertedId = qaInserted.insertedId;
+      let insertedId = qaInserted.insertedId;
       const newQuestion = {
         postId: new ObjectId(lessonId),
         questionId: new ObjectId(insertedId),
@@ -58,6 +58,7 @@ const exportedMethods = {
         { _id: new ObjectId(creatorId) },
         { $set: { 'progress.qaPlatform.questions': qaList } }
       );
+      insertedId = insertedId.toString();
       return { insertedId }; // or return some meaningful response
     } catch (e) {
       throw new Error(`Error creating QA: ${e.message}`);
