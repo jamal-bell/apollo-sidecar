@@ -423,6 +423,7 @@ router
     let error;
     let lessonId = xss(req.params.lessonId);
     let loggedIn;
+    let originLesson;
     if (req.session.user) {
       loggedIn = true;
     }

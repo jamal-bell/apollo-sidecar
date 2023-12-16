@@ -347,7 +347,6 @@ const exportedMethods = {
         .sort({ createdAt: -1 })
         .limit(20)
         .toArray();
-      console.log(recentQaArray);
       return recentQaArray;
     } catch (e) {
       throw new Error(`Database pull error: ${e.message}`);
