@@ -93,9 +93,9 @@ router
   .route("/register")
   .get(async (req, res) => {
     //code here for GET
-    return res.render("user/register", {
-      title: "Registration",
-      style_partial: "user-form",
+    return res.render('user/register', {
+      title: 'Registration',
+      script_partial: 'user-form',
     });
   })
   .post(async (req, res) => {
@@ -154,9 +154,9 @@ router
     let userRegister;
 
     if (errors.length > 0) {
-      return res.status(400).render("user/register", {
-        title: "Registration",
-        style_partial: "user-form",
+      return res.status(400).render('user/register', {
+        title: 'Registration',
+        script_partial: 'user-form',
         errors: errors,
         hasErrors: true,
         firstName: firstName,
@@ -181,9 +181,9 @@ router
       }
     } catch (e) {
       errors.push(e);
-      return res.status(400).render("user/register", {
-        title: "Registration",
-        style_partial: "user-form",
+      return res.status(400).render('user/register', {
+        title: 'Registration',
+        script_partial: 'user-form',
         errors: errors,
         hasErrors: true,
         firstName: firstName,
@@ -201,9 +201,9 @@ router
   .route("/login")
   .get(async (req, res) => {
     //code here for GET
-    return res.render("user/login", {
-      title: "Login",
-      style_partial: "user-form",
+    return res.render('user/login', {
+      title: 'Login',
+      script_partial: 'user-form',
     });
   })
   .post(async (req, res) => {
@@ -246,9 +246,9 @@ router
       }
     } catch (e) {
       errors.push(e);
-      return res.status(400).render("user/login", {
-        title: "Login",
-        style_partial: "user-form",
+      return res.status(400).render('user/login', {
+        title: 'Login',
+        script_partial: 'user-form',
         hasErrors: true,
         errors: errors,
       });
@@ -417,9 +417,10 @@ router.route("/user").get(async (req, res) => {
     hasAnswers = false;
   }
 
-  return res.render("user/user", {
-    title: "Overview",
-    style_partial: "overview",
+  return res.render('user/user', {
+    title: 'Overview',
+    style_partial: "css_userprofile",
+    script_partial: 'overview',
     user: user,
     lessons: userLessons,
     hasLessons: hasLessons,
@@ -576,9 +577,10 @@ router.route("/admin").get(async (req, res) => {
     hasAnswers = false;
   }
 
-  return res.render("user/admin", {
-    title: "Overview",
-    style_partial: "overview",
+  return res.render('user/admin', {
+    title: 'Overview',
+    style_partial: "css_userprofile",
+    script_partial: 'overview',
     user: user,
     lessons: adminLessons,
     hasLessons: hasLessons,
@@ -606,9 +608,10 @@ router.route("/public/:userId").get(async (req, res) => {
 
     if (user) {
     }
-    return res.render("user/public", {
-      title: "User Overview",
-      style_partial: "overview",
+    return res.render('user/public', {
+      title: 'User Overview',
+      style_partial: "css_userprofile",
+      script_partial: 'overview',
       user: user,
     });
   } catch (e) {
@@ -715,9 +718,9 @@ router
       return res.redirect("/user/login");
     }
 
-    return res.render("user/password", {
-      title: "Change Password",
-      style_partial: "user-form",
+    return res.render('user/password', {
+      title: 'Change Password',
+      script_partial: 'user-form',
     });
   })
   .post(async (req, res) => {
@@ -759,9 +762,9 @@ router
     let userRegister;
 
     if (errors.length > 0) {
-      return res.status(400).render("user/password", {
-        title: "Change Password",
-        style_partial: "user-form",
+      return res.status(400).render('user/password', {
+        title: 'Change Password',
+        script_partial: 'user-form',
         errors: errors,
         hasErrors: true,
       });
@@ -779,9 +782,9 @@ router
         });
       }
     } catch (e) {
-      return res.status(400).render("user/password", {
-        title: "Change Password",
-        style_partial: "user-form",
+      return res.status(400).render('user/password', {
+        title: 'Change Password',
+        script_partial: 'user-form',
         errors: errors,
         hasErrors: true,
       });
