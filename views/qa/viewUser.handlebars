@@ -7,9 +7,7 @@
     <input type='submit' />
     <input type='reset' />
   </form>
-  <div id="errorSpace"></div>
-  <script>
-</script>
+  <div class='errorSpace' id='errorSpace'></div>
   {{#if qaTarget.answers}}
     {{#each qaTarget.answers}}
     <a href='/qa/{{../qaTarget._id}}/answers/{{this._id}}'>URL DECODER</a>
@@ -29,8 +27,8 @@
       <div><a href='../../user/{{this.author}}'>{{this.author}}</a> at {{this.timeStamp}}</div>
       <div>{{this.text}}</div>
     {{/each}}
-  {{else}}
+  {{else}}  
     <p>No replies yet.</p>
   {{/if}}
-<script src="http://localhost:3000/public/js/qaScript.js"></script>
+<script src="http://localhost:3000/public/js/qaUser.js"></script>
 </article>
