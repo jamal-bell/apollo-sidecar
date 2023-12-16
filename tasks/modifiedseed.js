@@ -287,8 +287,7 @@ try {
       subject: randomSubject,
       description: `${randomSubject} Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an, saat seorang tukang cetak yang tidak dikenal mengambil sebuah kumpulan teks dan mengacaknya untuk menjadi sebuah buku contoh huruf. Ia tidak hanya bertahan selama 5 abad, tapi juga telah beralih ke penataan huruf elektronik, tanpa ada perubahan apapun. Ia mulai dipopulerkan pada tahun 1960 dengan diluncurkannya lembaran-lembaran Letraset yang menggunakan kalimat-kalimat dari Lorem Ipsum, dan seiring munculnya perangkat lunak Desktop Publishing seperti Aldus PageMaker juga memiliki versi Lorem Ipsum.`,
       creatorId: authorChosen._id,
-      creatorId: authorChosen._id,
-      upvote: 0,
+      handle: "gerneric",
       createdAt: new Date(),
       modifiedAt: new Date(),
       contents: [
@@ -301,16 +300,20 @@ try {
           text: `Text for Lesson ${index + 1}`,
           videoLink: ["https://www.youtube.com/watch?v=dQw4w9WgXcQ"],
           createdByRole: authorChosen.role,
+          createdAt: new Date(),
           modifiedAt: new Date(),
         },
       ],
     };
     const result = await lessonsCollection.insertOne(newLessonInfo);
     console.log(result); // Log the inserted document
-    const result2 = await userCollection.updateOne(
-      { _id: authorChosen._id },
-      { $push: { "progress.createdLessonId": { lessonId: result.insertedId } } }
-    );
+    // const result2 = await userCollection.updateOne(
+    //   { _id: authorChosen._id },
+    //   { $push: { "progress.createdLessonId": { lessonId: result.insertedId } } }
+    // );
+
+    await userData.addLesson(authorChosen._id.toString(), result.insertedId.toString(), "created")
+
     // console.log(result2);
   }
   console.log("Seeding Lessons Completed!");

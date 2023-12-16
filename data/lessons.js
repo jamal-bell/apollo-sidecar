@@ -8,7 +8,9 @@ const exportedLessonsMethods = {
   //Option to create additional modules via createModule()
   async createLesson(
     lessonTitle,
+    subject,
     description,
+    handle,
     contents = null,
     moduleTitle,
     text,
@@ -46,8 +48,12 @@ const exportedLessonsMethods = {
 
     let newLessonInfo = {
       lessonTitle: lessonTitle, //string
+      subject: subject,
       description: description, //string
       creatorId: ObjectId, //from user ID
+      handle: handle,
+      createdAt: new Date(),
+      modifiedAt: new Date,
       contents: [
         {
           _id: new ObjectId(),
@@ -125,6 +131,8 @@ const exportedLessonsMethods = {
       moduleTitle: moduleTitle,
       text: text,
       videoLink: videoLink,
+      createdAt: new Date(),
+      modifiedAt: new Date(),
       votes: {
         votedUsers: [],
         count: 0,
@@ -164,6 +172,7 @@ const exportedLessonsMethods = {
     console.log('Lesson Removed');
     return { ...deletionInfo, deleted: true };
   },
+
   //Updates lesson headers, not modules
   async updateLesson(id, title, description) {
     id = validation.checkId(id);
@@ -177,8 +186,10 @@ const exportedLessonsMethods = {
 
     const lessonUpdateInfo = {
       lessonTitle: lessonTitle,
+      subject: subject,
       description: description,
       creatorId: ObjectId, //from user ID
+      modifiedAt: new Date()
     };
 
     const lessonsCollection = await lessons();
@@ -214,7 +225,8 @@ const exportedLessonsMethods = {
       text: text,
       //creatorId: ObjectId,
       videoLink: videoLink,
-      votes: lesson.votes, //obj
+      votes: lesson.votes, //obj,
+      modifiedAt: new Date()
     };
 
     const updatedModule = await lessonsCollection.findOneAndUpdate(

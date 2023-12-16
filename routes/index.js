@@ -8,7 +8,7 @@ import searchResultsRoutes from "./search.js";
 const constructorMethod = (app) => {
   app.use("/", homeRoutes);
   app.use("/lessons", lessonRoutes);
-  app.use("/qaforum", qaRoutes);
+  app.use("/qa", qaRoutes);
   app.use("/user", userRoutes);
   app.use("/search", searchRoutes);
   app.use("/searchresults", searchResultsRoutes);
