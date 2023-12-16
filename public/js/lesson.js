@@ -81,7 +81,7 @@
     const moduleTitleInput = document.getElementById("moduleTitleInput");
     const textInput = document.getElementById("textInput");
     const videoLinkInput = document.getElementById("videoLinkInput");
-    const errorContainer = document.getElementById("errorsDiv");
+    const errorContainer = document.getElementById("errors");
     const newModuleButton = document.getElementById("newModuleButton");
     const publishButton = document.getElementById("newModuleButton");
     const lessonIdInput = document.getElementById("lessonId");
@@ -101,26 +101,26 @@
       try {
         moduleTitle = helpers.checkContent(moduleTitle, "module title", 3, 250);
       } catch (e) {
-        errorList += `${e}`;
+        errorList += `<li>${e}</li>`;
       }
 
       try {
         if (text)
           text = helpers.checkContent(text, "module content", 10, 60000);
       } catch (e) {
-        errorList += `${e}`;
+        errorList += `<li>${e}</li>`;
       }
 
       try {
         if (order) order = helpers.checkIsPositiveNum(order, "order");
       } catch (e) {
-        errorList += `${e}`;
+        errorList += `<li>${e}</li>`;
       }
 
       try {
         if (videoLink) videoLink = helpers.checkString(videoLink, "video link");
       } catch (e) {
-        errorList += `${e}`;
+        errorList += `<li>${e}</li>`;
       }
 
       if (errorList !== "") {
@@ -166,7 +166,7 @@
 
             li.innerHTML = `
             <h4>${order}: ${moduleTitle}</h4>
-            <h5>Resources: ${videoLink}</h5>
+            <h5>Video Resource: <a href="${videoLink}" target="_blank">${videoLink} </a></h5>
             <h5>Content: ${text}</h5>
           `;
 
@@ -203,12 +203,12 @@
             textInput.value = "";
             videoLinkInput.value = "";
 
-            errorContainer.hide(); //.empty or .hide???
+            errorContainer.empty(); 
             errorContainer.appendChild(`<p>Module Created!</p>`);
           }
         })
         .catch(function (e) {
-          errorList.push(`${e}`);
+          errorList.push(`<li>${e}</li>`);
           errorContainer.show();
         });
     });

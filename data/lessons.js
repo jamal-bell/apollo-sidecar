@@ -220,6 +220,7 @@ const exportedLessonsMethods = {
     const updatedModule = await lessonsCollection.findOneAndUpdate(
       { 'contents._id': new ObjectId(id) },
       { $set: { 'contents.$': moduleUpdateInfo } },
+      
       { returnDocument: 'after' }
       //{arrayFilters: []}
     );
