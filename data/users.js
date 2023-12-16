@@ -21,15 +21,32 @@ const exportedusersMethods = {
   //TODO: add input validation
   //TODO: await users() to get all users to prevent creating duplicate users
 
-  async registerUser(firstName, lastName, emailAddress, password, role) {
+  async registerUser(
+    firstName,
+    lastName,
+    emailAddress,
+    handle,
+    password,
+    role
+  ) {
     firstName = validation.checkString(firstName, "First Name");
     lastName = validation.checkString(lastName, "Last Name");
     emailAddress = validation.checkEmail(emailAddress);
     password = validation.checkPassword(password);
     role = checkRole(role);
+    handle = validation.checkHandle(handle);
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const timestamp = new Date();
+
+    const usersCollection = await users();
+
+    const checkEmail = await usersCollection.findOne({
+      emailAddress: emailAddress,
+    });
+    const checkHandle = await usersCollection.findOne({ handle: handle });
+    if (checkEmail) throw "Email already exist.";
+    if (checkHandle) throw "Handle is already used, try another one.";
 
     let newUser = {
       firstName: firstName,
@@ -38,7 +55,7 @@ const exportedusersMethods = {
       password: hashedPassword,
       role: role,
       photo: "/public/assets/no-photo.jpg",
-      handle: "",
+      handle: handle,
       github: "",
       lastIp: "",
       bio: "",
@@ -78,6 +95,7 @@ const exportedusersMethods = {
         createdLessonId: [],
         currentLesson: [],
         qaPlatform: {
+          iqPoints: 0,
           questions: [],
           answers: [],
           votes: [],
@@ -85,7 +103,6 @@ const exportedusersMethods = {
       },
     };
 
-    const usersCollection = await users();
     const insertInfo = await usersCollection.insertOne(newUser);
     if (!insertInfo.acknowledged || !insertInfo.insertedId)
       throw "Could not register user.";
@@ -179,23 +196,31 @@ const exportedusersMethods = {
     let lastName = userObject.lastName.trim();
     let bio = userObject.bio.trim();
     let github = userObject.github.trim();
+    let handle = userObject.handle.trim();
+    let userId = userObject._id.trim();
 
     firstName = validation.checkString(firstName, "First Name");
     lastName = validation.checkString(lastName, "Last Name");
     emailAddress = validation.checkEmail(emailAddress);
+    handle = validation.checkHandle(handle);
+    userId = validation.checkId(userId);
     if (github.trim().length !== 0 && !new URL(github)) {
       throw "Invalid Github link.";
     }
 
     const usersCollection = await users();
     const user = await usersCollection.findOne({ emailAddress: emailAddress });
-
     if (!user) throw "User not found in the system.";
+
+    const checkHandle = await usersCollection.findOne({ handle: handle });
+    if (checkHandle && checkHandle._id.toString() !== userId)
+      throw "Handle is already used, try another one.";
 
     const updatedInfo = {
       firstName: firstName,
       lastName: lastName,
       emailAddress: emailAddress,
+      handle: handle,
       github: github,
       bio: bio,
       updatedAt: new Date(),
@@ -347,49 +372,6 @@ const exportedusersMethods = {
     const updatedUser = await usersCollection.findOneAndUpdate(
       { _id: new ObjectId(userId) },
       { $set: updatedprogress },
-      { returnDocument: "after" }
-    );
-
-    if (!updatedUser) throw "Could not update the user successfully.";
-
-    return true;
-  },
-
-  async addQuestion(userId, questionId, createOrAnswered) {
-    userId = validation.checkId(userId, "userId");
-    questionId = validation.checkId(questionId, "questionId");
-    createOrAnswered = createOrAnswered.trim().toLowerCase();
-
-    const usersCollection = await users();
-    const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
-
-    if (!user) throw "User not found in the system.";
-
-    let qas = user.qas;
-
-    if (createOrAnswered === "created") {
-      if (lessons.created) {
-        qas.created.push(questionId);
-      } else {
-        qas.created = [questionId];
-      }
-    } else if (createOrAnswered === "answered") {
-      if (lessons.created) {
-        qas.answered.push(questionId);
-      } else {
-        qas.answered = [questionId];
-      }
-    } else {
-      throw `Invalid argument for 'createOrAnswered'. Must be either 'created' or 'answered'`;
-    }
-    const updatedQas = {
-      qas: qas,
-      updatedAt: new Date(),
-    };
-
-    const updatedUser = await usersCollection.findOneAndUpdate(
-      { _id: new ObjectId(userId) },
-      { $set: updatedQas },
       { returnDocument: "after" }
     );
 

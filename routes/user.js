@@ -102,6 +102,7 @@ router
     let firstName = xss(req.body.firstNameInput);
     let lastName = xss(req.body.lastNameInput);
     let emailAddress = xss(req.body.emailAddressInput);
+    let handle = xss(req.body.handleInput);
     let password = xss(req.body.passwordInput);
     let role = xss(req.body.roleInput);
     let errors = [];
@@ -120,6 +121,12 @@ router
 
     try {
       emailAddress = validation.checkEmail(emailAddress);
+    } catch (e) {
+      errors.push(e);
+    }
+
+    try {
+      handle = validation.checkHandle(handle);
     } catch (e) {
       errors.push(e);
     }
@@ -153,7 +160,8 @@ router
         hasErrors: true,
         firstName: firstName,
         lastName: lastName,
-        emailAddress: req.body.emailAddressInput,
+        emailAddress: emailAddress,
+        handle: handle,
       });
     }
 
@@ -162,6 +170,7 @@ router
         firstName,
         lastName,
         emailAddress,
+        handle,
         password,
         role
       );
@@ -178,7 +187,8 @@ router
         hasErrors: true,
         firstName: firstName,
         lastName: lastName,
-        emailAddress: req.body.emailAddressInput,
+        emailAddress: emailAddress,
+        handle: handle,
       });
     }
     res
@@ -222,6 +232,7 @@ router
           firstName: user.firstName,
           lastName: user.lastName,
           emailAddress: user.emailAddress,
+          handle: user.handle,
           role: user.role,
         };
         if (user.role === "admin") {
@@ -506,6 +517,7 @@ router.route("/profile").post(async (req, res) => {
   let firstName = xss(req.body.firstName);
   let lastName = xss(req.body.lastName);
   let emailAddress = xss(req.body.emailAddress);
+  let handle = xss(req.body.handle);
   let bio = xss(req.body.bio);
   let github = xss(req.body.github);
   let errors = [];
@@ -529,6 +541,12 @@ router.route("/profile").post(async (req, res) => {
   }
 
   try {
+    handle = validation.checkHandle(handle);
+  } catch (e) {
+    errors.push(`<li>${e}</li>`);
+  }
+
+  try {
     if (github.trim().length !== 0 && !new URL(github)) {
       throw "Invalid Github Link.";
     }
@@ -539,9 +557,11 @@ router.route("/profile").post(async (req, res) => {
   let userUpdated;
 
   const user = {
+    _id: req.session.sessionId,
     firstName: firstName,
     lastName: lastName,
     emailAddress: emailAddress,
+    handle: handle,
     bio: bio,
     github: github,
   };
