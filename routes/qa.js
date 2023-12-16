@@ -30,7 +30,6 @@ router.route('/').get(async (req, res) => {
     }
 
     recentQaArray = await qaMethods.getRecentQAs();
-    console.log(recentQaArray);
     res.render('qa/home', {
       recentQaArray,
       creatorQuestions,
