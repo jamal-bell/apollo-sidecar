@@ -217,22 +217,12 @@ router
       text = validation.checkString(text, 'Answer text');
     } catch (e) {
       error = e.message;
-      return res.status(400).render(`qa/view${viewSuffix}`, {
-        title: 'Error',
-        qaTarget,
-        owner,
-        error,
-      });
+      return res.redirect(`http://localhost:3000/qa/${qaId}`);
     }
     if (text.length < 15 || text.length > 10000) {
       error =
         'Answer length should be at least 15 characters and not absurdly long';
-      return res.status(400).render(`qa/view${viewSuffix}`, {
-        title: 'Error',
-        qaTarget,
-        owner,
-        error,
-      });
+      return res.redirect(`http://localhost:3000/qa/${qaId}`);
     }
     try {
       await qaMethods.createAnswer(creatorId, text, qaId);
@@ -244,14 +234,7 @@ router
     } catch (e) {
       return res.status(500).render('error', error);
     }
-    return res.redirect(req.session.previousUrl);
-    /* return res.status(200).render('qa/view', {
-      title: qaTarget.title,
-      qaTarget,
-      admin,
-      owner,
-      loggedIn,
-    }); */
+    return res.redirect(`http://localhost:3000/qa/${qaId}`);
   })
   .put(async (req, res) => {
     // Handle updating a reply
