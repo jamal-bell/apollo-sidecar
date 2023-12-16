@@ -6,7 +6,7 @@
     <!-- show last 20 questions on the site period. Visible to all -->
     <a href='/{{this._id}}'>{{this.title}}</a>
     <p>Created at:
-      {{this.createdAt}}
+      {{this.timeStamp}}
       by
       <a href='../user/{{this.author}}'>{{this.author}}</a></p>
   {{/each}}
@@ -19,7 +19,7 @@
       <!-- show last 20 questions they've asked -->
       <a href='/{{this._id}}'>{{this.title}}</a>
       <p>Created at:
-        {{this.createdAt}}
+        {{this.timeStamp}}
       </p>
     {{/each}}
   {{/if}}
@@ -32,7 +32,7 @@
       <!-- show last 20 questions for each lesson they've created -->
       <a href='/{{this._id}}'>{{this.title}}</a>
       <p>Created at:
-        {{this.createdAt}}
+        {{this.timeStamp}}
         by
         <a href='../user/{{this.author}}'>{{this.author}}</a></p>
     {{/each}}

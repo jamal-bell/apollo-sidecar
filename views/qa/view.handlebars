@@ -1,6 +1,7 @@
 <article id='qaMain'>
   <h2>{{qaTarget.title}}</h2>
   <p>{{qaTarget.text}}</p>
+  <p>by <a href='../../user/{{qaTarget.author}}'>{{qaTarget.author}}</a> at {{qaTarget.timeStamp}}</p>
   <form id='addAnswerForm' action='/qa/{{qaTarget._id}}/answers' method='post'>
     <input type='text' name='replyText' id='replyText' />
     <input type='submit' />

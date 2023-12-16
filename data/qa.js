@@ -36,6 +36,15 @@ const exportedMethods = {
       const answers = [];
       const currentDate = new Date();
       const createdAt = currentDate.getTime();
+      const createdAtDate = new Date(createdAt);
+      const timeStamp = createdAtDate.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true,
+      });
       const qaInserted = await qaCollection.insertOne({
         //QA START SCHEMA
         title: title, //title of the question
@@ -46,6 +55,7 @@ const exportedMethods = {
         contentId: new ObjectId(contentId), //in the lesson, what content the lesson is this related to
         answers: answers, //answers to the QA, refer to the database proposal
         createdAt: createdAt, //timestamp - added after DB proposal
+        timeStamp: timeStamp,
       }); //END SCHEMA
       let insertedId = qaInserted.insertedId;
       const newQuestion = {
