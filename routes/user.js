@@ -94,9 +94,10 @@ router
   .route("/register")
   .get(async (req, res) => {
     //code here for GET
-    return res.render("user/register", {
-      title: "Registration",
-      script_partial: "user-form",
+    return res.render('user/register', {
+      title: 'Registration',
+      style_partial: "css_users",
+      script_partial: 'user-form',
     });
   })
   .post(async (req, res) => {
@@ -155,9 +156,10 @@ router
     let userRegister;
 
     if (errors.length > 0) {
-      return res.status(400).render("user/register", {
-        title: "Registration",
-        script_partial: "user-form",
+      return res.status(400).render('user/register', {
+        title: 'Registration',
+        style_partial: "css_users",
+        script_partial: 'user-form',
         errors: errors,
         hasErrors: true,
         firstName: firstName,
@@ -184,6 +186,7 @@ router
       errors.push(e);
       return res.status(400).render("user/register", {
         title: "Registration",
+        style_partial: "css_users",
         script_partial: "user-form",
         errors: errors,
         hasErrors: true,
@@ -204,6 +207,7 @@ router
     //code here for GET
     return res.render("user/login", {
       title: "Login",
+      style_partial: "css_users",
       script_partial: "user-form",
     });
   })
@@ -249,6 +253,7 @@ router
       errors.push(e);
       return res.status(400).render("user/login", {
         title: "Login",
+        style_partial: "css_users",
         script_partial: "user-form",
         hasErrors: true,
         errors: errors,
@@ -768,6 +773,7 @@ router
 
     return res.status(200).render("user/password", {
       title: "Change Password",
+      style_partial: "css_users",
       script_partial: "user-form",
     });
   })
@@ -812,6 +818,7 @@ router
     if (errors.length > 0) {
       return res.status(400).render("user/password", {
         title: "Change Password",
+        style_partial: "css_users",
         script_partial: "user-form",
         errors: errors,
         hasErrors: true,
@@ -832,6 +839,7 @@ router
     } catch (e) {
       return res.status(400).render("user/password", {
         title: "Change Password",
+        style_partial: "css_users",
         script_partial: "user-form",
         errors: errors,
         hasErrors: true,

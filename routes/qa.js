@@ -15,11 +15,9 @@ router.route('/').get(async (req, res) => {
   let lessonQuestions;
   let recentQaArray;
   let error;
-  let loggedIn;
   try {
-    if (req.session.user) {
+    if (req.session.authenticated) {
       user = true;
-      loggedIn = true;
       const userId = req.session.sessionId;
       creatorQuestions = await qaMethods.getRecentQAsByCreator(userId);
 
@@ -31,12 +29,12 @@ router.route('/').get(async (req, res) => {
 
     recentQaArray = await qaMethods.getRecentQAs();
     res.render('qa/home', {
+      title: 'QA Central',
       recentQaArray,
       creatorQuestions,
       lessonQuestions,
       admin,
       user,
-      loggedIn,
     });
   } catch (e) {
     error = e.message;
@@ -50,20 +48,22 @@ router
     // VIEWING QA
     let qaTarget;
     let error;
-    let qaId = xss(req.params.id);
+    let qaId;
     let owner = false;
     let admin = false;
-    let loggedIn = false;
     let lessonCreatorId;
     let lessonRelatedId;
     let viewSuffix = '';
     try {
-      qaId = validation.checkId(qaId, 'QA ID');
+      qaId = validation.checkId(req.params.id, 'QA ID');
     } catch (e) {
       error = e.message;
-      return res.status(404).render('error', {
-        title: 'Error 404: Invalid Lesson ID?',
+      return res.status(400).render('qa/view', {
+        title: 'QA Centeral',
+        errors: 'Invalid Lesson ID?',
         error,
+        admin,
+        owner,
       });
     }
     try {
@@ -72,28 +72,24 @@ router
       error = e.message;
       return res
         .status(500)
-        .render('error', { title: 'Internal Server Error', error });
+        .render('error', { title: 'QA Central', pageTitle: 'Internal Server Error', error });
     }
     if (!qaTarget) {
       qaTarget.text = 'No QA Found :(';
-      return res.status(404).render('error', { title: 'No QA found!', error });
+      return res
+        .status(404)
+        .render('qa/view', { title: 'No QA found!', qaTarget });
     }
     if (req.session.user) {
-      loggedIn = true;
       viewSuffix = 'User';
       try {
-        lessonRelatedId = await lessonMethods.getLessonById(
-          qaTarget.lessonId.toString()
-        );
-        lessonCreatorId = lessonRelatedId.creatorId.toString();
+        lessonRelatedId = await lessonMethods.getLessonById(qaTarget.lessonId);
+        lessonCreatorId = lessonRelatedId.creatorId;
       } catch (e) {
         error = e.message;
         return res.status(500).render('error', error);
       }
-      if (
-        req.session.user.role === 'admin' &&
-        req.session.sessionId === lessonCreatorId
-      ) {
+      if (req.session.user.role === 'admin' && creatorId === lessonCreatorId) {
         admin = true;
         viewSuffix = 'Admin';
       } else {
@@ -101,7 +97,8 @@ router
       }
     }
     return res.status(200).render(`qa/view${viewSuffix}`, {
-      title: qaTarget.title,
+      title: 'QA Question',
+      pageTitle: qaTarget.title,
       qaTarget,
       owner,
     });
@@ -109,7 +106,7 @@ router
   .delete(async (req, res) => {
     //DELETING QA
     let error;
-    let qaId = xss(req.params.id);
+    let qaId = req.params.id;
     let owner;
     let admin;
     let qaTarget;
@@ -129,9 +126,9 @@ router
     }
     try {
       const lessonRelatedId = await lessonMethods.getLessonById(
-        qaTarget.lessonId.toString()
+        qaTarget.lessonId
       );
-      lessonCreatorId = lessonRelatedId.creatorId.toString();
+      lessonCreatorId = lessonRelatedId.creatorId;
     } catch (e) {
       error = e.message;
       return res.status(500).render('error', error);
@@ -149,7 +146,8 @@ router
     }
     if (owner === false && admin === false) {
       return res.status(403).render(`qa/view${viewSuffix}`, {
-        title: 'FORBIDDEN',
+        title: 'QA Central',
+        pageTitle: 'FORBIDDEN',
         qaTarget,
         owner,
       });
@@ -174,12 +172,12 @@ router
   .post(async (req, res) => {
     //CREATING ANSWER
     let error;
-    let qaId = xss(req.params.id);
     let qaTarget;
     let owner;
     let admin;
     let lessonCreatorId;
-    let creatorId = req.session.sessionId;
+    let creatorId = req.session.user.sessionId;
+    let qaId;
     let text;
     let loggedIn;
     let viewSuffix;
@@ -199,9 +197,9 @@ router
     try {
       //rendering purpose only
       const lessonRelatedId = await lessonMethods.getLessonById(
-        qaTarget.lessonId.toString()
+        qaTarget.lessonId
       );
-      lessonCreatorId = lessonRelatedId.creatorId.toString();
+      lessonCreatorId = lessonRelatedId.creatorId;
     } catch (e) {
       error = e.message;
       return res.status(500).render('error', error);
@@ -217,21 +215,25 @@ router
       text = validation.checkString(text, 'Answer text');
     } catch (e) {
       error = e.message;
-      return res.status(400).render(`qa/view${viewSuffix}`, {
-        title: 'Error',
+      return res.status(400).render('qa/view', {
+        pageTitle: 'Error',
         qaTarget,
-        owner,
         error,
+        admin,
+        owner,
+        loggedIn,
       });
     }
     if (text.length < 15 || text.length > 10000) {
       error =
         'Answer length should be at least 15 characters and not absurdly long';
-      return res.status(400).render(`qa/view${viewSuffix}`, {
-        title: 'Error',
+      return res.status(400).render('qa/view', {
+        pageTitle: 'Error',
         qaTarget,
-        owner,
         error,
+        admin,
+        owner,
+        loggedIn,
       });
     }
     try {
@@ -309,7 +311,8 @@ router
       return res.status(500).render('error', { title: error, error });
     }
     return res.status(200).render(`qa/view${viewSuffix}`, {
-      title: qaTarget.title,
+      title: 'QA Answers', 
+      pageTitle: qaTarget.title,
       qaTarget,
       owner,
     });
@@ -340,9 +343,9 @@ router
     }
     try {
       const lessonRelatedId = await lessonMethods.getLessonById(
-        qaTarget.lessonId.toString()
+        qaTarget.lessonId
       );
-      lessonCreatorId = lessonRelatedId.creatorId.toString();
+      lessonCreatorId = lessonRelatedId.creatorId;
     } catch (e) {
       error = e.message;
       return res.status(500).render('error', error);
@@ -359,8 +362,11 @@ router
     }
     if (!admin) {
       return res.status(403).render('qa/view', {
-        title: 'FORBIDDEN',
+        pageTitle: 'FORBIDDEN',
         qaTarget,
+        admin,
+        owner,
+        loggedIn,
       });
     }
     try {
@@ -369,7 +375,7 @@ router
       error = e.message;
       if (error === 'NP') {
         return res.status(403).render('qa/view', {
-          title: 'FORBIDDEN',
+          pageTitle: 'FORBIDDEN',
           qaTarget,
         });
       }
@@ -403,15 +409,9 @@ router
     let title;
     let originLesson;
     let contentId;
-    let creatorId = req.session.sessionId;
-    let lessonId = xss(req.params.lessonId);
+    let creatorId = req.session.user.sessionId;
     let newQaId;
-    let loggedIn;
-    if (req.session.user) {
-      loggedIn = true;
-    }
     try {
-      contentId = xss(req.body.contentId);
       lessonId = validation.checkId(lessonId, 'Lesson ID');
       contentId = validation.checkId(contentId, 'content ID');
       creatorId = validation.checkId(creatorId, 'creator ID');
