@@ -17,7 +17,7 @@ const exportedMethods = {
       contentId = validation.checkId(contentId, 'Content ID');
       if (title.length < 10 || title.length > 50) {
         throw new Error(
-          'Title must be between 10 and 15 characters, inclusive'
+          'Title must be between 10 and 50 characters, inclusive'
         );
       }
       if (text.length < 25 || text.length > 10000) {
