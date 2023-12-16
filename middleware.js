@@ -128,19 +128,19 @@ const middleware = {
   //qa middleware
   qa: (app) => {
     app.use('qa/:id', async (req, res, next) => {
-      if (req.method !== 'GET' && !req.session.authenticated) {
+      if (req.method !== 'GET' && !req.session.user) {
         return res.redirect('/user/login');
       }
       next();
     });
     app.use('qa/:id/', async (req, res, next) => {
-      if (!req.session.authenticated) {
+      if (!req.session.user) {
         return res.redirect('/user/login');
       }
       next();
     });
     app.use('qa/create/', async (req, res, next) => {
-      if (!req.session.authenticated) {
+      if (!req.session.user) {
         return res.redirect('user/login');
       }
       next();
