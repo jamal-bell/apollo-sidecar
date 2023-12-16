@@ -4,19 +4,17 @@ import { lessons } from '../config/mongoCollections.js';
 import { ObjectId } from 'mongodb';
 import validation from './validation.js';
 import xss from 'xss';
-
 const exportedMethods = {
   async createQa(title, creatorId, lessonId, contentId, text) {
     try {
       title = xss(title);
       title = validation.checkString(title, 'title');
       text = xss(text);
-      text = validation.checkString(bodyText, 'body text of QA submission');
+      text = validation.checkString(text, 'body text of QA submission');
       validation;
       creatorId = validation.checkId(creatorId, 'Author ID');
       lessonId = validation.checkId(lessonId, 'Lesson ID');
       contentId = validation.checkId(contentId, 'Content ID');
-
       if (title.length < 10 || title.length > 50) {
         throw new Error(
           'Title must be between 10 and 15 characters, inclusive'
@@ -31,17 +29,13 @@ const exportedMethods = {
       const author = await usersCollection.findOne({
         _id: ObjectId(creatorId),
       });
-
       if (!author) {
         throw new Error('Author not found');
       }
-
       const qaCollection = await qa();
       const answers = [];
-
       const currentDate = new Date();
       const createdAt = currentDate.getTime();
-
       const qaInserted = await qaCollection.insertOne({
         //QA START SCHEMA
         title: title, //title of the question
@@ -60,18 +54,15 @@ const exportedMethods = {
       };
       const qaList = author.progress.qaPlatform.questions;
       qaList.push(newQuestion);
-
       await usersCollection.updateOne(
         { _id: ObjectId(creatorId) },
         { $set: { 'progress.qaPlatform.questions': qaList } }
       );
-
       return { insertedId }; // or return some meaningful response
     } catch (e) {
       throw new Error(`Error creating QA: ${e.message}`);
     }
   },
-
   async deleteQA(qaId, userId, admin) {
     try {
       validation.checkId(qaId, 'QA ID');
@@ -111,13 +102,13 @@ const exportedMethods = {
       throw new Error(`Error deleting QA: ${e.message}`);
     }
   },
-
   async getQa(qaId) {
     let qaTarget;
     try {
       qaId = validation.checkId(qaId, 'qa Id');
+      qaId = new ObjectId(qaId);
       const qaCollection = await qa();
-      qaTarget = await qaCollection.findOne({ _id: new ObjectId(qaId) });
+      qaTarget = await qaCollection.findOne({ _id: qaId });
     } catch (e) {
       throw new Error('QA Not Found!');
     }
@@ -162,7 +153,6 @@ const exportedMethods = {
       if (!author) {
         throw new Error('Author not found');
       }
-
       const commentId = new ObjectId();
       const currentDate = new Date();
       const timestamp = currentDate.getTime();
@@ -202,7 +192,6 @@ const exportedMethods = {
           },
         }
       );
-
       if (result2.modifiedCount === 0) {
         throw new Error('User not found or not updated');
       }
@@ -266,7 +255,6 @@ const exportedMethods = {
       throw new Error(`Error deleting reply: ${e.message}`);
     }
   },
-
   async iqPoint(qaId, voterId, answerId) {
     try {
       qaId = validation.checkId(qaId, 'QA ID');
@@ -332,6 +320,23 @@ const exportedMethods = {
                 type: 'q/a',
               },
             },
+
+    
+          
+            
+    
+
+          
+          Expand Down
+          
+            
+    
+
+          
+          Expand Up
+    
+    @@ -359,12 +357,12 @@ const exportedMethods = {
+  
           }
         );
       }
@@ -365,6 +370,17 @@ const exportedMethods = {
           .sort({ createdAt: -1 })
           .limit(20)
           .toArray();
+
+    
+        
+          
+    
+
+        
+        Expand All
+    
+    @@ -380,7 +378,7 @@ const exportedMethods = {
+  
       });
       const questionsByLesson = await Promise.all(questionPromises);
       const flattenedQuestions = questionsByLesson.flat();
@@ -381,11 +397,21 @@ const exportedMethods = {
         .sort({ createdAt: -1 })
         .limit(20)
         .toArray();
+
+    
+          
+            
+    
+
+          
+          Expand Down
+    
+    
+  
       return recentQuestions;
     } catch (e) {
       throw new Error(`Database pull error: ${e.message}`);
     }
   },
 };
-
 export default exportedMethods;
