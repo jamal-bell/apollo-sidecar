@@ -33,7 +33,7 @@ router.route("/lesson/:id").get(async (req, res) => {
       .render("/error", { error: "Unknown url id param", title: "Error" });
   }
   const lessonFound = await lessonsData.getLessonById(req.params.id);
-  res.status(200).render("lesson/lessonById", {
+  return res.status(200).render("lesson/lessonById", {
     lessonId: req.params.id,
     title: lessonFound.title,
     moduleTitle: lessonFound.moduleTitle,
@@ -49,10 +49,10 @@ router
     try {
       return res.status(200).render("lesson/newlesson", {
         title: "Create Lesson",
-        style_partial: "user-form",
+        //style_partial: "lesson",//ERROR HERE?
       });
     } catch (e) {
-      res.status(500).json({ Error: e });
+      return res.status(500).json({ Error: e });
     }
   })
   .post(async (req, res) => {
@@ -159,9 +159,13 @@ router
 router
   .route("/addmodule/:id")
   .get(async (req, res) => {
-    const lessonId = req.params.id;
-    //console.log("req.params at addmodule route: "+req.params);
-    const lesson = await lessonsData.getLessonById(lessonId);
+    let lessonId = req.params.id;
+    let lesson = {};
+    try {
+      lesson = await lessonsData.getLessonById(lessonId);
+    } catch (e) {
+      return res.status(500).json({ Error: e });
+    }
     return res.status(200).render("lesson/publish", {
       title: "Publish Lesson",
       lessonId,
@@ -195,7 +199,6 @@ router
         text: text,
         order: order,
         videoLink: videoLink,
-        
       });
     } catch (error) {
       return res.status(400).json({
@@ -236,11 +239,26 @@ router
     let createdBy;
 
     try {
-      text = validation.checkContent(text, "lesson title", 3, 250);
+      moduleTitle = validation.checkContent(
+        moduleTitle,
+        "lesson title",
+        3,
+        250
+      );
     } catch (e) {
       errors.push(e);
     }
-    //TODO other validation
+    try {
+      text = validation.checkContent(text, "lesson title", 10, 250);
+    } catch (e) {
+      errors.push(e);
+    }
+
+    try {
+      videoLink = validation.checkString(videoLink, "lesson title");
+    } catch (e) {
+      errors.push(e);
+    }
 
     req.session.user.role == "admin"
       ? createdBy == "admin"
@@ -269,7 +287,7 @@ router
       );
 
       //if successful, render lesson/:id
-      res.status(200).render("lesson/lessonById", {
+      return res.status(200).render("lesson/lessonById", {
         lessonTitle,
         description,
         order,

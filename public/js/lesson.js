@@ -52,12 +52,14 @@
           errorList += `<li>${e}</li>`;
         }
         try {
-          text = helpers.checkContent(text, "module content", 10, 60000);
+          if (text)
+            text = helpers.checkContent(text, "module content", 10, 60000);
         } catch (e) {
           errorList += `<li>${e}</li>`;
         }
         try {
-          videoLink = helpers.checkString(videoLink, "video link");
+          if (videoLink)
+            videoLink = helpers.checkString(videoLink, "video link");
         } catch (e) {
           errorList += `<li>${e}</li>`;
         }
@@ -97,18 +99,14 @@
 
       //call checks and append to errorList surrounded by try/catch
       try {
-        moduleTitle = helpers.checkContent(
-          moduleTitle,
-          "module title",
-          10,
-          250
-        );
+        moduleTitle = helpers.checkContent(moduleTitle, "module title", 3, 250);
       } catch (e) {
         errorList += `${e}`;
       }
-     
+
       try {
-        if (text) text = helpers.checkContent(text, "module content", 10, 60000);
+        if (text)
+          text = helpers.checkContent(text, "module content", 10, 60000);
       } catch (e) {
         errorList += `${e}`;
       }
@@ -158,47 +156,54 @@
             order = response.order;
             videoLink = response.videoLink;
 
-            //   const contentsList = document.getElementById("contentList");
-            //   let li = document.createElement("li");
-
-            //   li.textContent = `{{{<h4>${order}: ${moduleTitle}</h4>
-            //   <h5>Resources:${videoLink}</h5>
-            //   <h5>Content: ${text}</h5>
-            // }}}`;
-            //   contentsList.appendChild(li);
-
             const contentsList = document.getElementById("contentList");
-            const li = document.createElement("li");
+            let li = document.createElement("li");
 
-            // Assuming you have a Handlebars template with placeholders like {{order}}, {{moduleTitle}}, etc.
-            const template = `
-            <h4>{{order}}: {{this.moduleTitle}}</h4>
-            <h5>Resources: {{this.videoLink}}</h5>
-            <h5>Content: {{this.text}}</h5>
+            //   li.textContent = `{{{<h4>${order}: ${this.moduleTitle}</h4>
+            //   <h5>Resources:${this.videoLink}</h5>
+            //   <h5>Content: ${this.text}</h5>
+            // }}}`;
+
+            li.innerHTML = `
+            <h4>${order}: ${moduleTitle}</h4>
+            <h5>Resources: ${videoLink}</h5>
+            <h5>Content: ${text}</h5>
           `;
 
-            const templateFunction = Handlebars.compile(template);
-
-            // Replace the placeholders with your actual data
-            const html = templateFunction({
-              order: order, // replace with your actual order variable
-              moduleTitle: moduleTitle, // replace with your actual moduleTitle variable
-              videoLink: videoLink, // replace with your actual videoLink variable
-              text: text, // replace with your actual text variable
-            });
-            console.log("html template: " + html);
-            // Set the compiled HTML as the content of the list item
-            li.innerHTML = html;
-
-            // Append the list item to the contentList
             contentsList.appendChild(li);
+            //------------------------------------------------------------------------------
+            // const contentsList = document.getElementById("contentList");
+            // const li = document.createElement("li");
+
+            //   // Assuming you have a Handlebars template with placeholders like {{order}}, {{moduleTitle}}, etc.
+            //   const template = `
+            //   <h4>{{order}}: {{this.moduleTitle}}</h4>
+            //   <h5>Resources: {{this.videoLink}}</h5>
+            //   <h5>Content: {{this.text}}</h5>
+            // `;
+
+            //   const templateFunction = Handlebars.compile(template);
+
+            //   // Replace the placeholders with your actual data
+            //   const html = templateFunction({
+            //     order: order, // replace with your actual order variable
+            //     moduleTitle: moduleTitle, // replace with your actual moduleTitle variable
+            //     videoLink: videoLink, // replace with your actual videoLink variable
+            //     text: text, // replace with your actual text variable
+            //   });
+            //   console.log("html template: " + html);
+            //   // Set the compiled HTML as the content of the list item
+            //   li.innerHTML = html;
+
+            //   // Append the list item to the contentList
+            //   contentsList.appendChild(li);
 
             orderInput.value = "";
             moduleTitleInput.value = "";
             textInput.value = "";
             videoLinkInput.value = "";
 
-            errorContainer.empty();
+            errorContainer.hide(); //.empty or .hide???
             errorContainer.appendChild(`<p>Module Created!</p>`);
           }
         })

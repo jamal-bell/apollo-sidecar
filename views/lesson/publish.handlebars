@@ -1,4 +1,4 @@
-<h2>Add Module \from publish.handlebars {{this.moduleTitle}}</h2>
+<h2>Add Module {{this.moduleTitle}}</h2>
 <h3 class="information">Create additional modules for this lesson. Click PUBLISH to make your lesson viewable to others.
 </h3>
 <section>
@@ -7,7 +7,7 @@
       <h1>lesson-id: {{this.lessonId}}</h1>
       <input class="hide-id" value={{this.lessonId}} name="lessonId" />
       <div>
-        <input type-"text" id="lessonId" name="lessonId" value={{this.lessonId}} hidden/>
+        <input type-"text" id="lessonId" name="lessonId" value={{this.lessonId}} hidden />
       </div>
       <div>
         <label for="moduleTitleInput">Module Title:</label>
@@ -23,7 +23,7 @@
       </div>
       <div>
         <label for="orderInput" id="orderInput">order of this module</label>
-        <input type="number" id="orderInpu" name="order" value="{{order}}">
+        <input type="number" id="orderInput" name="order" value="{{order}}">
       </div>
       <div class="buttons">
         <button type="submit" id="newModuleButton">Add a New Module</button>
@@ -48,28 +48,24 @@
   </div>
 </section>
 
-<section>
-  <h1>PREVIEW /this is from publish.handlebars</h1>
-  <h1>Lesson name : {{this?.lesson?.lessonTitle}}</h1>
-  <h1>Lesson Moduless</h1>
-  <div>
-    {{#each this?.lesson?.contents}}
-    <h1>Module name : {{moduleTitle ?? ''}}</h1>
-    {{/each}}
-  </div>
+<section id="preview">
+  <h1>PREVIEW</h1>
+  {{!-- <h1>Lesson Title: {{this.lesson.lessonTitle}}</h1>
+  <h1>Modules</h1> --}}
 </section>
 
+{{!-- The section below is populated from lessonById.handlebars --}}
 <section id="detail">
-  <h2>{{this.lessonTitle}}</h2>
-  <h3>{{this.description}}</h3>
+  <h2>{{this.lesson.lessonTitle}}</h2>
+  <h2>{{this.lesson.description}}</h2>
 
   <ul id="contentList">
-    {{#each contents}}
+    {{#each this.lesson.contents}}
     <li>
-      <h4>{{this.order}}: {{this.moduleTitle}}</h4>
-      <h5>Resources: {{this.videoLink}}</h5>
-      <h5>Content: {{this.text}}</h5>
-      
+      <h4>{{this?.lesson?.contents?.order}}: {{this?.lesson?.contents?.moduleTitle?}}</h4>
+      <h5>Video Resource: {{this?.lesson?.contents?.videoLink?}}</h5>
+      <h5>Content: {{this.lesson.contents.text}}</h5>
+
     </li>
     {{/each}}
   </ul>
