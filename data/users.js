@@ -180,6 +180,14 @@ const exportedusersMethods = {
     return user;
   }, //end getUserById()
 
+  async getUserByHandle(handle) {
+    handle = validation.checkHandle(handle);
+    const usersCollection = await users();
+    const user = await usersCollection.findOne({ handle: handle });
+    if (!user) throw "User not found in the system.";
+    return user;
+  }, //end getUserById()
+
   async getUserByEmail(emailAddress) {
     emailAddress = validation.checkEmail(emailAddress);
     const usersCollection = await users();
