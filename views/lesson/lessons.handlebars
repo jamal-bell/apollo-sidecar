@@ -1,13 +1,19 @@
 <section id="lessons">
+  <h2>All Lessons - public</h2>
   <ul>
     {{#each lessons}}
     <li style="text-decoration: none" ;>
       <div>
         <h3><a href="/lessons/lesson/{{this._id}}">Lesson Title: {{this.lessonTitle}}</a></h3>
+        <h4>Created by: <span>{{handle}}</span></h4>
+        <h4>Subject: {{this.subject}}</h4> 
         <h4>Description: {{this.description}}</h4>
-        <h4>lessonId: {{this._id}}</h4>
+        <h4 hidden>lessonId: {{this._id}}</h4>
+        <p>Created: {{this.createdAt}}</p>
+        <p>Last modified: {{this.modifiedAt}}</p> 
+        
       </div>
-
+      
       {{!-- <button type="button" onclick="location.href='/lesson/{{id}}'">Go To Lesson</button> --}}
     </li>
     {{/each}}

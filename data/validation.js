@@ -125,6 +125,20 @@ const helperFunctions = {
 
     return password;
   },
+
+  checkHandle(handle) {
+    if (!handle) throw "You must provide unique handle.";
+    handle = handle.trim();
+    if (handle.length === 0 || typeof handle !== "string")
+      throw "Handle must be a valid string.";
+    if (handle.length < 3 || handle.length > 10)
+      throw "Handle must be 3 - 10 unique characters.";
+    if (/\s/.test(handle)) throw "Handle can not have space in it.";
+    if (/[!@#$%^&*(),.?":{}|<>_]/.test(handle))
+      throw "Handle can not have special characters.";
+
+    return handle;
+  },
 };
 
 export default helperFunctions;

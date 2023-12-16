@@ -1,18 +1,39 @@
 <section id="detail">
   <h2>{{this.lessonTitle}}</h2>
-  <h3>{{this.description}}</h3>
+  <p><span>created: </span>{{this.created}} <span>Last modified: </span>{{this.modified}}</p> <!-- jamal -->
+  <h3>{{this.subject}}</h3> 
+  <h3>{{this.description}}</h3> 
+  {{> (lookup . 'html_partial') }}
 
   <ul>
     {{#each contents}}
     <li>
       <h4>{{this.order}}: {{this.moduleTitle}}</h4>
       <h5>Author: {{this.author}} with creatorId: {{this.creatorId}}</h5>
-      <h5>Resources: {{this.videoLink}}</h5>
+
+      <h5>Video Resource: <a href="{{this.videoLink}}" target="_blank">{{this.videoLink}} </a></h5>
+
+      //<h5>Video Resource: {{this.videoLink}}</h5>
+
       <h5>{{this.text}}</h5>
       <button type="button" onclick="location.href='/user/profile'">Mark Complete!</button>
     </li>
     {{/each}}
   </ul>
+
+
+  <div>
+    <a href="/lessons/addmodule/{{this.lessonId}}">
+      Add Modules to this Lesson
+    </a>
+  </div>
+  <div>
+    <a href="/qa/create/{{lessonId}}">
+      Ask a question about this Lesson
+    </a>
+  </div>
+
+
 
 
   <a href="/lessons/newlesson/publish/{{this.lessonId}}">

@@ -7,10 +7,6 @@ import { Router } from "express";
 const app = express();
 const router = Router();
 
-// router.route("/").get(async (req, res) => {
-//   //reserved for logging
-//   return res.render("user/error", { error: "Internal Error." });
-// });
 
 router.route("/lessons").get(async (req, res) => {
   //Lesson 'home' list of all lessons, unrestricted
@@ -23,6 +19,7 @@ router.route("/lessons").get(async (req, res) => {
 });
 
 router.route("/lesson/:id").get(async (req, res) => {
+  req.session.authenticated = true;
   // if (!req.session.authenticated) {
   //   return res.redirect("/user/login");
   // }
@@ -33,13 +30,32 @@ router.route("/lesson/:id").get(async (req, res) => {
       .status(400)
       .render("/error", { error: "Unknown url id param", title: "Error" });
   }
+
   const lessonFound = await lessonsData.getLessonById(req.params.id);
-  res.status(200).render("lesson/lessonById", {
-    title: lessonFound.title,
-    moduleTitle: lessonFound.moduleTitle,
-    description: lessonFound.description,
-    contents: lessonFound.contents,
-  });
+  if (req.session.authenticated) {
+    res.status(200).render("lesson/lessonById", {
+      title: lessonFound.title,
+      moduleTitle: lessonFound.moduleTitle,
+      subject: lessonFound.subject,
+      description: lessonFound.description,
+      contents: lessonFound.contents,
+      created: lessonFound.createdAt,
+      modified: lessonFound.modifiedAt,
+      upVoteId: lessonFound._id,
+      html_partial: "html_upVote",
+      script_partial: "script_upVote"
+    });
+  } else {
+    res.status(200).render("lesson/lessonById", {
+      title: lessonFound.title,
+      moduleTitle: lessonFound.moduleTitle,
+      subject: lessonFound.subject,
+      description: lessonFound.description,
+      contents: lessonFound.contents,
+      created: lessonFound.createdAt,
+      modified: lessonFound.modifiedAt
+    });
+  }
 });
 
 router
@@ -49,14 +65,19 @@ router
     try {
       return res.status(200).render("lesson/newlesson", {
         title: "Create Lesson",
+        //style_partial: "lesson",//ERROR HERE?
       });
     } catch (e) {
-      res.status(500).json({ Error: e });
+      return res.status(500).json({ Error: e });
     }
   })
   .post(async (req, res) => {
     const { lessonTitle, description, moduleTitle, text, videoLink } = req.body;
-    //console.log(req.body);
+
+    const firstName = reqsession.user.firstName;
+    const lastName = req.session.user.lastName;
+    const handleName = req.secure.user.handle;
+
     try {
       const content = [
         {
@@ -73,7 +94,10 @@ router
         content,
         moduleTitle,
         text,
-        videoLink
+        videoLink, 
+        firstName, 
+        lastName,
+        handleName
       );
 
       // const user = await usersData.getUserByEmail(
@@ -89,8 +113,15 @@ router
       // const author = user.firstName + user.lastName;
 
       const { _id } = lesson;
-      // user.lessons.created.push(_id.toString());
-      // console.log(user);
+      const lessonId = _id.toString();
+
+      const addedToUser = await usersData.addLesson(
+        req.session.sessionId,
+        lessonId,
+        "created"
+      );
+
+      if (!addedToUser) throw "Could not add Lesson to user.";
 
       return res.status(200).render(`lesson/lessonById`, {
         title: "Create Lesson",
@@ -101,6 +132,7 @@ router
         moduleTitle,
         text,
         videoLink,
+        style_partial: "lesson",
         createdBy: null,
         //creatorId,
         //author,
@@ -147,25 +179,33 @@ router
     //   .render("/error", { error: "Internal Server Error", title: "Error" });
   });
 
-router
-  .route("/addmodule")
+  router
+  .route("/addmodule/:id")
   .get(async (req, res) => {
-    const lessonId = req.params["lesson-id"];
-    return res.render("lesson/publish", {
+    let lessonId = req.params.id;
+    let lesson = {};
+    try {
+      lesson = await lessonsData.getLessonById(lessonId);
+    } catch (e) {
+      return res.status(500).json({ Error: e });
+    }
+    return res.status(200).render("lesson/publish", {
       title: "Publish Lesson",
       lessonId,
+      lesson,
+      style_partial: "lesson",
     });
   })
   .post(async (req, res) => {
     try {
-      const { lessonId, moduleTitle, text, videoLink, order } = req.body;
-      console.log(req.body);
+      let { lessonId, moduleTitle, text, videoLink, order } = req.body;
+      //console.log(order);
 
-      const orderId = parseInt(order);
+      order = "undefined" ? 1 : parseInt(order);
 
       const response = await lessonsData.createModule(
         lessonId,
-        orderId,
+        order,
         moduleTitle,
         text,
         videoLink
@@ -174,13 +214,17 @@ router
 
       //console.log("response: " + response);
 
-      return res.render("lesson/publish", {
+      return res.json({
+        updated: true,
         title: "Publish Lesson",
+        moduleTitle: moduleTitle,
         lessonId: lessonId,
-        lesson,
+        text: text,
+        order: order,
+        videoLink: videoLink,
       });
     } catch (error) {
-      return res.status(400).render("lesson/publish", {
+      return res.status(400).json({
         title: "Edit Lesson",
         errors: error,
         hasErrors: true,
@@ -191,14 +235,14 @@ router
     }
   });
 
-router
-  .route("/newlesson/publish/:id")
+  router
+  .route("published/:id")
   .get(async (req, res) => {
     const lessonId = req.params.id;
     const lesson = await lessonsData.getLessonById(lessonId);
 
-    res.render("lesson/publish", {
-      title: "Publish Lesson",
+    res.render("lessonById", {
+      title: "Lesson Published!",
       lesson,
       lessonId,
     });
@@ -211,39 +255,54 @@ router
     const firstName = res.session.user.firstName;
     const lastName = res.session.user.lastName;
     let moduleTitle = req.body.contents.moduleTitle;
-    const creatorId = `${firstName} ${lastName}`;
+    const author = `${firstName} ${lastName}`;
     let text = req.body.contents.text;
     let videoLink = req.body.contents.videoLink;
     let errors = [];
     let createdBy;
 
     try {
-      text = validation.checkContent(text, "lesson title", 3, 250);
+      moduleTitle = validation.checkContent(
+        moduleTitle,
+        "lesson title",
+        3,
+        250
+      );
     } catch (e) {
       errors.push(e);
     }
-    //TODO other validation
+    try {
+      text = validation.checkContent(text, "lesson title", 10, 250);
+    } catch (e) {
+      errors.push(e);
+    }
+
+    try {
+      videoLink = validation.checkString(videoLink, "lesson title");
+    } catch (e) {
+      errors.push(e);
+    }
 
     req.session.user.role == "admin"
       ? createdBy == "admin"
       : createdBy == "user";
 
     if (errors.length > 0) {
-      return res.status(400).render("partials/publish", {
-        title: "Edit Lesson",
-
+      return res.status(400).render("lesson/publish", {
+        title: "Error Publishing - Try Again",
         errors: errors,
         hasErrors: true,
         moduleTitle: moduleTitle,
         text: text,
         videoLink: videoLink,
+        style_partial: "lesson",
       });
     }
 
     //call data function
     try {
       const newlesson = await lessonsData.createModule(
-        id,
+        lessonId, // I CHANGED THIS
         order,
         moduleTitle,
         text,
@@ -251,7 +310,7 @@ router
       );
 
       //if successful, render lesson/:id
-      res.status(200).render("lesson/lessonById", {
+      return res.status(200).render("lesson/lessonById", {
         lessonTitle,
         description,
         order,
@@ -259,6 +318,7 @@ router
         creatorId,
         videoLink,
         text,
+        author,
       });
     } catch (e) {
       errors.push(e);
@@ -269,12 +329,24 @@ router
         moduleTitle: moduleTitle,
         text: text,
         videoLink: videoLink,
+        style_partial: "lesson",
       });
     }
     res
       .status(500)
       .render("/error", { error: "Internal Server Error", title: "Error" });
   });
+
+  //===============
+  router.post('/upvote/:id', async (req, res) => {
+    try {
+    const id = req.body.voteId
+    lessonsData.upvote(id);
+    }catch(e) {
+      errors.push(e)
+    }
+  });
+  // ==============
 
 router.route("/error").get(async (req, res) => {
   //code here for GET

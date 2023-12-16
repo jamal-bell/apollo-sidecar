@@ -1,3 +1,4 @@
+<h2>{{pageTitle}}</h2>
 <h2>Create Lesson</h2>
 <h3 class="information">Upon saving your lesson with first module, you will have the option to create additional
     modules. Click PUBLISH to make your lesson viewable to others. </h3>
@@ -6,6 +7,10 @@
         <div>
             <label for="titleInput">Lesson Title:</label>
             <input type="text" id="titleInput" name="lessonTitle" value="{{lessonTitle}}">
+        </div>
+        <div>  <!-- jamal -->
+            <label for="subjectInput">Subject:</label>  
+            <input type="text" id="subjectInput" name="subject" value="{{subject}}">
         </div>
         <div>
             <label for="descriptionInput">Lesson Description:</label>
@@ -33,9 +38,7 @@
             <ul id="errors" class="errors">
                 {{#if hasErrors}}
                 {{#each errors}}
-                <li>
-                    {{this}}
-                </li>
+                {{this}}
                 {{/each}}
                 {{/if}}
             </ul>
@@ -43,7 +46,7 @@
         <div class="form-errors">
             <ul id="errors" class="errors">
                 {{#if error}}
-                    {{error}}
+                {{error}}
                 {{/if}}
             </ul>
         </div>

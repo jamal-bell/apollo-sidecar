@@ -1,31 +1,40 @@
 <h1>Welcome to QA central!</h1>
 <h2>Feeling helpful? Here are some of our most recent questions asked:</h2>
 <div class='errorSpace' id='errorSpace'></div>
-{{#if recentQaArray}}
-  {{#each recentQaArray}} <!-- show last 20 questions on the site period. Visible to all -->
-    <a href='/{{this._id}}'>{{this.title}}</a>
-    <p>Created at:
-      {{this.createdAt}}
-      by
-      <a href='../user/{{this.author}}'>{{this.author}}</a></p>
+{{#if recentQaArray.length}}
+  {{#each recentQaArray}}
+    <!-- show last 20 questions on the site period. Visible to all -->
+    <a href='/qa/{{this._id}}'>{{this.title}}</a>
+    Created at:
+    {{this.timeStamp}}
+    by
+    <a href='../user/{{this.author}}'>{{this.author}}</a>
   {{/each}}
 {{/if}}
-{{#if user}} <!-- if logged in user -->
-<p>Let's see if anybody has answered any of your burning questions:</p>
-  {{#each creatorQuestions}} <!-- show last 20 questions they've asked -->
-    <a href='/{{this._id}}'>{{this.title}}</a>
-    <p>Created at:
-      {{this.createdAt}}
-    </p>
-  {{/each}}
+{{#if user}}
+  <!-- if logged in user -->
+  <p>Let's see if anybody has answered any of your burning questions:</p>
+  {{#if creatorQuestions.length}}
+    {{#each creatorQuestions}}
+      <!-- show last 20 questions they've asked -->
+      <a href='/qa/{{this._id}}'>{{this.title}}</a>
+      <p>Created at:
+        {{this.timeStamp}}
+      </p>
+    {{/each}}
+  {{/if}}
 {{/if}}
-{{#if admin}} <!-- if teacher -->
-<p>Hey Smartypants, ready to help?</p>
-  {{#each lessonsQuestions}}  <!-- show last 20 questions for each lesson they've created -->
-  <a href='/{{this._id}}'>{{this.title}}</a>
-  <p>Created at:
-  {{this.createdAt}}
-  by
-  <a href='../user/{{this.author}}'>{{this.author}}</a></p>
-  {{/each}}
+{{#if admin}}
+  <!-- if teacher -->
+  <p>Hey Smartypants, ready to help?</p>
+  {{#if lessonsQuestions.length}}
+    {{#each lessonsQuestions}}
+      <!-- show last 20 questions for each lesson they've created -->
+      <a href='/qa/{{this._id}}'>{{this.title}}</a>
+      <p>Created at:
+        {{this.timeStamp}}
+        by
+        <a href='../user/{{this.author}}'>{{this.author}}</a></p>
+    {{/each}}
+  {{/if}}
 {{/if}}

@@ -64,6 +64,19 @@ const validation = {
       throw "Role can only be admin or user.";
     return role;
   },
+  checkHandle(handle) {
+    if (!handle) throw "You must provide unique handle.";
+    handle = handle.trim();
+    if (handle.length === 0 || typeof handle !== "string")
+      throw "Handle must be a valid string.";
+    if (handle.length < 3 || handle.length > 10)
+      throw "Handle must be 3 - 10 unique characters.";
+    if (/\s/.test(handle)) throw "Handle can not have space in it.";
+    if (/[!@#$%^&*(),.?":{}|<>_]/.test(handle))
+      throw "Handle can not have special characters.";
+
+    return handle;
+  },
 };
 
 let loginForm = document.getElementById("login-form");
@@ -117,6 +130,7 @@ if (registerForm) {
   const passwordInput = document.getElementById("passwordInput");
   const confirmPasswordInput = document.getElementById("confirmPasswordInput");
   const roleInput = document.getElementById("roleInput");
+  const handleInput = document.getElementById("handleInput");
   const errorContainer = document.getElementById("errors");
 
   registerForm.addEventListener("submit", (event) => {
@@ -125,6 +139,7 @@ if (registerForm) {
     let firstName = firstNameInput.value.trim();
     let lastName = lastNameInput.value.trim();
     let emailAddress = emailAddressInput.value.trim();
+    let handle = handleInput.value.trim();
     let password = passwordInput.value.trim();
     let confirmPassword = confirmPasswordInput.value.trim();
     let role = roleInput.value.trim();
@@ -144,6 +159,12 @@ if (registerForm) {
 
     try {
       emailAddress = validation.checkEmail(emailAddress);
+    } catch (e) {
+      errorList += `<li>${e}</li>`;
+    }
+
+    try {
+      handle = validation.checkHandle(handle);
     } catch (e) {
       errorList += `<li>${e}</li>`;
     }
@@ -169,6 +190,7 @@ if (registerForm) {
       errorContainer.hidden = false;
     } else {
       errorContainer.hidden = true;
+      alert("Account registered! Login now.");
       registerForm.submit();
     }
   });
@@ -238,6 +260,7 @@ if (profile) {
     const firstNameInput = $("#firstNameInput");
     const lastNameInput = $("#lastNameInput");
     const emailAddressInput = $("#emailAddressInput");
+    const handleInput = $("#handleInput");
     const bioInput = $("#bioInput");
     const githubInput = $("#githubInput");
     const errorContainer = $("#errors");
@@ -247,14 +270,6 @@ if (profile) {
     profileForm.hide();
     userProfileContainer.show();
 
-    function activeInput(input) {
-      input.attr("disabled", false);
-    }
-
-    function deactiveInput(input) {
-      input.attr("disabled", true);
-    }
-
     function saveProfileClick(event) {
       event.preventDefault();
       let errorList = "";
@@ -262,6 +277,7 @@ if (profile) {
       let firstName = firstNameInput.val().trim();
       let lastName = lastNameInput.val().trim();
       let emailAddress = emailAddressInput.val().trim();
+      let handle = handleInput.val().trim();
       let bio = bioInput.val().trim();
       let github = githubInput.val().trim();
 
@@ -279,6 +295,12 @@ if (profile) {
 
       try {
         emailAddress = validation.checkEmail(emailAddress);
+      } catch (e) {
+        errorList += `<li>${e}</li>`;
+      }
+
+      try {
+        handle = validation.checkHandle(handle);
       } catch (e) {
         errorList += `<li>${e}</li>`;
       }
@@ -305,6 +327,7 @@ if (profile) {
             firstName: firstName,
             lastName: lastName,
             emailAddress: emailAddress,
+            handle: handle,
             bio: bio,
             github: github,
           }),
@@ -319,20 +342,16 @@ if (profile) {
               firstName = response.user.firstName;
               lastName = response.user.lastName;
               email = response.user.emailAddress;
+              handle = response.user.handle;
               bio = response.user.bio;
               github = response.user.github;
 
               firstNameInput.val(firstName);
               lastNameInput.val(lastName);
               emailAddressInput.val(email);
+              handleInput.val(handle);
               bioInput.val(bio);
               githubInput.val(github);
-
-              deactiveInput(firstNameInput);
-              deactiveInput(lastNameInput);
-              deactiveInput(emailAddressInput);
-              deactiveInput(bioInput);
-              deactiveInput(githubInput);
 
               profileForm.hide();
               userProfileContainer.show();
@@ -343,7 +362,7 @@ if (profile) {
               location.reload();
             }
           })
-          .catch(function (error) {
+          .catch(function (e) {
             errorList.push(`<li>${e}</li>`);
             errorContainer.show();
           });
@@ -353,11 +372,6 @@ if (profile) {
     function editProfileClick(event) {
       event.preventDefault();
       errorContainer.hide();
-      activeInput(firstNameInput);
-      activeInput(lastNameInput);
-      activeInput(emailAddressInput);
-      activeInput(bioInput);
-      activeInput(githubInput);
       profileForm.show();
       userProfileContainer.hide();
 
@@ -436,12 +450,24 @@ if (profile) {
 if (uploadPhotoButton) {
   const userPhotoDisplay = document.getElementById("userPhotoDisplay");
   const file = document.getElementById("photoInput");
+  const photoUploadMessage = document.getElementById("photoMessage");
 
   uploadPhotoButton.addEventListener("click", async function (event) {
     event.preventDefault();
 
     if (file.files.length === 0) {
-      return alert("Please choose a photo to upload");
+      photoUploadMessage.style.color = "red";
+      photoUploadMessage.textContent = "Please choose a photo to upload";
+      file.value = "";
+      return;
+    }
+    const maxSize = 3 * 1024 * 1024;
+    if (file.files[0].size > maxSize) {
+      photoUploadMessage.style.color = "red";
+      photoUploadMessage.textContent =
+        "The file is too large. Please select a file smaller than 5MB.";
+      file.value = "";
+      return;
     }
 
     let url;
@@ -465,17 +491,21 @@ if (uploadPhotoButton) {
       const imageUrl = url.split("?")[0];
       //post url server to save into database
 
-      const photoUpdated = await axios.post("/user/s3", {url: imageUrl});
+      const photoUpdated = await axios.post("/user/s3", { url: imageUrl });
 
       if (photoUpdated.data.updated) {
         userPhotoDisplay.src = photoUpdated.data.user.photo;
-        alert("Photo Updated!");
+        photoUploadMessage.style.color = "green";
+        photoUploadMessage.textContent = "Photo Updated!";
       } else {
-        alert("Error Updating Photo: " + photoUpdated.data.photoErrors);
+        photoUploadMessage.style.color = "red";
+        photoUploadMessage.textContent =
+          "Error Updating Photo: " + photoUpdated.data.photoErrors;
       }
       file.value = "";
     } catch (e) {
-      alert("Error poisting the image to S3 bucket:" + e);
+      photoUploadMessage.style.color = "red";
+      photoUploadMessage.textContent = "Error Updating Photo: " + e;
     }
   });
 }

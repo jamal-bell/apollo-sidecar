@@ -1,68 +1,37 @@
-<h2>Publish Lesson</h2>
+<h2>Add Module {{this.moduleTitle}}</h2>
 <h3 class="information">Create additional modules for this lesson. Click PUBLISH to make your lesson viewable to others.
 </h3>
 <section>
   <div id="module-wrapper">
-    <form id="module-form" method="POST" action="/lessons/addmodule" class="form">
+    <form id="module-form" class="form">
       <h1>lesson-id: {{this.lessonId}}</h1>
       <input class="hide-id" value={{this.lessonId}} name="lessonId" />
+      <div>
+        <input type-"text" id="lessonId" name="lessonId" value={{this.lessonId}} hidden />
+      </div>
       <div>
         <label for="moduleTitleInput">Module Title:</label>
         <input type="text" id="moduleTitleInput" name="moduleTitle" value="{{moduleTitle}}">
       </div>
       <div>
         <label for="textInput">Module Content:</label>
-        <input type="text" id="textInput" name="text" value="{{text}}">
+        <textarea  row="40" cols="18" id="textInput" name = "textInput" value="{{text}}"></textarea>
       </div>
       <div>
         <label for="videoLinkInput">Module Video Link:</label>
-        <input type="videoLink" id="videoLinkInput" name="videoLink" value="{{videoLink}}">
+        <input type="text" id="videoLinkInput" name="videoLink" value="{{videoLink}}">
       </div>
       <div>
         <label for="orderInput" id="orderInput">order of this module</label>
-        <input type="number" id="orderInpu" name="order" value="{{order}}">
+        <input type="number" id="orderInput" name="order" value="{{order}}">
       </div>
       <div class="buttons">
-        <button type="submit">Add a New Module</button>
+        <button type="submit" id="newModuleButton">Add a New Module</button>
       </div>
-
-      <button type="button" action="/lessons/lesson/:id">Publish Lesson</button>
     </form>
-
-
   </div>
 
-
-  <section>
-    <h1>Preview</h1>
-    <h1>Lesson name : {{this?.lesson?.lessonTitle}}</h1>
-    <h1>Lesson Modules</h1>
-    <div>
-      {{#each this?.lesson?.contents}}
-      <h1>Module name : {{moduleTitle ?? ''}}</h1>
-      {{/each}}
-    </div>
-  </section>
-
-  <section id="detail">
-    <h2>{{this.lessonTitle}}</h2>
-    <h3>{{this.description}}</h3>
-    <ul>
-      {{#each contents}}
-      <li>
-
-        <h4>{{this.order}}: {{this.moduleTitle}}</h4>
-        <h5>Author: {{this.author}}</h5>
-        <h5>Resources: {{this.videoLink}}</h5>
-        <h5>{{this.text}}</h5>
-        <button type="button" onclick="location.href='/user/profile'">Mark Complete!</button>
-      </li>
-      {{/each}}
-    </ul>
-  </section>
-
-
-  <div class="form-errors">
+  <div class="form-errors" id="errorsDiv">
     <ul id="errors" class="errors">
       {{#if hasErrors}}
       {{#each errors}}
@@ -71,19 +40,42 @@
       </li>
       {{/each}}
       {{/if}}
-    </ul>
-  </div>
-  <div class="form-errors">
-    <ul id="errors" class="errors">
+
       {{#if error}}
-      {{error}}
+      <li>{{error}} </li>
       {{/if}}
     </ul>
   </div>
-
-
 </section>
 
+<section id="preview">
+  <h1>PREVIEW</h1>
+  {{!-- <h1>Lesson Title: {{this.lesson.lessonTitle}}</h1>
+  <h1>Modules</h1> --}}
+</section>
+
+{{!-- The section below is populated from lessonById.handlebars --}}
+<section id="detail">
+  <h2>{{this.lesson.lessonTitle}}</h2>
+  <h2>{{this.lesson.description}}</h2>
+
+  <ul id="contentList">
+    {{#each this.lesson.contents}}
+    <li>
+      <h4>{{this?.lesson?.contents?.order}}: {{this?.lesson?.contents?.moduleTitle?}}</h4>
+      <h5>Video Resource: {{this?.lesson?.contents?.videoLink?}}</h5>
+      <h5>Content: {{this.lesson.contents.text}}</h5>
+
+    </li>
+    {{/each}}
+  </ul>
+  <button type="button" action="/lessons/lesson/:id">Publish Lesson</button>
+</section>
+
+
+
+
+{{!-- not being used yet --}}
 <script>
   function duplicateModuleForm() {
     let formsContainer = document.getElementById("module-wrapper");

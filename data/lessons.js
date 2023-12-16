@@ -8,13 +8,21 @@ const exportedLessonsMethods = {
   //Option to create additional modules via createModule()
   async createLesson(
     lessonTitle,
+    subject,
     description,
     contents = null,
     moduleTitle,
     text,
-    videoLink
+    videoLink,
+    firstName, 
+    lastName, 
+    handleName
   ) {
     lessonTitle = validation.checkContent(lessonTitle, 'lesson title', 3, 250);
+    subject = validation.checkContent(subject, 'subject', 2, 25); // Jamal
+    firstName =  validation.checkString(firstName, 'first name', 1, 25);
+    handle = validation. // add validation
+    lastName = validation.checkString(lastName, 'last name', 1, 25);
     description = validation.checkContent(
       description,
       'lesson description',
@@ -53,8 +61,14 @@ const exportedLessonsMethods = {
 
     let newLessonInfo = {
       lessonTitle: lessonTitle, //string
+      subject: subject, // Jamal
       description: description, //string
       creatorId: ObjectId, //from user ID
+      author: {firstName: firstName, lastName: lastName}, 
+      handle: handleName,  // change this =============================================================
+      upvote: 0,
+      createdAt: new Date(), // jamal
+      modifiedAt: new Date(), // jamal
       contents: [
         {
           _id: new ObjectId(),
@@ -132,6 +146,8 @@ const exportedLessonsMethods = {
       moduleTitle: moduleTitle,
       text: text,
       videoLink: videoLink,
+      createdAt: new Date(),
+      modifiedAt: new Date(),
       votes: {
         votedUsers: [],
         count: 0,
@@ -172,9 +188,10 @@ const exportedLessonsMethods = {
     return { ...deletionInfo, deleted: true };
   },
   //Updates lesson headers, not modules
-  async updateLesson(id, title, description) {
+  async updateLesson(id, title, subject, description) {  
     id = validation.checkId(id);
     title = validation.checkContent(title, 'lesson title', 3, 100);
+    subject = validation.checkContent(subject, 'subject', 3, 30);  
     description = validation.checkContent(
       description,
       'lesson description',
@@ -184,8 +201,10 @@ const exportedLessonsMethods = {
 
     const lessonUpdateInfo = {
       lessonTitle: lessonTitle,
+      subject: subject,  // jamal added
       description: description,
       creatorId: ObjectId, //from user ID
+      modifiedAt: new Date() // jamal added
     };
 
     const lessonsCollection = await lessons();
@@ -222,6 +241,7 @@ const exportedLessonsMethods = {
       //creatorId: ObjectId,
       videoLink: videoLink,
       votes: lesson.votes, //obj
+      modifiedAt: new Date()
     };
 
     const updatedModule = await lessonsCollection.findOneAndUpdate(
@@ -235,6 +255,26 @@ const exportedLessonsMethods = {
 
     return updatedModule;
   },
+
+  async upvote(id) {
+    try {
+
+      id = validation.checkId(id);
+      const lessonsCollection = await lessons();
+      const lesson = await lessonsCollection.findOne({ _id: new ObjectId(id) });
+      const result = await lessonCollection.updateOne({ _id: id }, { $inc: { upvote: 1 } });
+  
+      if (result.modifiedCount === 1) {
+       return ({ success: true });
+      } else {
+        return({ success: false, message: 'Document not found or not updated' });
+      }
+    } catch(e) {
+      throw `upVoting failed`
+    }
+  }
 };
+
+
 
 export default exportedLessonsMethods;

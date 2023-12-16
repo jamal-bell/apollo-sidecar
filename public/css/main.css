@@ -35,9 +35,9 @@ form label {
 }
 
 
-a, p, footer, h1, h2 {
+.lessson a, p, footer, h1, h2 {
 	text-align: center;
-    display: flex;
+    /* display: flex; */
     justify-content: center;
     align-items: center;
     margin-top: 10px;
@@ -64,7 +64,7 @@ a, p, footer, h1, h2 {
     object-fit: cover;
 }
 
-img {
+td img {
   border-radius: 50%; /* Makes the image circular */
   object-fit: cover;
   text-align: center;
@@ -105,3 +105,20 @@ table td a {
     margin-top: 10px;
 }
 
+/* jamal added these */
+
+th {
+  text-align: left;
+}
+
+td {
+  padding-left: 20px
+}
+
+td button {
+  margin: 0 auto;
+}
+
+#qas main {
+  box-shadow: none;
+}
