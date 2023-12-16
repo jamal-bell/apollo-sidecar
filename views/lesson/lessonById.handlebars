@@ -1,4 +1,7 @@
 <section id="detail">
+  <div>
+    <button id="launchButton" type="button">Launch Lesson</button>
+  </div>
   <h2>{{this.lessonTitle}}</h2>
   <h3>{{this.description}}</h3>
   {{!-- <h3>{{this.lessonId}}</h3> --}}
@@ -14,7 +17,7 @@
       //<h5>Video Resource: {{this.videoLink}}</h5>
 
       <h5>{{this.text}}</h5>
-      <button type="button" onclick="location.href='/user/profile'">Mark Complete!</button>
+      <button type="button" id="completeButton" onclick="location.href='/user/profile'">Mark Complete!</button>
     </li>
     {{/each}}
   </ul>
@@ -26,7 +29,7 @@
     </a>
   </div>
   <div>
-    <a href="/qa/create/{{lessonId}}">
+    <a href="/qa/create/{{this.lessonId}}">
       Ask a question about this Lesson
     </a>
   </div>

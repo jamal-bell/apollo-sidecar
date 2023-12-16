@@ -222,6 +222,9 @@
     });
   }
 
+  
+
+
   //TODO implemnent for updating lessons/modules
   // if (profileForm) {
   //
@@ -356,8 +359,16 @@
   //       errorContainer.hide();
   //       saveProfileClick.call(this, event);
   //     });
+  
 })(jQuery);
 // }
+
+// const launchButton = document.getElementById("launchButton");
+//   launchButton.addEventListener("click", addLesson);
+//   const completeButton = document.getElementById("completeButton");
+//   launchButton.addEventListener("click", addLesson);
+//   const publishButton = document.getElementById("publishButton");
+//   launchButton.addEventListener("click", addLesson);
 
 const helpers = {
   checkId(id, varName) {
