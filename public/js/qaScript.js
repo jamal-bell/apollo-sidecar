@@ -49,14 +49,14 @@ if (qaForm) {
     const titleInput_trimmed = titleInput.value.trim();
     if (!titleInput_trimmed) {
       qaFormErrors.push('Title must be included');
-    } else {
-      if (titleInput_trimmed.length <= 10) {
-        qaFormErrors.push('Title must be at least 10 characters');
-      }
-      if (titleInput_trimmed.length >= 50) {
-        qaFormErrors.push('Title must be most 50 characters.');
-      }
     }
+    if (titleInput_trimmed.length <= 10) {
+      qaFormErrors.push('Title must be at least 10 characters');
+    }
+    if (titleInput_trimmed.length >= 50) {
+      qaFormErrors.push('Title must be most 50 characters.');
+    }
+
     if (!textInput_trimmed) {
       qaFormErrors.push('Some text must be included entire question.');
     } else {
@@ -95,6 +95,7 @@ if (deleteAnswerForm) {
     }
   });
 }
+
 if (deleteQaForm) {
   deleteQaForm.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -102,7 +103,7 @@ if (deleteQaForm) {
       'Are you sure you want to delete this answer?'
     );
     if (confirmation) {
-      const response = await fetch(form.action, {
+      const response = await fetch(deleteQaForm.action, {
         method: 'DELETE',
       });
     }
