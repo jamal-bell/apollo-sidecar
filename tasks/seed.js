@@ -5,6 +5,7 @@ import userData from '../data/users.js';
 import { ObjectId } from 'mongodb';
 import qaData from '../data/qa.js';
 import lessonsData from '../data/lessons.js';
+
 const db = await dbConnection();
 await db.dropDatabase();
 let newUser = undefined;
@@ -12,6 +13,7 @@ let newLesson = undefined;
 let newQaPost = undefined;
 let newQaResponse = undefined;
 let userCollection;
+let lessonsCollection;
 try {
   userCollection = await users();
 } catch (e) {
@@ -138,7 +140,7 @@ try {
 console.log('Seeding users completed!');
 let userIds;
 try {
-  const userCollection = await users();
+  userCollection = await users();
   userIds = await userCollection
     .find()
     .map((user) => user._id)
@@ -148,7 +150,7 @@ try {
 }
 console.log('Flattening IDs for random lesson creation completed!');
 try {
-  const lessonsCollection = await lessons();
+  lessonsCollection = await lessons();
   const lessonTitlePrefix = 'Lesson';
   userCollection = await users();
   for (let index = 0; index < 30; index++) {
@@ -180,9 +182,59 @@ try {
     console.log(result2);
   }
   console.log('Seeding Lessons Completed!');
-  console.log('Seeding completed successfully!');
 } catch (e) {
   console.error('Seeding failed at lessons:', e);
-} finally {
-  await closeConnection();
 }
+let allLessonIdsForQaSeeding;
+try {
+  allLessonIdsForQaSeeding = await lessonsCollection
+    .find()
+    .map((lesson) =>
+      lesson.contents.map((content) => ({
+        lessonId: lesson._id,
+        contentId: content._id,
+        creatorId: content.creatorId,
+      }))
+    )
+    .toArray();
+
+  allLessonIdsForQaSeeding = allLessonIdsForQaSeeding.flat();
+} catch (e) {
+  console.error('Seeding failed at flattening constantIds:', e);
+}
+console.log('Flattening IDs for random qa creation completed!');
+
+try {
+  const numberOfQaEntries = 1; // Adjust as needed
+
+  for (let i = 0; i < numberOfQaEntries; i++) {
+    // Randomly select a lesson object from allLessonIdsForQaSeeding
+    const randomLessonObject =
+      allLessonIdsForQaSeeding[
+        Math.floor(Math.random() * allLessonIdsForQaSeeding.length)
+      ];
+
+    // Extract properties from the selected lesson object
+    const { lessonId, contentId, creatorId } = randomLessonObject;
+    const lessonIdString = lessonId.toString();
+    const contentIdString = contentId.toString();
+    const creatorIdString = creatorId.toString();
+    // Generate random title and text (you can replace these with your own logic)
+    const title = `Q&A Entry ${i + 1} Title`;
+    const text = `Q&A Entry ${
+      i + 1
+    } Text. It must be over 24 characters long or else the journey ends here. I like banana sprinkles and such.`;
+
+    // Call the createQa function with the extracted properties
+    await qaData.createQa(
+      title,
+      creatorIdString,
+      lessonIdString,
+      contentIdString,
+      text
+    );
+  }
+} catch (e) {
+  console.error('Seeding failed at creating QAs:', e);
+}
+await closeConnection();

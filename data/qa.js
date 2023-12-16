@@ -4,19 +4,17 @@ import { lessons } from '../config/mongoCollections.js';
 import { ObjectId } from 'mongodb';
 import validation from './validation.js';
 import xss from 'xss';
-
 const exportedMethods = {
   async createQa(title, creatorId, lessonId, contentId, text) {
     try {
       title = xss(title);
       title = validation.checkString(title, 'title');
       text = xss(text);
-      text = validation.checkString(bodyText, 'body text of QA submission');
+      text = validation.checkString(text, 'body text of QA submission');
       validation;
       creatorId = validation.checkId(creatorId, 'Author ID');
       lessonId = validation.checkId(lessonId, 'Lesson ID');
       contentId = validation.checkId(contentId, 'Content ID');
-
       if (title.length < 10 || title.length > 50) {
         throw new Error(
           'Title must be between 10 and 15 characters, inclusive'
@@ -29,49 +27,53 @@ const exportedMethods = {
       }
       const usersCollection = await users();
       const author = await usersCollection.findOne({
-        _id: ObjectId(creatorId),
+        _id: new ObjectId(creatorId),
       });
-
       if (!author) {
         throw new Error('Author not found');
       }
-
       const qaCollection = await qa();
       const answers = [];
-
       const currentDate = new Date();
       const createdAt = currentDate.getTime();
-
+      const createdAtDate = new Date(createdAt);
+      const timeStamp = createdAtDate.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true,
+      });
       const qaInserted = await qaCollection.insertOne({
         //QA START SCHEMA
         title: title, //title of the question
         text: text, //text of the question
-        creatorId: ObjectId(author._id), //author's _id
+        creatorId: new ObjectId(author._id), //author's _id
         author: author.handle, //author's handle/username
-        lessonId: ObjectId(lessonId), //which less is the QA related to?
-        contentId: ObjectId(contentId), //in the lesson, what content the lesson is this related to
+        lessonId: new ObjectId(lessonId), //which less is the QA related to?
+        contentId: new ObjectId(contentId), //in the lesson, what content the lesson is this related to
         answers: answers, //answers to the QA, refer to the database proposal
         createdAt: createdAt, //timestamp - added after DB proposal
+        timeStamp: timeStamp,
       }); //END SCHEMA
-      const insertedId = qaInserted.insertedId;
+      let insertedId = qaInserted.insertedId;
       const newQuestion = {
-        postId: ObjectId(lessonId),
-        questionId: ObjectId(insertedId),
+        postId: new ObjectId(lessonId),
+        questionId: new ObjectId(insertedId),
       };
       const qaList = author.progress.qaPlatform.questions;
       qaList.push(newQuestion);
-
       await usersCollection.updateOne(
-        { _id: ObjectId(creatorId) },
+        { _id: new ObjectId(creatorId) },
         { $set: { 'progress.qaPlatform.questions': qaList } }
       );
-
+      insertedId = insertedId.toString();
       return { insertedId }; // or return some meaningful response
     } catch (e) {
       throw new Error(`Error creating QA: ${e.message}`);
     }
   },
-
   async deleteQA(qaId, userId, admin) {
     try {
       validation.checkId(qaId, 'QA ID');
@@ -105,19 +107,18 @@ const exportedMethods = {
         _id: new ObjectId(creatorId),
         'progress.qaPlatform.questions': qaList,
       });
-
       return { title: 'QA Deleted' }; // or return some meaningful response
     } catch (e) {
       throw new Error(`Error deleting QA: ${e.message}`);
     }
   },
-
   async getQa(qaId) {
     let qaTarget;
     try {
       qaId = validation.checkId(qaId, 'qa Id');
+      qaId = new ObjectId(qaId);
       const qaCollection = await qa();
-      qaTarget = await qaCollection.findOne({ _id: new ObjectId(qaId) });
+      qaTarget = await qaCollection.findOne({ _id: qaId });
     } catch (e) {
       throw new Error('QA Not Found!');
     }
@@ -162,7 +163,6 @@ const exportedMethods = {
       if (!author) {
         throw new Error('Author not found');
       }
-
       const commentId = new ObjectId();
       const currentDate = new Date();
       const timestamp = currentDate.getTime();
@@ -202,7 +202,6 @@ const exportedMethods = {
           },
         }
       );
-
       if (result2.modifiedCount === 0) {
         throw new Error('User not found or not updated');
       }
@@ -266,7 +265,6 @@ const exportedMethods = {
       throw new Error(`Error deleting reply: ${e.message}`);
     }
   },
-
   async iqPoint(qaId, voterId, answerId) {
     try {
       qaId = validation.checkId(qaId, 'QA ID');
@@ -306,6 +304,7 @@ const exportedMethods = {
                 type: 'q/a',
               },
             },
+            $inc: { 'progress.qaPlatform.iqPoints': -1 },
           }
         );
       } else {
@@ -332,6 +331,7 @@ const exportedMethods = {
                 type: 'q/a',
               },
             },
+            $inc: { 'progress.qaPlatform.iqPoints': 1 },
           }
         );
       }
@@ -345,7 +345,9 @@ const exportedMethods = {
       const recentQaArray = qaCollection
         .find()
         .sort({ createdAt: -1 })
-        .limit(20);
+        .limit(20)
+        .toArray();
+      console.log(recentQaArray);
       return recentQaArray;
     } catch (e) {
       throw new Error(`Database pull error: ${e.message}`);
@@ -387,5 +389,4 @@ const exportedMethods = {
     }
   },
 };
-
 export default exportedMethods;

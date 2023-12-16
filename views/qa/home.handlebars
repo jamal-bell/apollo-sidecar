@@ -4,11 +4,11 @@
 {{#if recentQaArray.length}}
   {{#each recentQaArray}}
     <!-- show last 20 questions on the site period. Visible to all -->
-    <a href='/{{this._id}}'>{{this.title}}</a>
-    <p>Created at:
-      {{this.createdAt}}
-      by
-      <a href='../user/{{this.author}}'>{{this.author}}</a></p>
+    <a href='/qa/{{this._id}}'>{{this.title}}</a>
+    Created at:
+    {{this.timeStamp}}
+    by
+    <a href='../user/{{this.author}}'>{{this.author}}</a>
   {{/each}}
 {{/if}}
 {{#if user}}
@@ -17,9 +17,9 @@
   {{#if creatorQuestions.length}}
     {{#each creatorQuestions}}
       <!-- show last 20 questions they've asked -->
-      <a href='/{{this._id}}'>{{this.title}}</a>
+      <a href='/qa/{{this._id}}'>{{this.title}}</a>
       <p>Created at:
-        {{this.createdAt}}
+        {{this.timeStamp}}
       </p>
     {{/each}}
   {{/if}}
@@ -30,9 +30,9 @@
   {{#if lessonsQuestions.length}}
     {{#each lessonsQuestions}}
       <!-- show last 20 questions for each lesson they've created -->
-      <a href='/{{this._id}}'>{{this.title}}</a>
+      <a href='/qa/{{this._id}}'>{{this.title}}</a>
       <p>Created at:
-        {{this.createdAt}}
+        {{this.timeStamp}}
         by
         <a href='../user/{{this.author}}'>{{this.author}}</a></p>
     {{/each}}
