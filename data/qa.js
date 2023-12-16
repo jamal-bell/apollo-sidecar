@@ -10,7 +10,7 @@ const exportedMethods = {
       title = xss(title);
       title = validation.checkString(title, 'title');
       text = xss(text);
-      text = validation.checkString(text, 'body text of QA submission');
+      text = validation.checkString(bodyText, 'body text of QA submission');
       validation;
       creatorId = validation.checkId(creatorId, 'Author ID');
       lessonId = validation.checkId(lessonId, 'Lesson ID');
@@ -27,7 +27,7 @@ const exportedMethods = {
       }
       const usersCollection = await users();
       const author = await usersCollection.findOne({
-        _id: ObjectId(creatorId),
+        _id: new ObjectId(creatorId),
       });
       if (!author) {
         throw new Error('Author not found');
@@ -40,22 +40,22 @@ const exportedMethods = {
         //QA START SCHEMA
         title: title, //title of the question
         text: text, //text of the question
-        creatorId: ObjectId(author._id), //author's _id
+        creatorId: new ObjectId(author._id), //author's _id
         author: author.handle, //author's handle/username
-        lessonId: ObjectId(lessonId), //which less is the QA related to?
-        contentId: ObjectId(contentId), //in the lesson, what content the lesson is this related to
+        lessonId: new ObjectId(lessonId), //which less is the QA related to?
+        contentId: new ObjectId(contentId), //in the lesson, what content the lesson is this related to
         answers: answers, //answers to the QA, refer to the database proposal
         createdAt: createdAt, //timestamp - added after DB proposal
       }); //END SCHEMA
       const insertedId = qaInserted.insertedId;
       const newQuestion = {
-        postId: ObjectId(lessonId),
-        questionId: ObjectId(insertedId),
+        postId: new ObjectId(lessonId),
+        questionId: new ObjectId(insertedId),
       };
       const qaList = author.progress.qaPlatform.questions;
       qaList.push(newQuestion);
       await usersCollection.updateOne(
-        { _id: ObjectId(creatorId) },
+        { _id: new ObjectId(creatorId) },
         { $set: { 'progress.qaPlatform.questions': qaList } }
       );
       return { insertedId }; // or return some meaningful response
@@ -96,7 +96,6 @@ const exportedMethods = {
         _id: new ObjectId(creatorId),
         'progress.qaPlatform.questions': qaList,
       });
-
       return { title: 'QA Deleted' }; // or return some meaningful response
     } catch (e) {
       throw new Error(`Error deleting QA: ${e.message}`);
@@ -320,23 +319,6 @@ const exportedMethods = {
                 type: 'q/a',
               },
             },
-
-    
-          
-            
-    
-
-          
-          Expand Down
-          
-            
-    
-
-          
-          Expand Up
-    
-    @@ -359,12 +357,12 @@ const exportedMethods = {
-  
           }
         );
       }
@@ -370,17 +352,6 @@ const exportedMethods = {
           .sort({ createdAt: -1 })
           .limit(20)
           .toArray();
-
-    
-        
-          
-    
-
-        
-        Expand All
-    
-    @@ -380,7 +378,7 @@ const exportedMethods = {
-  
       });
       const questionsByLesson = await Promise.all(questionPromises);
       const flattenedQuestions = questionsByLesson.flat();
@@ -397,17 +368,6 @@ const exportedMethods = {
         .sort({ createdAt: -1 })
         .limit(20)
         .toArray();
-
-    
-          
-            
-    
-
-          
-          Expand Down
-    
-    
-  
       return recentQuestions;
     } catch (e) {
       throw new Error(`Database pull error: ${e.message}`);
