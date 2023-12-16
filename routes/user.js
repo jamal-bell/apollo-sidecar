@@ -396,10 +396,17 @@ router.route("/user").get(async (req, res) => {
 
         currLesson = await lessonsData.getLessonById(lessonId);
         currLesson._id = currLesson._id.toString();
-        currContent = await lessonsCollection.findOne({
-          _id: lessonId,
-          "contents._id": contentId,
-        });
+        currContent = await lessonsCollection.findOne(
+          {
+            _id: new ObjectId(lessonId),
+            "contents._id": new ObjectId(contentId),
+          },
+          {
+            projection: {
+              "contents.$": 1,
+            },
+          }
+        );
         currContent._id = currContent._id.toString();
         answers = currQa.answers
           .filter((answer) => answer.creatorId.equals(user._id))
@@ -561,10 +568,17 @@ router.route("/admin").get(async (req, res) => {
 
         currLesson = await lessonsData.getLessonById(lessonId);
         currLesson._id = currLesson._id.toString();
-        currContent = await lessonsCollection.findOne({
-          _id: lessonId,
-          "contents._id": contentId,
-        });
+        currContent = await lessonsCollection.findOne(
+          {
+            _id: new ObjectId(lessonId),
+            "contents._id": new ObjectId(contentId),
+          },
+          {
+            projection: {
+              "contents.$": 1,
+            },
+          }
+        );
         currContent._id = currContent._id.toString();
         answers = currQa.answers
           .filter((answer) => answer.creatorId.equals(user._id))
@@ -604,7 +618,7 @@ router.route("/admin").get(async (req, res) => {
   });
 });
 
-router.route("/public/:handle").get(async (req, res) => {
+router.route("/handle").get(async (req, res) => {
   //code here for GET
   if (!req.session.authenticated) {
     return res.redirect("/user/login");
