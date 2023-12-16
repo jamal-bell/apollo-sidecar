@@ -48,6 +48,14 @@ const exportedusersMethods = {
     if (checkEmail) throw "Email already exist.";
     if (checkHandle) throw "Handle is already used, try another one.";
 
+    const completedLessonId = [];
+    const inProgressLessonId = [];
+    const createdLessonId = [];
+    const currentLesson = [];
+    const questions = [];
+    const answers = [];
+    const votes = [];
+
     let newUser = {
       firstName: firstName,
       lastName: lastName,
@@ -90,15 +98,15 @@ const exportedusersMethods = {
         voteCount: 0,
         qaAnswerCount: 0,
         qaQuestionCount: 0,
-        completedLessonId: [],
-        inProgressLessonId: [],
-        createdLessonId: [],
-        currentLesson: [],
+        completedLessonId: completedLessonId,
+        inProgressLessonId: inProgressLessonId,
+        createdLessonId: createdLessonId,
+        currentLesson: currentLesson,
         qaPlatform: {
           iqPoints: 0,
-          questions: [],
-          answers: [],
-          votes: [],
+          questions: questions,
+          answers: answers,
+          votes: votes,
         },
       },
     };

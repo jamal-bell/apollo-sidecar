@@ -155,39 +155,48 @@
 
 <h2>Q&A Contributions</h2>
 <section id="qas">
-    {{#if hasQuestion}}
+    <p>
+        Your total IQ Points: {{{user.progress.qaPlatform.iqPoints}}}!
+    </p>
+    {{#if hasAnswers}}
         <ul>
             {{#each answers}}
                 <li>
-                    <h3>{{this.questionName}}</h3>
-                    <p>Type: <span>{{this.questionType}}</span></p>
-                    <p>Ans: <span>{{this.answers.sum}}</span></p>
-                    <p>Upvotes: <span>{{this.votes.sum}}</span></p>
-                    <p><span>{{this.createdAt}}</span></p>
-                    <button type="button" onclick="location.href='/lesson/details'">Review/Continue</button>
+                    <h3>{{this.question.title}}</h3>
+                    <p>Lesson Related: <span>{{this.lesson.lessonTitle}}, {{this.content.moduleTitle}}</span></p>
+                    <p>Question date: <span>{{this.question.createdAt}}</span></p>
+                    <p>Your have total {{this.question.answers.length}} answers, the top 3 voted answers are:</p>
+                        <ul>
+                            {{#each answers.answers}}
+                            <li>
+                                <h4>{{this.answerText}}</h4>
+                                <p>Upvotes: <span>{{this.answerVotes}}</span></p>
+                            </li>
+                            {{/each}}
+                        </ul>
+                    <button type="button" onclick="location.href='/lesson/{{this.question._id}}'">Review question</button>
                 </li>
             {{/each}}
         </ul>
     {{else}}
         <main>
-            <p>No Q&A contributions yet.</p>
+            <p>No Q&A contribution yet, help others and earn IQ points now <a href="/qa">here</a>.</p>
         </main>
     {{/if}}
 </section>
 
 
-{{#if hasAnswers}}
+{{#if hasQuestions}}
     <h2>Question Asked</h2>
     <section id="qas">
         <ul>
             {{#each questions}}
                 <li>
-                    <h3>{{this.questionName}}</h3>
-                    <p>Type: <span>{{this.questionType}}</span></p>
-                    <p>Ans: <span>{{this.answers.sum}}</span></p>
-                    <p>Upvotes: <span>{{this.votes.sum}}</span></p>
-                    <p><span>{{this.createdAt}}</span></p>
-                    <button type="button" onclick="location.href='/lesson/details'">Review/Continue</button>
+                    <h3>{{this.question.title}}</h3>
+                    <p>Lesson Related: <span>{{this.lesson.lessonTitle}}, {{this.content.moduleTitle}}</span></p>
+                    <p>Total Ans: <span>{{this.question.answers.length}}</span></p>
+                    <p><span>{{this.question.createdAt}}</span></p>
+                    <button type="button" onclick="location.href='/lesson/{{this.question._id}}'">Review</button>
                 </li>
             {{/each}}
         </ul>

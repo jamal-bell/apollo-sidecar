@@ -1,26 +1,27 @@
-import users from '../data/users.js';
-import lessons from '../data/lessons.js';
-import qa from '../data/qa.js';
-import { Router } from 'express';
+import { lessons, qa } from "../config/mongoCollections.js";
+import users from "../data/users.js";
+import lessonsData from "../data/lessons.js";
+import qaData from "../data/qa.js";
+import { Router } from "express";
 const router = Router();
-import express from 'express';
+import express from "express";
 const app = express();
-import validation from '../data/validation.js';
+import validation from "../data/validation.js";
 // import cloudinary from "cloudinary";
-import dotenv from 'dotenv';
-import xss from 'xss';
+import dotenv from "dotenv";
+import xss from "xss";
 import {
   S3Client,
   PutObjectCommand,
   DeleteObjectCommand,
-} from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import crypto from 'crypto';
-import { promisify } from 'util';
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import crypto from "crypto";
+import { promisify } from "util";
 dotenv.config();
 
-const region = 'us-east-1';
-const bucketName = 'apollo-sidecar';
+const region = "us-east-1";
+const bucketName = "apollo-sidecar";
 const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
 const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 
@@ -37,7 +38,7 @@ const randomBytes = promisify(crypto.randomBytes);
 const s3Function = {
   async generateUploadURL() {
     const rawBytes = await randomBytes(16);
-    const imageName = rawBytes.toString('hex');
+    const imageName = rawBytes.toString("hex");
 
     const params = {
       Bucket: bucketName,
@@ -74,27 +75,27 @@ const s3Function = {
 // });
 
 function checkRole(role) {
-  if (!role) throw 'You must provide the role.';
-  if (typeof role !== 'string' || role.trim().length === 0)
-    throw 'Role must be valid strings.';
+  if (!role) throw "You must provide the role.";
+  if (typeof role !== "string" || role.trim().length === 0)
+    throw "Role must be valid strings.";
   role = role.trim().toLowerCase();
-  if (role !== 'admin' && role !== 'user')
-    throw 'Role can only be admin or user.';
+  if (role !== "admin" && role !== "user")
+    throw "Role can only be admin or user.";
   return role;
 }
 
-router.route('/').get(async (req, res) => {
+router.route("/").get(async (req, res) => {
   //code here for GET THIS ROUTE SHOULD NEVER FIRE BECAUSE OF MIDDLEWARE #1 IN SPECS.
-  return res.render('user/error', { error: 'Internal Error.' });
+  return res.render("user/error", { error: "Internal Error." });
 });
 
 router
-  .route('/register')
+  .route("/register")
   .get(async (req, res) => {
     //code here for GET
-    return res.render('user/register', {
-      title: 'Registration',
-      style_partial: 'user-form',
+    return res.render("user/register", {
+      title: "Registration",
+      style_partial: "user-form",
     });
   })
   .post(async (req, res) => {
@@ -108,13 +109,13 @@ router
     let errors = [];
 
     try {
-      firstName = validation.checkString(firstName, 'First Name');
+      firstName = validation.checkString(firstName, "First Name");
     } catch (e) {
       errors.push(e);
     }
 
     try {
-      lastName = validation.checkString(lastName, 'Last Name');
+      lastName = validation.checkString(lastName, "Last Name");
     } catch (e) {
       errors.push(e);
     }
@@ -145,7 +146,7 @@ router
 
     try {
       if (password !== req.body.confirmPasswordInput)
-        throw 'Password and confirmed password do not match.';
+        throw "Password and confirmed password do not match.";
     } catch (e) {
       errors.push(e);
     }
@@ -153,9 +154,9 @@ router
     let userRegister;
 
     if (errors.length > 0) {
-      return res.status(400).render('user/register', {
-        title: 'Registration',
-        style_partial: 'user-form',
+      return res.status(400).render("user/register", {
+        title: "Registration",
+        style_partial: "user-form",
         errors: errors,
         hasErrors: true,
         firstName: firstName,
@@ -176,13 +177,13 @@ router
       );
 
       if (userRegister && userRegister.insertedUser) {
-        return res.redirect('/user/login');
+        return res.redirect("/user/login");
       }
     } catch (e) {
       errors.push(e);
-      return res.status(400).render('user/register', {
-        title: 'Registration',
-        style_partial: 'user-form',
+      return res.status(400).render("user/register", {
+        title: "Registration",
+        style_partial: "user-form",
         errors: errors,
         hasErrors: true,
         firstName: firstName,
@@ -193,16 +194,16 @@ router
     }
     res
       .status(500)
-      .render('user/error', { error: 'Internal Server Error', title: 'Error' });
+      .render("user/error", { error: "Internal Server Error", title: "Error" });
   });
 
 router
-  .route('/login')
+  .route("/login")
   .get(async (req, res) => {
     //code here for GET
-    return res.render('user/login', {
-      title: 'Login',
-      style_partial: 'user-form',
+    return res.render("user/login", {
+      title: "Login",
+      style_partial: "user-form",
     });
   })
   .post(async (req, res) => {
@@ -235,40 +236,39 @@ router
           handle: user.handle,
           role: user.role,
         };
-        if (user.role === 'admin') {
-          return res.redirect('/user/admin');
-        } else if (user.role === 'user') {
-          return res.redirect('/user/user');
+        if (user.role === "admin") {
+          return res.redirect("/user/admin");
+        } else if (user.role === "user") {
+          return res.redirect("/user/user");
         }
       } else {
-        throw 'Invalid username and/or password.';
+        throw "Invalid username and/or password.";
       }
     } catch (e) {
       errors.push(e);
-      return res.status(400).render('user/login', {
-        title: 'Login',
-        style_partial: 'user-form',
+      return res.status(400).render("user/login", {
+        title: "Login",
+        style_partial: "user-form",
         hasErrors: true,
         errors: errors,
       });
     }
   });
 
-router.route('/user').get(async (req, res) => {
+router.route("/user").get(async (req, res) => {
   //code here for GET
   if (!req.session.authenticated) {
-    return res.redirect('/user/login');
+    return res.redirect("/user/login");
   }
 
   const user = await users.getUserByEmail(req.session.user.emailAddress);
 
   if (req.session.sessionId !== user._id.toString()) {
-    return res.render('user/error', {
+    return res.render("user/error", {
       errors: "No access to such user's account page.",
     });
   }
 
-  const ipPoints = user.progress.qaPlatform.iqPoints;
   const userLessons = [];
   let hasLessons;
   if (user.progress.inProgressLessonId.length !== 0) {
@@ -278,12 +278,12 @@ router.route('/user').get(async (req, res) => {
       try {
         let lessonId = validation.checkId(
           user.progress.inProgressLessonId[i].toString(),
-          'lessonId'
+          "lessonId"
         );
-        currLesson = await lessons.getLessonById(lessonId);
+        currLesson = await lessonsData.getLessonById(lessonId);
         currLesson._id = currLesson._id.toString();
       } catch (e) {
-        return res.status(400).render('user/error', { error: e });
+        return res.status(400).render("user/error", { error: e });
       }
       userLessons.push(currLesson);
     }
@@ -300,12 +300,12 @@ router.route('/user').get(async (req, res) => {
       try {
         let lessonId = validation.checkId(
           user.progress.createdLessonId[i].toString(),
-          'lessonId'
+          "lessonId"
         );
-        currLesson = await lessons.getLessonById(lessonId);
+        currLesson = await lessonsData.getLessonById(lessonId);
         currLesson._id = currLesson._id.toString();
       } catch (e) {
-        return res.status(400).render('user/error', { error: e });
+        return res.status(400).render("user/error", { error: e });
       }
       lessonCreated.push(currLesson);
     }
@@ -320,16 +320,39 @@ router.route('/user').get(async (req, res) => {
     let count = 0;
     for (let i = user.progress.qaPlatform.questions.length - 1; i >= 0; i--) {
       let currQa;
+      let currLesson;
+      let currContent;
       try {
         const qaId = validation.checkId(
           user.progress.qaPlatform.questions[i].toString()
         );
-        currQa = await qa.getQa(qaId);
+        currQa = await qaData.getQa(qaId);
         currQa._id = currQa._id.toString();
+
+        const lessonId = validation.checkId(
+          currQa.lessonId.toString(),
+          "lessonId"
+        );
+        const contentId = validation.checkId(
+          currQa.contentId.toString(),
+          "lessonId"
+        );
+        currLesson = await lessonsData.getLessonById(lessonId);
+        currLesson._id = currLesson._id.toString();
+
+        currContent = await lessonsCollection.findOne({
+          _id: lessonId,
+          "contents._id": contentId,
+        });
+        currContent._id = currContent._id.toString();
       } catch (e) {
-        return res.status(400).render('user/error', { error: e });
+        return res.status(400).render("user/error", { error: e });
       }
-      userQuestions.push(currQa);
+      userQuestions.push({
+        lesson: currLesson,
+        content: content,
+        question: currQa,
+      });
       count++;
       if (count === 3) break;
     }
@@ -344,16 +367,49 @@ router.route('/user').get(async (req, res) => {
     let count = 0;
     for (let i = user.progress.qaPlatform.answers.length - 1; i >= 0; i--) {
       let currQa;
+      let answers;
+      let currLesson;
+      let currContent;
       try {
         const qaId = validation.checkId(
           user.progress.qaPlatform.answers[i].toString()
         );
-        currQa = await qa.getQa(qaId);
+        currQa = await qaData.getQa(qaId);
         currQa._id = currQa._id.toString();
+
+        const lessonId = validation.checkId(
+          currQa.lessonId.toString(),
+          "lessonId"
+        );
+        const contentId = validation.checkId(
+          currQa.contentId.toString(),
+          "lessonId"
+        );
+
+        currLesson = await lessonsData.getLessonById(lessonId);
+        currLesson._id = currLesson._id.toString();
+        currContent = await lessonsCollection.findOne({
+          _id: lessonId,
+          "contents._id": contentId,
+        });
+        currContent._id = currContent._id.toString();
+        answers = currQa.answers
+          .filter((answer) => answer.creatorId.equals(user._id))
+          .sort((a, b) => b.vote - a.vote)
+          .slice(0, 3)
+          .map((answer) => ({
+            answerText: answer.text,
+            answerVotes: answer.votes,
+          }));
       } catch (e) {
-        return res.status(400).render('user/error', { error: e });
+        return res.status(400).render("user/error", { error: e });
       }
-      userAnswers.push(currQa);
+      userAnswers.push({
+        question: currQa,
+        answers: answers,
+        lesson: currLesson,
+        content: currContent,
+      });
       count++;
       if (count === 3) break;
     }
@@ -361,9 +417,9 @@ router.route('/user').get(async (req, res) => {
     hasAnswers = false;
   }
 
-  return res.render('user/user', {
-    title: 'Overview',
-    style_partial: 'overview',
+  return res.render("user/user", {
+    title: "Overview",
+    style_partial: "overview",
     user: user,
     lessons: userLessons,
     hasLessons: hasLessons,
@@ -376,22 +432,19 @@ router.route('/user').get(async (req, res) => {
   });
 });
 
-router.route('/admin').get(async (req, res) => {
+router.route("/admin").get(async (req, res) => {
   //code here for GET
   if (!req.session.authenticated) {
-    return res.redirect('/user/login');
+    return res.redirect("/user/login");
   }
 
   const user = await users.getUserByEmail(req.session.user.emailAddress);
+  const usersCollection = await users();
+  const lessonsCollection = await lessons();
+  const qasCollection = await qa();
 
   if (req.session.sessionId !== user._id.toString()) {
-    return res.render('user/error', {
-      errors: "No access to such user's account page.",
-    });
-  }
-
-  if (req.session.sessionId !== user._id.toString()) {
-    return res.render('user/error', {
+    return res.render("user/error", {
       errors: "No access to such user's account page.",
     });
   }
@@ -405,12 +458,12 @@ router.route('/admin').get(async (req, res) => {
       try {
         let lessonId = validation.checkId(
           user.progress.createdLessonId[i].toString(),
-          'lessonId'
+          "lessonId"
         );
-        currLesson = await lessons.getLessonById(lessonId);
+        currLesson = await lessonsData.getLessonById(lessonId);
         currLesson._id = currLesson._id.toString();
       } catch (e) {
-        return res.status(400).render('user/error', { error: e });
+        return res.status(400).render("user/error", { error: e });
       }
       adminLessons.push(currLesson);
     }
@@ -425,16 +478,40 @@ router.route('/admin').get(async (req, res) => {
     let count = 0;
     for (let i = user.progress.qaPlatform.questions.length - 1; i >= 0; i--) {
       let currQa;
+      let currLesson;
+      let currContent;
       try {
         const qaId = validation.checkId(
-          user.progress.qaPlatform.questions[i].toString()
+          user.progress.qaPlatform.questions[i].questionId.toString()
         );
-        currQa = await qa.getQa(qaId);
+
+        currQa = await qaData.getQa(qaId);
         currQa._id = currQa._id.toString();
+
+        const lessonId = validation.checkId(
+          currQa.lessonId.toString(),
+          "lessonId"
+        );
+        const contentId = validation.checkId(
+          currQa.contentId.toString(),
+          "lessonId"
+        );
+        currLesson = await lessonsData.getLessonById(lessonId);
+        currLesson._id = currLesson._id.toString();
+
+        currContent = await lessonsCollection.findOne({
+          _id: lessonId,
+          "contents._id": contentId,
+        });
+        currContent._id = currContent._id.toString();
       } catch (e) {
-        return res.status(400).render('user/error', { error: e });
+        return res.status(400).render("user/error", { error: e });
       }
-      adminQuestions.push(currQa);
+      adminQuestions.push({
+        lesson: currLesson,
+        content: currContent,
+        question: currQa,
+      });
       count++;
       if (count === 3) break;
     }
@@ -449,16 +526,49 @@ router.route('/admin').get(async (req, res) => {
     let count = 0;
     for (let i = user.progress.qaPlatform.answers.length - 1; i >= 0; i--) {
       let currQa;
+      let answers;
+      let currLesson;
+      let currContent;
       try {
         const qaId = validation.checkId(
-          user.progress.qaPlatform.answers[i].toString()
+          user.progress.qaPlatform.answers[i].postId.toString()
         );
-        currQa = await qa.getQa(qaId);
+        currQa = await qaData.getQa(qaId);
         currQa._id = currQa._id.toString();
+
+        const lessonId = validation.checkId(
+          currQa.lessonId.toString(),
+          "lessonId"
+        );
+        const contentId = validation.checkId(
+          currQa.contentId.toString(),
+          "lessonId"
+        );
+
+        currLesson = await lessonsData.getLessonById(lessonId);
+        currLesson._id = currLesson._id.toString();
+        currContent = await lessonsCollection.findOne({
+          _id: lessonId,
+          "contents._id": contentId,
+        });
+        currContent._id = currContent._id.toString();
+        answers = currQa.answers
+          .filter((answer) => answer.creatorId.equals(user._id))
+          .sort((a, b) => b.vote - a.vote)
+          .slice(0, 3)
+          .map((answer) => ({
+            answerText: answer.text,
+            answerVotes: answer.votes,
+          }));
       } catch (e) {
-        return res.status(400).render('user/error', { error: e });
+        return res.status(400).render("user/error", { error: e });
       }
-      adminAnswers.push(currQa);
+      adminAnswers.push({
+        question: currQa,
+        answers: answers,
+        lesson: currLesson,
+        content: currContent,
+      });
       count++;
       if (count === 3) break;
     }
@@ -466,9 +576,9 @@ router.route('/admin').get(async (req, res) => {
     hasAnswers = false;
   }
 
-  return res.render('user/admin', {
-    title: 'Overview',
-    style_partial: 'overview',
+  return res.render("user/admin", {
+    title: "Overview",
+    style_partial: "overview",
     user: user,
     lessons: adminLessons,
     hasLessons: hasLessons,
@@ -479,16 +589,16 @@ router.route('/admin').get(async (req, res) => {
   });
 });
 
-router.route('/public/:userId').get(async (req, res) => {
+router.route("/public/:userId").get(async (req, res) => {
   //code here for GET
   if (!req.session.authenticated) {
-    return res.redirect('/user/login');
+    return res.redirect("/user/login");
   }
 
   try {
-    req.params.userId = validation.checkId(req.params.userId, 'User Id');
+    req.params.userId = validation.checkId(req.params.userId, "User Id");
   } catch (e) {
-    return res.status(400).render('/user/error', { title: 'Error', error: e });
+    return res.status(400).render("/user/error", { title: "Error", error: e });
   }
 
   try {
@@ -496,25 +606,25 @@ router.route('/public/:userId').get(async (req, res) => {
 
     if (user) {
     }
-    return res.render('user/public', {
-      title: 'User Overview',
-      style_partial: 'overview',
+    return res.render("user/public", {
+      title: "User Overview",
+      style_partial: "overview",
       user: user,
     });
   } catch (e) {
-    return res.status(400).render('/user/error', { title: 'Error', error: e });
+    return res.status(400).render("/user/error", { title: "Error", error: e });
   }
 });
 
-router.route('/error').get(async (req, res) => {
+router.route("/error").get(async (req, res) => {
   //code here for GET
-  return res.render('user/error', {
-    title: 'Error',
-    error: 'You do not have access to admin.',
+  return res.render("user/error", {
+    title: "Error",
+    error: "You do not have access to admin.",
   });
 });
 
-router.route('/profile').post(async (req, res) => {
+router.route("/profile").post(async (req, res) => {
   let firstName = xss(req.body.firstName);
   let lastName = xss(req.body.lastName);
   let emailAddress = xss(req.body.emailAddress);
@@ -524,13 +634,13 @@ router.route('/profile').post(async (req, res) => {
   let errors = [];
 
   try {
-    firstName = validation.checkString(firstName, 'First Name');
+    firstName = validation.checkString(firstName, "First Name");
   } catch (e) {
     errors.push(`<li>${e}</li>`);
   }
 
   try {
-    lastName = validation.checkString(lastName, 'Last Name');
+    lastName = validation.checkString(lastName, "Last Name");
   } catch (e) {
     errors.push(`<li>${e}</li>`);
   }
@@ -549,7 +659,7 @@ router.route('/profile').post(async (req, res) => {
 
   try {
     if (github.trim().length !== 0 && !new URL(github)) {
-      throw 'Invalid Github Link.';
+      throw "Invalid Github Link.";
     }
   } catch (e) {
     errors.push(`<li>${e}</li>`);
@@ -594,20 +704,20 @@ router.route('/profile').post(async (req, res) => {
 
   return res
     .status(500)
-    .render('user/error', { error: 'Internal Server Error', title: 'Error' });
+    .render("user/error", { error: "Internal Server Error", title: "Error" });
 });
 
 router
-  .route('/password')
+  .route("/password")
   .get(async (req, res) => {
     //code here for GET
     if (!req.session.authenticated) {
-      return res.redirect('/user/login');
+      return res.redirect("/user/login");
     }
 
-    return res.render('user/password', {
-      title: 'Change Password',
-      style_partial: 'user-form',
+    return res.render("user/password", {
+      title: "Change Password",
+      style_partial: "user-form",
     });
   })
   .post(async (req, res) => {
@@ -641,7 +751,7 @@ router
 
     try {
       if (confirmNewPassword !== newPassword)
-        throw 'New password and confirm password do not match.';
+        throw "New password and confirm password do not match.";
     } catch (e) {
       errors.push(e);
     }
@@ -649,9 +759,9 @@ router
     let userRegister;
 
     if (errors.length > 0) {
-      return res.status(400).render('user/password', {
-        title: 'Change Password',
-        style_partial: 'user-form',
+      return res.status(400).render("user/password", {
+        title: "Change Password",
+        style_partial: "user-form",
         errors: errors,
         hasErrors: true,
       });
@@ -663,15 +773,15 @@ router
       if (userRegister && userRegister.updated) {
         users.logoutUser(emailAddress);
         req.session.destroy();
-        return res.render('user/logout', {
-          title: 'Password Updated',
-          message: 'Your password have been updated, please login again.',
+        return res.render("user/logout", {
+          title: "Password Updated",
+          message: "Your password have been updated, please login again.",
         });
       }
     } catch (e) {
-      return res.status(400).render('user/password', {
-        title: 'Change Password',
-        style_partial: 'user-form',
+      return res.status(400).render("user/password", {
+        title: "Change Password",
+        style_partial: "user-form",
         errors: errors,
         hasErrors: true,
       });
@@ -679,13 +789,13 @@ router
 
     return res
       .status(500)
-      .render('user/error', { error: 'Internal Server Error', title: 'Error' });
+      .render("user/error", { error: "Internal Server Error", title: "Error" });
   });
 
-router.route('/logout').get(async (req, res) => {
+router.route("/logout").get(async (req, res) => {
   //code here for GET
   if (!req.session.authenticated) {
-    return res.redirect('/user/login');
+    return res.redirect("/user/login");
   }
 
   const emailAddress = req.session.user.emailAddress;
@@ -693,29 +803,29 @@ router.route('/logout').get(async (req, res) => {
   if (req.session) {
     users.logoutUser(emailAddress);
     req.session.destroy();
-    return res.render('user/logout', {
-      title: 'Logout',
-      message: 'You have been logged out.',
+    return res.render("user/logout", {
+      title: "Logout",
+      message: "You have been logged out.",
     });
   }
 });
 
-router.route('/cancel').get(async (req, res) => {
+router.route("/cancel").get(async (req, res) => {
   //code here for GET
   if (!req.session.authenticated) {
-    return res.redirect('/user/login');
+    return res.redirect("/user/login");
   }
 
   const cancel = await users.removeUser(req.session.user.emailAddress);
 
   if (cancel && cancel.deleted) {
     req.session.destroy();
-    return res.render('user/logout', {
-      title: 'Account canceled',
-      message: 'Your account have been canceled.',
+    return res.render("user/logout", {
+      title: "Account canceled",
+      message: "Your account have been canceled.",
     });
   } else {
-    return res.render('user/error', { title: 'Failed to delete account' });
+    return res.render("user/error", { title: "Failed to delete account" });
   }
 });
 
@@ -770,15 +880,15 @@ router.route('/cancel').get(async (req, res) => {
 //   });
 // });
 
-router.route('/s3Url').get(async (req, res) => {
+router.route("/s3Url").get(async (req, res) => {
   const url = await s3Function.generateUploadURL();
   res.json({ url });
 });
 
 //AWS S3
-router.route('/s3').post(async (req, res) => {
+router.route("/s3").post(async (req, res) => {
   if (!req.session.authenticated) {
-    return res.redirect('/user/login');
+    return res.redirect("/user/login");
   }
   const newUrl = xss(req.body.url).trim();
 
@@ -786,19 +896,19 @@ router.route('/s3').post(async (req, res) => {
 
   const user = await users.getUserByEmail(emailAddress);
 
-  let photoKey = '';
+  let photoKey = "";
 
   try {
-    if (newUrl.length === 0 || !new URL(newUrl)) throw 'Invalid photo url';
-    if (user.photo !== '/public/assets/no-photo.jpg') {
+    if (newUrl.length === 0 || !new URL(newUrl)) throw "Invalid photo url";
+    if (user.photo !== "/public/assets/no-photo.jpg") {
       const photoUrl = user.photo;
-      photoKey = photoUrl.substring(photoUrl.lastIndexOf('/') + 1);
+      photoKey = photoUrl.substring(photoUrl.lastIndexOf("/") + 1);
     }
 
     const photoUpdated = await users.updatePhoto(emailAddress, newUrl);
 
     if (photoUpdated) {
-      if (photoKey !== '') {
+      if (photoKey !== "") {
         await s3Function.deleteImageFromS3(photoKey);
       }
       return res.json({
@@ -812,9 +922,9 @@ router.route('/s3').post(async (req, res) => {
       photoErrors: e,
     });
   }
-  return res.status(500).render('user/error', {
-    error: 'Internal Server Error',
-    title: 'Error',
+  return res.status(500).render("user/error", {
+    error: "Internal Server Error",
+    title: "Error",
   });
 });
 
