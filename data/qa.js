@@ -304,6 +304,7 @@ const exportedMethods = {
                 type: 'q/a',
               },
             },
+            $inc: { 'progress.qaPlatform.iqPoints': -1 },
           }
         );
       } else {
@@ -330,6 +331,7 @@ const exportedMethods = {
                 type: 'q/a',
               },
             },
+            $inc: { 'progress.qaPlatform.iqPoints': 1 },
           }
         );
       }
