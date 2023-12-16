@@ -38,10 +38,10 @@ main, #main, footer {
     visibility: hidden;
 }
 
-footer {
+/* footer {
     position: absolute;
     bottom: 0;
-}
+} */
 
 #login-page {
     position: absolute;

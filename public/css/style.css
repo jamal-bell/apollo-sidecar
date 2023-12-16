@@ -580,8 +580,6 @@ margin-left: 50px;
     .sidenav a {font-size: 18px;}
   }
 
-
-
 .aside {
     margin-top: 40px;
     position: relative;
@@ -622,7 +620,7 @@ margin-left: 50px;
     font-weight: 400;
 }
 
-#lessons-page, #qa-page {
+#lessons-page, #qa-page, #search-page {
   margin: 0 16.33%; 
   padding-left: 5%;
   padding-right: 5%;
