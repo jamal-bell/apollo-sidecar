@@ -176,7 +176,7 @@ const exportedMethods = {
     });
     const votedUsers = [];
     const voteUserAndTime = {
-      userId: author._id.toString(),
+      userId: author._id, //finds objectId, should not convert down to string when stored
       voteTime: timeStamp,
     };
     votedUsers.push(voteUserAndTime);
@@ -275,77 +275,113 @@ const exportedMethods = {
     }
   },
   async iqPoint(qaId, voterId, answerId) {
-    try {
-      qaId = validation.checkId(qaId, 'QA ID');
-      voterId = validation.checkId(voterId, 'Voter ID');
-      answerId = validation.checkId(answerId, 'Answer ID');
+    qaId = validation.checkId(qaId, 'QA ID');
+    voterId = validation.checkId(voterId, 'Voter ID');
+    answerId = validation.checkId(answerId, 'Answer ID');
 
-      const qaCollection = await qa();
-      const usersCollection = await users();
-      const result = await qaCollection.findOne({
-        _id: new ObjectId(qaId),
-        'answers._id': new ObjectId(answerId),
-      });
-      if (result.locked === true) {
-        return;
-      }
-      const result2 = await qaCollection.findOne({
-        _id: new ObjectId(qaId),
-        'answers._id': new ObjectId(answerId),
-        'answers.votes.votedUsers.userId': new ObjectId(voterId),
-      });
-      if (result2) {
-        await qaCollection.updateOne(
-          { _id: qaId, 'answers._id': new ObjectId(answerId) },
-          {
-            $inc: { 'answers.$.votes.value': -1 },
-            $pull: {
-              'answers.$.votes.votedUsers': { userId: new ObjectId(voterId) },
-            },
-          }
-        );
-        const result3 = await usersCollection.updateOne(
-          { _id: new ObjectId(creatorId) },
-          {
-            $pull: {
-              'progress.qaPlatform.votes': {
-                postId: new ObjectId(answerId),
-                type: 'q/a',
+    const qaCollection = await qa();
+    const usersCollection = await users();
+    const resultArray = await qaCollection
+      .aggregate([
+        { $match: { _id: new ObjectId(qaId) } },
+        {
+          $project: {
+            answers: {
+              $filter: {
+                input: '$answers',
+                as: 'answer',
+                cond: { $eq: ['$$answer._id', new ObjectId(answerId)] },
               },
             },
-            $inc: { 'progress.qaPlatform.iqPoints': -1 },
-          }
-        );
-      } else {
-        const currentDate = new Date();
-        const timestamp = currentDate.getTime();
-        await qaCollection.updateOne(
-          { _id: qaId, 'answers._id': new ObjectId(answerId) },
-          {
-            $inc: { 'answers.$.votes.value': 1 },
-            $addToSet: {
-              'answers.$.votes.votedUsers': {
-                userId: new ObjectId(voterId),
-                voteTime: timestamp,
-              },
+          },
+        },
+      ])
+      .toArray();
+    const answerTarget = resultArray[0].answers[0];
+    if (answerTarget.locked === true) {
+      return;
+    }
+    const ownerOfAnswerId = answerTarget.creatorId.toString() || null;
+    const voterArray = answerTarget.votes.votedUsers;
+    const votersIdsOnly = voterArray.map((voter) => voter.userId.toString());
+    const result = votersIdsOnly.includes(voterId);
+    if (result) {
+      //if they already voted
+      /* const result1 = await qaCollection.updateOne(
+        { _id: qaId, 'answers._id': new ObjectId(answerId) },
+        {
+          $inc: { 'answers.$.votes.value': -1 },
+          $pull: {
+            'answers.$.votes.votedUsers': { userId: new ObjectId(voterId) },
+          },
+        }
+      ); */
+
+      const result1 = await qaCollection.findOneAndUpdate(
+        { _id: new ObjectId(qaId), 'answers._id': new ObjectId(answerId) },
+        {
+          $inc: { 'answers.$.votes.value': -1 },
+          $pull: {
+            'answers.$.votes.votedUsers': { userId: new ObjectId(voterId) },
+          },
+        },
+        { returnDocument: 'after' }
+      );
+
+      const result2 = await usersCollection.findOneAndUpdate(
+        { _id: new ObjectId(voterId) },
+        {
+          $pull: {
+            'progress.qaPlatform.votes': {
+              postId: new ObjectId(answerId),
+              type: 'q/a',
             },
-          }
-        );
-        const result3 = await usersCollection.updateOne(
-          { _id: new ObjectId(creatorId) },
-          {
-            $push: {
-              'progress.qaPlatform.votes': {
-                postId: new ObjectId(answerId),
-                type: 'q/a',
-              },
+          },
+          $inc: { 'progress.qaPlatform.iqPoints': -1 },
+        },
+        { returnDocument: 'after' }
+      );
+      const result3 = await usersCollection.findOneAndUpdate(
+        { _id: new ObjectId(ownerOfAnswerId) },
+        {
+          $inc: { 'progress.qaPlatform.iqPoints': -1 },
+        },
+        { returnDocument: 'after' }
+      );
+    } else {
+      //if they didn't vote
+      const currentDate = new Date();
+      const timestamp = currentDate.getTime();
+      const result0 = await qaCollection.updateOne(
+        { _id: new ObjectId(qaId), 'answers._id': new ObjectId(answerId) },
+        {
+          $inc: { 'answers.$.votes.value': 1 },
+          $addToSet: {
+            'answers.$.votes.votedUsers': {
+              userId: new ObjectId(voterId),
+              voteTime: timestamp,
             },
-            $inc: { 'progress.qaPlatform.iqPoints': 1 },
-          }
-        );
-      }
-    } catch (e) {
-      throw new Error(`Error voting: ${e.message}`);
+          },
+        }
+      );
+      const result4 = await usersCollection.updateOne(
+        { _id: new ObjectId(voterId) },
+        {
+          $push: {
+            'progress.qaPlatform.votes': {
+              postId: new ObjectId(answerId),
+              type: 'q/a',
+            },
+          },
+          $inc: { 'progress.qaPlatform.iqPoints': 1 },
+        }
+      );
+      const result5 = await usersCollection.updateOne(
+        { _id: new ObjectId(ownerOfAnswerId) },
+        {
+          $inc: { 'progress.qaPlatform.iqPoints': 1 },
+        }
+      );
     }
   },
   async getRecentQAs() {

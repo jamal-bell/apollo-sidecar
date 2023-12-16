@@ -128,29 +128,24 @@ const middleware = {
   //qa middleware
   qa: (app) => {
     app.use('/qa/:id', async (req, res, next) => {
-      if (req.method === 'GET') {
-        return next();
+      if (req.method !== 'GET' && !req.session.authenticated) {
+        return res.redirect('/user/login');
       }
+      next();
+    });
+    app.use('/qa/:id/:aId', async (req, res, next) => {
       if (!req.session.authenticated) {
         return res.redirect('/user/login');
       }
       next();
     });
-    app.use('/qa/answer', async (req, res, next) => {
+    app.use('/qa/create/', async (req, res, next) => {
       if (!req.session.authenticated) {
-        return res.redirect('/user/login');
-      }
-      next();
-    });
-
-    app.use('/qa/create', async (req, res, next) => {
-      if (!req.session.authenticated) {
-        return res.redirect('/user/login');
+        return res.redirect('user/login');
       }
       next();
     });
   },
-
   //   });
   // new lesson middleware
   // app.use("/lesson/newlesson", async (req, res, next) => {

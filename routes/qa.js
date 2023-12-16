@@ -268,45 +268,50 @@ router
     let lessonCreatorId;
     let lessonRelatedId;
     let loggedIn;
-    const qaId = xss(req.params.id);
-    const answerId = xss(req.params.aId);
-    const voterId = req.session.sessionId;
+    let viewSuffix;
+    let qaId = xss(req.params.id);
+    let answerId = xss(req.params.aId);
+    let voterId = req.session.sessionId;
     req.session.previousUrl = req.get('referer') || '/';
     try {
       qaId = validation.checkId(qaId, 'QA ID');
       answerId = validation.checkId(answerId, 'answer ID');
       voterId = validation.checkId(voterId, 'voter ID');
-
+    } catch (e) {
+      error = e.message;
+      return res.status(500).render('error', error);
+    }
+    try {
+      qaTarget = await qaMethods.getQa(qaId);
       lessonRelatedId = await lessonMethods.getLessonById(
         qaTarget.lessonId.toString()
       );
       lessonCreatorId = lessonRelatedId.creatorId.toString();
     } catch (e) {
-      error = e.message;
       return res.status(500).render('error', error);
     }
     if (req.session.user) {
       loggedIn = true;
+      viewSuffix = 'User';
+      if (req.session.user.role === 'admin' && voterId === lessonCreatorId) {
+        admin = true;
+        owner = true;
+        viewSuffix = 'Admin';
+      } else {
+        admin = false;
+      }
     }
-    if (req.session.user.role === 'admin' && creatorId === lessonCreatorId) {
-      admin = true;
-    } else {
-      admin = false;
-    }
+
     try {
       await qaMethods.iqPoint(qaId, voterId, answerId);
     } catch (e) {
       error = e.message;
       return res.status(500).render('error', { title: error, error });
     }
-    try {
-      qaTarget = await qaMethods.getQa(qaId);
-    } catch (e) {
-      return res.status(500).render('error', error);
-    }
-    return res.status(200).render('qa/view', {
+    return res.status(200).render(`qa/view${viewSuffix}`, {
       title: qaTarget.title,
       qaTarget,
+      owner,
     });
   })
   .delete(async (req, res) => {

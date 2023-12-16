@@ -12,7 +12,7 @@
 </script>
   {{#if qaTarget.answers}}
     {{#each qaTarget.answers}}
-    
+    <a href='/qa/{{../qaTarget._id}}/answers/{{this._id}}'>URL DECODER</a>
     <div id="iqPoint" class="iqPoint">{{this.votes.value}}</div>
       <form
         class='vote'
