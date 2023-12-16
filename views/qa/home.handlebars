@@ -17,7 +17,7 @@
   {{#if creatorQuestions.length}}
     {{#each creatorQuestions}}
       <!-- show last 20 questions they've asked -->
-      <a href='/{{this._id}}'>{{this.title}}</a>
+      <a href='/qa/{{this._id}}'>{{this.title}}</a>
       <p>Created at:
         {{this.timeStamp}}
       </p>
@@ -30,7 +30,7 @@
   {{#if lessonsQuestions.length}}
     {{#each lessonsQuestions}}
       <!-- show last 20 questions for each lesson they've created -->
-      <a href='/{{this._id}}'>{{this.title}}</a>
+      <a href='/qa/{{this._id}}'>{{this.title}}</a>
       <p>Created at:
         {{this.timeStamp}}
         by
