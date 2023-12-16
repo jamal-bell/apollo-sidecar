@@ -2,14 +2,17 @@
   <h2>{{qaTarget.title}}</h2>
   <p>{{qaTarget.text}}</p>
   <p>by <a href='../../user/{{qaTarget.author}}'>{{qaTarget.author}}</a> at {{qaTarget.timeStamp}}</p>
+  {{#if loggedIn}}
   <form id='addAnswerForm' action='/qa/{{qaTarget._id}}/answers' method='post'>
     <input type='text' name='replyText' id='replyText' />
     <input type='submit' />
     <input type='reset' />
   </form>
+  {{/if}}
   <div class="errorSpace" id="errorSpace"></div>
   {{#if qaTarget.answers}}
     {{#each qaTarget.answers}}
+    {{#if loggedIn}}
     <div id="iqPoint" class="iqPoint">{{this.votes.value}}</div>
       <form
         class='vote'
@@ -22,6 +25,7 @@
           </svg>
         </button>
       </form>
+      {{/if}}
       <div><a href='../../user/{{this.author}}'>{{this.author}}</a></div>
       <div>{{this.text}}</div>
       {{#if admin}}
