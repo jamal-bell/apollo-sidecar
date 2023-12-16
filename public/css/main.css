@@ -1,3 +1,6 @@
+/* There are conflicts because of global css -- I'll just comment out some of them and we can figure out what's needed */
+
+
 .errors li,
 .errors,
 #error {
@@ -34,7 +37,7 @@ form label {
   margin-right: 5px;
 }
 
-a, p, footer, h1, h2 {
+.lesson a, p, footer, h1, h2 { /* added lesson class so all links are not globally centered */
 	text-align: center;
     justify-content: center;
     align-items: center;
@@ -62,7 +65,7 @@ a, p, footer, h1, h2 {
     object-fit: cover;
 }
 
-img {
+td img { /* I added the td reference so the image effects are not global */
   border-radius: 50%; /* Makes the image circular */
   object-fit: cover;
   text-align: center;
@@ -103,3 +106,20 @@ table td a {
     margin-top: 10px;
 }
 
+/* jamal added these */
+
+th {
+  text-align: left;
+}
+
+td {
+  padding-left: 20px
+}
+
+td button {
+  margin: 0 auto;
+}
+
+#qas main {
+  box-shadow: none;
+}

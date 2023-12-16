@@ -81,7 +81,11 @@
     const moduleTitleInput = document.getElementById("moduleTitleInput");
     const textInput = document.getElementById("textInput");
     const videoLinkInput = document.getElementById("videoLinkInput");
+
     const errorContainer = document.getElementById("errors");
+
+    //const errorContainer = document.getElementById("errorsDiv");
+
     const newModuleButton = document.getElementById("newModuleButton");
     const publishButton = document.getElementById("newModuleButton");
     const lessonIdInput = document.getElementById("lessonId");
@@ -102,6 +106,7 @@
         moduleTitle = helpers.checkContent(moduleTitle, "module title", 3, 250);
       } catch (e) {
         errorList += `<li>${e}</li>`;
+        //errorList += `${e}`;
       }
 
       try {
@@ -203,12 +208,15 @@
             textInput.value = "";
             videoLinkInput.value = "";
 
-            errorContainer.empty(); 
+            //errorContainer.empty(); 
+            errorContainer.hide(); //.empty or .hide???
             errorContainer.appendChild(`<p>Module Created!</p>`);
           }
         })
         .catch(function (e) {
+
           errorList.push(`<li>${e}</li>`);
+          //errorList.push(`${e}`);
           errorContainer.show();
         });
     });

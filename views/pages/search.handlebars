@@ -1,0 +1,43 @@
+
+<h3>{{heading}}</h3>
+
+<p class="error">{{errorMessage}}</p>
+
+<form method="GET" action="/searchresults" id="search-page-form" >
+
+<label for="advancedKeyword" class="search-page-label" />
+<input type="text" id="advancedKeyword" class="search-input" name="keyword" />
+
+<label for="platform" class="search-page-label" />
+<select name="platform" id-"selectPart" class="select-input" form="search-page-form">
+    <option value="lessons">Lessons</option>
+    <option value="qa">QA</option>
+    <option value="all">All</option>
+</select>
+
+</form>
+
+
+
+
+
+
+{{!-- <form method="POST" action="/search/searchresults">
+  <label for="keywords">Keywords:</label>
+  <input type="text" name="keywords" placeholder="Enter keywords">
+
+  <label for="documentType">Document Type:</label>
+  <select name="documentType">
+    <option value="lessons">Lessons</option>
+    <option value="qadata">QA Data</option>
+    <option value="both">Both</option>
+  </select>
+
+  <label for="sortOrder">Sort Order:</label>
+  <select name="sortOrder">
+    <option value="newest">Newest First</option>
+    <option value="oldest">Oldest First</option>
+  </select>
+
+  <button type="submit">Search</button>
+</form> --}}

@@ -2,6 +2,8 @@ import homeRoutes from "./home.js";
 import lessonRoutes from "./lessons.js";
 import qaRoutes from "./qa.js";
 import userRoutes from "./user.js";
+import searchRoutes from "./search.js"
+import searchResultsRoutes from "./search.js";
 
 const constructorMethod = (app) => {
   app.use("/", homeRoutes);

@@ -1,6 +1,8 @@
+import { lessons, qa } from "../config/mongoCollections.js";
 import users from "../data/users.js";
-import lessons from "../data/lessons.js";
-import qa from "../data/qa.js";
+import lessonsData from "../data/lessons.js";
+import qaData from "../data/qa.js";
+import { ObjectId } from "mongodb";
 import { Router } from "express";
 const router = Router();
 import express from "express";
@@ -94,7 +96,7 @@ router
     //code here for GET
     return res.render("user/register", {
       title: "Registration",
-      style_partial: "user-form",
+      script_partial: "user-form",
     });
   })
   .post(async (req, res) => {
@@ -102,6 +104,7 @@ router
     let firstName = xss(req.body.firstNameInput);
     let lastName = xss(req.body.lastNameInput);
     let emailAddress = xss(req.body.emailAddressInput);
+    let handle = xss(req.body.handleInput);
     let password = xss(req.body.passwordInput);
     let role = xss(req.body.roleInput);
     let errors = [];
@@ -120,6 +123,12 @@ router
 
     try {
       emailAddress = validation.checkEmail(emailAddress);
+    } catch (e) {
+      errors.push(e);
+    }
+
+    try {
+      handle = validation.checkHandle(handle);
     } catch (e) {
       errors.push(e);
     }
@@ -148,12 +157,13 @@ router
     if (errors.length > 0) {
       return res.status(400).render("user/register", {
         title: "Registration",
-        style_partial: "user-form",
+        script_partial: "user-form",
         errors: errors,
         hasErrors: true,
         firstName: firstName,
         lastName: lastName,
-        emailAddress: req.body.emailAddressInput,
+        emailAddress: emailAddress,
+        handle: handle,
       });
     }
 
@@ -162,6 +172,7 @@ router
         firstName,
         lastName,
         emailAddress,
+        handle,
         password,
         role
       );
@@ -173,12 +184,13 @@ router
       errors.push(e);
       return res.status(400).render("user/register", {
         title: "Registration",
-        style_partial: "user-form",
+        script_partial: "user-form",
         errors: errors,
         hasErrors: true,
         firstName: firstName,
         lastName: lastName,
-        emailAddress: req.body.emailAddressInput,
+        emailAddress: emailAddress,
+        handle: handle,
       });
     }
     res
@@ -192,7 +204,7 @@ router
     //code here for GET
     return res.render("user/login", {
       title: "Login",
-      style_partial: "user-form",
+      script_partial: "user-form",
     });
   })
   .post(async (req, res) => {
@@ -222,6 +234,7 @@ router
           firstName: user.firstName,
           lastName: user.lastName,
           emailAddress: user.emailAddress,
+          handle: user.handle,
           role: user.role,
         };
         if (user.role === "admin") {
@@ -236,7 +249,7 @@ router
       errors.push(e);
       return res.status(400).render("user/login", {
         title: "Login",
-        style_partial: "user-form",
+        script_partial: "user-form",
         hasErrors: true,
         errors: errors,
       });
@@ -268,7 +281,7 @@ router.route("/user").get(async (req, res) => {
           user.progress.inProgressLessonId[i].toString(),
           "lessonId"
         );
-        currLesson = await lessons.getLessonById(lessonId);
+        currLesson = await lessonsData.getLessonById(lessonId);
         currLesson._id = currLesson._id.toString();
       } catch (e) {
         return res.status(400).render("user/error", { error: e });
@@ -290,7 +303,7 @@ router.route("/user").get(async (req, res) => {
           user.progress.createdLessonId[i].toString(),
           "lessonId"
         );
-        currLesson = await lessons.getLessonById(lessonId);
+        currLesson = await lessonsData.getLessonById(lessonId);
         currLesson._id = currLesson._id.toString();
       } catch (e) {
         return res.status(400).render("user/error", { error: e });
@@ -308,16 +321,46 @@ router.route("/user").get(async (req, res) => {
     let count = 0;
     for (let i = user.progress.qaPlatform.questions.length - 1; i >= 0; i--) {
       let currQa;
+      let currLesson;
+      let currContent;
       try {
         const qaId = validation.checkId(
           user.progress.qaPlatform.questions[i].toString()
         );
-        currQa = await qa.getQa(qaId);
+        currQa = await qaData.getQa(qaId);
         currQa._id = currQa._id.toString();
+
+        const lessonId = validation.checkId(
+          currQa.lessonId.toString(),
+          "lessonId"
+        );
+        const contentId = validation.checkId(
+          currQa.contentId.toString(),
+          "lessonId"
+        );
+        currLesson = await lessonsData.getLessonById(lessonId);
+        currLesson._id = currLesson._id.toString();
+
+        currContent = await lessonsCollection.findOne(
+          {
+            _id: new ObjectId(lessonId),
+            "contents._id": new ObjectId(contentId),
+          },
+          {
+            projection: {
+              "contents.$": 1,
+            },
+          }
+        );
+        currContent._id = currContent._id.toString();
       } catch (e) {
         return res.status(400).render("user/error", { error: e });
       }
-      userQuestions.push(currQa);
+      userQuestions.push({
+        lesson: currLesson,
+        content: content,
+        question: currQa,
+      });
       count++;
       if (count === 3) break;
     }
@@ -332,16 +375,49 @@ router.route("/user").get(async (req, res) => {
     let count = 0;
     for (let i = user.progress.qaPlatform.answers.length - 1; i >= 0; i--) {
       let currQa;
+      let answers;
+      let currLesson;
+      let currContent;
       try {
         const qaId = validation.checkId(
           user.progress.qaPlatform.answers[i].toString()
         );
-        currQa = await qa.getQa(qaId);
+        currQa = await qaData.getQa(qaId);
         currQa._id = currQa._id.toString();
+
+        const lessonId = validation.checkId(
+          currQa.lessonId.toString(),
+          "lessonId"
+        );
+        const contentId = validation.checkId(
+          currQa.contentId.toString(),
+          "lessonId"
+        );
+
+        currLesson = await lessonsData.getLessonById(lessonId);
+        currLesson._id = currLesson._id.toString();
+        currContent = await lessonsCollection.findOne({
+          _id: lessonId,
+          "contents._id": contentId,
+        });
+        currContent._id = currContent._id.toString();
+        answers = currQa.answers
+          .filter((answer) => answer.creatorId.equals(user._id))
+          .sort((a, b) => b.vote - a.vote)
+          .slice(0, 3)
+          .map((answer) => ({
+            answerText: answer.text,
+            answerVotes: answer.votes,
+          }));
       } catch (e) {
         return res.status(400).render("user/error", { error: e });
       }
-      userAnswers.push(currQa);
+      userAnswers.push({
+        question: currQa,
+        answers: answers,
+        lesson: currLesson,
+        content: currContent,
+      });
       count++;
       if (count === 3) break;
     }
@@ -351,7 +427,8 @@ router.route("/user").get(async (req, res) => {
 
   return res.render("user/user", {
     title: "Overview",
-    style_partial: "overview",
+    style_partial: "css_userprofile",
+    script_partial: "overview",
     user: user,
     lessons: userLessons,
     hasLessons: hasLessons,
@@ -371,12 +448,7 @@ router.route("/admin").get(async (req, res) => {
   }
 
   const user = await users.getUserByEmail(req.session.user.emailAddress);
-
-  if (req.session.sessionId !== user._id.toString()) {
-    return res.render("user/error", {
-      errors: "No access to such user's account page.",
-    });
-  }
+  const lessonsCollection = await lessons();
 
   if (req.session.sessionId !== user._id.toString()) {
     return res.render("user/error", {
@@ -395,7 +467,7 @@ router.route("/admin").get(async (req, res) => {
           user.progress.createdLessonId[i].toString(),
           "lessonId"
         );
-        currLesson = await lessons.getLessonById(lessonId);
+        currLesson = await lessonsData.getLessonById(lessonId);
         currLesson._id = currLesson._id.toString();
       } catch (e) {
         return res.status(400).render("user/error", { error: e });
@@ -413,16 +485,47 @@ router.route("/admin").get(async (req, res) => {
     let count = 0;
     for (let i = user.progress.qaPlatform.questions.length - 1; i >= 0; i--) {
       let currQa;
+      let currLesson;
+      let currContent;
       try {
         const qaId = validation.checkId(
-          user.progress.qaPlatform.questions[i].toString()
+          user.progress.qaPlatform.questions[i].questionId.toString()
         );
-        currQa = await qa.getQa(qaId);
+
+        currQa = await qaData.getQa(qaId);
         currQa._id = currQa._id.toString();
+
+        const lessonId = validation.checkId(
+          currQa.lessonId.toString(),
+          "lessonId"
+        );
+        const contentId = validation.checkId(
+          currQa.contentId.toString(),
+          "lessonId"
+        );
+        currLesson = await lessonsData.getLessonById(lessonId);
+        currLesson._id = currLesson._id.toString();
+
+        currContent = await lessonsCollection.findOne(
+          {
+            _id: new ObjectId(lessonId),
+            "contents._id": new ObjectId(contentId),
+          },
+          {
+            projection: {
+              "contents.$": 1,
+            },
+          }
+        );
+        currContent._id = currContent._id.toString();
       } catch (e) {
         return res.status(400).render("user/error", { error: e });
       }
-      adminQuestions.push(currQa);
+      adminQuestions.push({
+        lesson: currLesson,
+        content: currContent,
+        question: currQa,
+      });
       count++;
       if (count === 3) break;
     }
@@ -437,16 +540,49 @@ router.route("/admin").get(async (req, res) => {
     let count = 0;
     for (let i = user.progress.qaPlatform.answers.length - 1; i >= 0; i--) {
       let currQa;
+      let answers;
+      let currLesson;
+      let currContent;
       try {
         const qaId = validation.checkId(
-          user.progress.qaPlatform.answers[i].toString()
+          user.progress.qaPlatform.answers[i].postId.toString()
         );
-        currQa = await qa.getQa(qaId);
+        currQa = await qaData.getQa(qaId);
         currQa._id = currQa._id.toString();
+
+        const lessonId = validation.checkId(
+          currQa.lessonId.toString(),
+          "lessonId"
+        );
+        const contentId = validation.checkId(
+          currQa.contentId.toString(),
+          "lessonId"
+        );
+
+        currLesson = await lessonsData.getLessonById(lessonId);
+        currLesson._id = currLesson._id.toString();
+        currContent = await lessonsCollection.findOne({
+          _id: lessonId,
+          "contents._id": contentId,
+        });
+        currContent._id = currContent._id.toString();
+        answers = currQa.answers
+          .filter((answer) => answer.creatorId.equals(user._id))
+          .sort((a, b) => b.vote - a.vote)
+          .slice(0, 3)
+          .map((answer) => ({
+            answerText: answer.text,
+            answerVotes: answer.votes,
+          }));
       } catch (e) {
         return res.status(400).render("user/error", { error: e });
       }
-      adminAnswers.push(currQa);
+      adminAnswers.push({
+        question: currQa,
+        answers: answers,
+        lesson: currLesson,
+        content: currContent,
+      });
       count++;
       if (count === 3) break;
     }
@@ -456,7 +592,8 @@ router.route("/admin").get(async (req, res) => {
 
   return res.render("user/admin", {
     title: "Overview",
-    style_partial: "overview",
+    style_partial: "css_userprofile",
+    script_partial: "overview",
     user: user,
     lessons: adminLessons,
     hasLessons: hasLessons,
@@ -467,14 +604,14 @@ router.route("/admin").get(async (req, res) => {
   });
 });
 
-router.route("/public/:userId").get(async (req, res) => {
+router.route("/public/:handle").get(async (req, res) => {
   //code here for GET
   if (!req.session.authenticated) {
     return res.redirect("/user/login");
   }
 
   try {
-    req.params.userId = validation.checkId(req.params.userId, "User Id");
+    req.params.userId = validation.checkHandle(req.params.userId, "User Id");
   } catch (e) {
     return res.status(400).render("/user/error", { title: "Error", error: e });
   }
@@ -486,7 +623,8 @@ router.route("/public/:userId").get(async (req, res) => {
     }
     return res.render("user/public", {
       title: "User Overview",
-      style_partial: "overview",
+      style_partial: "css_userprofile",
+      script_partial: "overview",
       user: user,
     });
   } catch (e) {
@@ -506,6 +644,7 @@ router.route("/profile").post(async (req, res) => {
   let firstName = xss(req.body.firstName);
   let lastName = xss(req.body.lastName);
   let emailAddress = xss(req.body.emailAddress);
+  let handle = xss(req.body.handle);
   let bio = xss(req.body.bio);
   let github = xss(req.body.github);
   let errors = [];
@@ -529,6 +668,12 @@ router.route("/profile").post(async (req, res) => {
   }
 
   try {
+    handle = validation.checkHandle(handle);
+  } catch (e) {
+    errors.push(`<li>${e}</li>`);
+  }
+
+  try {
     if (github.trim().length !== 0 && !new URL(github)) {
       throw "Invalid Github Link.";
     }
@@ -539,9 +684,11 @@ router.route("/profile").post(async (req, res) => {
   let userUpdated;
 
   const user = {
+    _id: req.session.sessionId,
     firstName: firstName,
     lastName: lastName,
     emailAddress: emailAddress,
+    handle: handle,
     bio: bio,
     github: github,
   };
@@ -586,7 +733,7 @@ router
 
     return res.render("user/password", {
       title: "Change Password",
-      style_partial: "user-form",
+      script_partial: "user-form",
     });
   })
   .post(async (req, res) => {
@@ -630,7 +777,7 @@ router
     if (errors.length > 0) {
       return res.status(400).render("user/password", {
         title: "Change Password",
-        style_partial: "user-form",
+        script_partial: "user-form",
         errors: errors,
         hasErrors: true,
       });
@@ -650,7 +797,7 @@ router
     } catch (e) {
       return res.status(400).render("user/password", {
         title: "Change Password",
-        style_partial: "user-form",
+        script_partial: "user-form",
         errors: errors,
         hasErrors: true,
       });

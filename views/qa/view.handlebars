@@ -1,46 +1,24 @@
 <article id='qaMain'>
   <h2>{{qaTarget.title}}</h2>
   <p>{{qaTarget.text}}</p>
-  <form id='addAnswerForm' action='/qa/{{qaTarget._id}}/answers' method='post'>
-    <input type='text' name='replyText' id='replyText' />
-    <input type='submit' />
-    <input type='reset' />
-  </form>
-  <div class="errorSpace" id="errorSpace"></div>
+  <p>by
+    <a href='../../user/{{qaTarget.author}}'>{{qaTarget.author}}</a>
+    at
+    {{qaTarget.timeStamp}}</p>
+  <a href='../../user/login'>Ready to Contribute? Login Now!</a>
+  <div class='errorSpace' id='errorSpace'></div>
   {{#if qaTarget.answers}}
     {{#each qaTarget.answers}}
-    <div id="iqPoint" class="iqPoint">{{this.votes.value}}</div>
-      <form
-        class='vote'
-        action='/qa/{{../qaTarget._id}}/answers/{{this._id}}'
-        method='post'
-      >
-        <button type='submit'>
-          <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='16' height='16'>
-            <use href='../../public/assets/up_arrow.svg' />
-          </svg>
-        </button>
-      </form>
-      <div><a href='../../user/{{this.author}}'>{{this.author}}</a></div>
+
+      <div><a href='../../user/{{this.author}}'>{{this.author}}</a>
+        at
+        {{this.timeStamp}}</div>
       <div>{{this.text}}</div>
-      {{#if admin}}
-      <form id="deleteAnswerAdminForm" class="delete" action="/qa/{{../qaTarget._id}}/{{this._id}}" method="">
-      <input type="submit">delete?</input>
-      </form>
-      {{/if}}
+
     {{/each}}
   {{else}}
     <p>No replies yet.</p>
   {{/if}}
-  {{#if admin}}
-<form id="deleteQaAdminForm" class="delete" action="/qa/{{qaTarget._id}}" method="">
-      <input type="submit">ADMIN: delete this QA?</input>
-      </form>
-  {{/if}}
-{{#if owner}}
-<form id="deleteQaForm" class="delete" action="/qa/{{qaTarget._id}}" method="">
-      <input type="submit">OWNER: delete this QA?</input>
-      </form>
-  {{/if}}
-<script src="../../public/js/qaScript.js"></script>
+  <a href='../../user/login'>Ready to Contribute? Login Now!</a>
+  <script src='http://localhost:3000/public/js/qaScript.js'></script>
 </article>

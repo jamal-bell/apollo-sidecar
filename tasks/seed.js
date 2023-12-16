@@ -183,6 +183,56 @@ try {
   console.log('Seeding completed successfully!');
 } catch (e) {
   console.error('Seeding failed at lessons:', e);
-} finally {
-  await closeConnection();
+}
+let allLessonIdsForQaSeeding;
+try {
+  allLessonIdsForQaSeeding = await lessonsCollection
+    .find()
+    .map((lesson) =>
+      lesson.contents.map((content) => ({
+        lessonId: lesson._id,
+        contentId: content._id,
+        creatorId: content.creatorId,
+      }))
+    )
+    .toArray();
+
+  allLessonIdsForQaSeeding = allLessonIdsForQaSeeding.flat();
+} catch (e) {
+  console.error('Seeding failed at flattening constantIds:', e);
+}
+console.log('Flattening IDs for random qa creation completed!');
+
+try {
+  const numberOfQaEntries = 100; // Adjust as needed
+
+  for (let i = 0; i < numberOfQaEntries; i++) {
+    // Randomly select a lesson object from allLessonIdsForQaSeeding
+    const randomLessonObject =
+      allLessonIdsForQaSeeding[
+        Math.floor(Math.random() * allLessonIdsForQaSeeding.length)
+      ];
+
+    // Extract properties from the selected lesson object
+    const { lessonId, contentId, creatorId } = randomLessonObject;
+    const lessonIdString = lessonId.toString();
+    const contentIdString = contentId.toString();
+    const creatorIdString = creatorId.toString();
+    // Generate random title and text (you can replace these with your own logic)
+    const title = `Q&A Entry ${i + 1} Title`;
+    const text = `Q&A Entry ${
+      i + 1
+    } Text. It must be over 24 characters long or else the journey ends here. I like banana sprinkles and such.`;
+
+    // Call the createQa function with the extracted properties
+    await qaData.createQa(
+      title,
+      creatorIdString,
+      lessonIdString,
+      contentIdString,
+      text
+    );
+  }
+} catch (e) {
+  console.error('Seeding failed at creating QAs:', e);
 }

@@ -49,7 +49,7 @@ router
     try {
       return res.status(200).render("lesson/newlesson", {
         title: "Create Lesson",
-        //style_partial: "lesson",//ERROR HERE?
+        //script_partial: "lesson",//ERROR HERE?
       });
     } catch (e) {
       return res.status(500).json({ Error: e });
@@ -110,7 +110,7 @@ router
         moduleTitle,
         text,
         videoLink,
-        style_partial: "lesson",
+        script_partial: "lesson",
         //createdBy: null,
         //creatorId,
         //author,
@@ -172,7 +172,7 @@ router
       title: "Publish Lesson",
       lessonId,
       lesson,
-      style_partial: "lesson",
+      script_partial: "lesson",
     });
   })
   .post(async (req, res) => {
@@ -274,7 +274,7 @@ router
         moduleTitle: moduleTitle,
         text: text,
         videoLink: videoLink,
-        style_partial: "lesson",
+        script_partial: "lesson",
       });
     }
 
@@ -316,7 +316,7 @@ router
         moduleTitle: moduleTitle,
         text: text,
         videoLink: videoLink,
-        style_partial: "lesson",
+        script_partial: "lesson",
       });
     }
     res

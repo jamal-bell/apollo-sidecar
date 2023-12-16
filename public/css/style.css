@@ -1,0 +1,619 @@
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+html {
+    box-sizing: border-box;
+  
+}
+
+  body, html {
+    height: 100%;
+    width: 100%;
+    margin: 0; 
+    /* overflow-y: hidden; */
+  }
+
+body {
+    font-family: "Saira", sans-serif;
+    letter-spacing: 0.2px;
+    padding: 0;
+    margin: 0;
+    background-image: url("https://cdn.wallpapersafari.com/11/49/WTwa9B.jpg");
+    /* background-image: url("https://cdn.mos.cms.futurecdn.net/gqH8aYGAhKiqddhxrTUFJX.jpg"); */
+    /* background-image: url("https://spacenews.com/wp-content/uploads/2019/12/rsz_lunar_marsokhod.jpg"); */
+    /* background-image: url("https://img.wallscloud.net/uploads/thumb/2845750753/nasa-astronaut-in-the-moon-Wn4Q-1024x576-MM-80.webp"); */
+    /* background-image: url("https://i0.wp.com/spacenews.com/wp-content/uploads/2019/07/Artemis-Lander-concept-art.jpg?fit=1000%2C562&ssl=1"); */
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    width: 100vw;
+    /* height: 100vh; */
+
+}
+
+header {
+    background-color: #22313F;
+    color: #FFF;
+    padding: 10px 30px;
+    /* height: 60px;
+    line-height: 60px; */
+    font-size: 1.3em;
+    box-shadow: 0px 2px 5px rgb(26, 26, 26);
+    position: sticky;
+    top: 0;
+}
+
+footer {
+    background-image: url("https://png.pngtree.com/thumb_back/fh260/back_pic/03/83/26/7857c8e8de71d6a.jpg");
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-repeat: no-repeat;
+    /* z-index: 3; */
+    /* position: fixed;
+    bottom: 0; */
+    width: 67.33%;
+    /* width: 68%; */
+    margin-left: 16.33%;
+    height: 200px;
+    margin-top: 0;
+    color: #FFF;
+    letter-spacing: 2px;
+    font-size: 1.5em;
+    text-shadow: 3px 8px 7px #000;
+    position: relative;
+}
+
+footer .row{
+    height: 200px;
+    margin:0
+}
+
+footer .col-s-2 {
+    border: none;
+}
+
+footer .base {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    /* bottom: 0; */
+    background-color: #1a1a1a;
+    height: 5vh;
+    bottom: 0;
+    font-size: .6em;
+    font-weight: 200;
+    letter-spacing: 3px;
+    padding-top: 15px;
+}
+
+header span {
+    line-height: normal;
+    display: inline;
+}
+
+#header-block {
+    margin-bottom: 5px;
+    margin-top: 45px;
+    text-align: center;
+}
+
+#header-block h1 {
+        /* float: left; */
+    /* margin: 0 auto; */
+    /* display: unset; */
+    position: absolute;
+    width: 100%;
+    top: 15px;
+    font-weight: 400;
+    letter-spacing: 3px;
+}
+
+.row {
+    min-height: 100%;
+}
+
+main {
+    background-color: rgb(228, 230, 220);
+    box-shadow: -10px 0 8px -8px black, 10px 0 8px -8px black;
+}
+/* a, p, footer, h1 {
+    margin: 0;
+} */
+
+.active {
+  font-weight: 800;
+  color: #000;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: block;
+}
+/* top menu */
+
+#top-menu-block {
+    display: block;
+    width: 100%;
+}
+#top-menu {
+    position: absolute;
+    right: 0;
+    margin-right: 25px;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    width: 255px;
+    padding-left: 20px;
+    box-shadow: inset 0 0 20px #1a1a1a;
+    z-index: 5;
+}
+
+ul#top-menu li {
+    float: left;
+
+}
+
+#top-menu a.top-menu-item {
+    font-size: 0.7em;
+    color: #FFF;
+    text-decoration: none;    
+    margin: 5px 5px;
+    padding: 1px;
+}
+
+#top-menu a.top-menu-item:hover {
+    color: #00e0fd;
+}
+
+/* header and search */
+
+#logo {
+    position: absolute;
+    width: 300px; 
+    top: 20px;
+    z-index: 5;
+}
+.left-adj {
+    left: 25px;
+}
+
+.project-name h1 {
+    /* float: left; */
+    /* margin: 0 auto; */
+    /* display: unset; */
+    position: absolute;
+    /* width: 100%; */
+    top: 15px;
+    font-weight: 400;
+    margin: 0 auto;
+    letter-spacing: 3px;
+    display: inline;
+}
+
+.project-name h2 {
+    font-size: 20px;
+    font-weight: 100;
+    margin-left: 70px;
+    top: 35px;
+}
+
+.search-bar {
+    position: relative;
+    width: 60%;
+}
+
+.search {
+/* width: 100%; */
+/* position: relative; */
+display: flex;
+font-size: 1em;
+/* flex-direction: row; */
+justify-content: flex-end;
+}
+
+.searchTerm {
+/* width: 100%; */
+border: 3px solid #00B4CC;
+border-right: none;
+padding: 10px;
+height: 36px;
+border-radius: 5px 0 0 5px;
+outline: none;
+color: #9DBFAF;
+}
+  
+.searchTerm:focus{
+color: #00B4CC;
+}
+
+.searchButton {
+width: 40px;
+height: 36px;
+border: 1px solid #00B4CC;
+background: #00B4CC;
+text-align: center;
+color: #fff;
+border-radius: 0 5px 5px 0;
+cursor: pointer;
+font-size: 20px;
+}
+
+/*Resize the wrap to see the search bar change!*/
+.wrap{
+width: 75%;
+position: absolute;
+top: 60px;
+left: 50%;
+transform: translate(-50%, -50%);
+}
+
+main {
+    padding: 20px 0;
+    /* min-height: 100vh; */
+    /* position: fixed;
+    min-height: 100%;
+    width: 67.33%; */
+    /* overflow: hidden; */
+  }
+
+
+/* For mobile phones: */
+[class*="col-"] {
+    width: 100%;
+  }
+  
+  @media only screen and (max-width: 600px) {
+    /* For tablets: */
+    .col-s-1 {width: 8.33%;}
+    .col-s-2 {width: 16.66%;}
+    .col-s-3 {width: 25%;}
+    .col-s-4 {width: 33.33%;}
+    .col-s-5 {width: 41.66%;}
+    .col-s-6 {width: 50%;}
+    .col-s-7 {width: 58.33%;}
+    .col-s-8 {width: 66.66%;}
+    .col-s-9 {width: 75%;}
+    .col-s-10 {width: 83.33%;}
+    .col-s-11 {width: 91.66%;}
+    .col-s-12 {width: 100%;}
+  }
+  
+
+  @media only screen and (min-width: 600px) {
+    /* For tablets: */
+    .col-s-1 {width: 8.33%;}
+    .col-s-2 {width: 16.66%;}
+    .col-s-3 {width: 25%;}
+    .col-s-4 {width: 33.33%;}
+    .col-s-5 {width: 41.66%;}
+    .col-s-6 {width: 50%;}
+    .col-s-7 {width: 58.33%;}
+    .col-s-8 {width: 66.66%;}
+    .col-s-9 {width: 75%;}
+    .col-s-10 {width: 83.33%;}
+    .col-s-11 {width: 91.66%;}
+    .col-s-12 {width: 100%;}
+  }
+  
+  @media only screen and (min-width: 768px) {
+    /* For desktop: */
+    .col-1 {width: 8.33%;}
+    .col-2 {width: 16.66%;}
+    .col-3 {width: 25%;}
+    .col-4 {width: 33.33%;}
+    .col-5 {width: 41.66%;}
+    .col-6 {width: 50%;}
+    .col-7 {width: 58.33%;}
+    .col-8 {width: 66.66%;}
+    .col-9 {width: 75%;}
+    .col-10 {width: 83.33%;}
+    .col-11 {width: 91.66%;}
+    .col-12 {width: 100%;}
+  }
+
+  @media only screen and (min-width: 992px) {
+    /* For tablets: */
+    .col-s-1 {width: 8.33%;}
+    .col-s-2 {width: 16.66%;}
+    .col-s-3 {width: 25%;}
+    .col-s-4 {width: 33.33%;}
+    .col-s-5 {width: 41.66%;}
+    .col-s-6 {width: 50%;}
+    .col-s-7 {width: 58.33%;}
+    .col-s-8 {width: 66.66%;}
+    .col-s-9 {width: 75%;}
+    .col-s-10 {width: 83.33%;}
+    .col-s-11 {width: 91.66%;}
+    .col-s-12 {width: 100%;}
+  }
+  
+  @media only screen and (min-width: 1200px) {
+    /* For tablets: */
+    .col-s-1 {width: 8.33%;}
+    .col-s-2 {width: 16.66%;}
+    .col-s-3 {width: 25%;}
+    .col-s-4 {width: 33.33%;}
+    .col-s-5 {width: 41.66%;}
+    .col-s-6 {width: 50%;}
+    .col-s-7 {width: 58.33%;}
+    .col-s-8 {width: 66.66%;}
+    .col-s-9 {width: 75%;}
+    .col-s-10 {width: 83.33%;}
+    .col-s-11 {width: 91.66%;}
+    .col-s-12 {width: 100%;}
+  }
+  
+  /* The web page will have a lightblue background if the orientation is in landscape mode: */
+  /* @media only screen and (orientation: landscape) {
+    body {
+      background-color: lightblue;
+    }
+  } */
+
+  /* If the screen size is 600px wide or less, hide the element */
+@media only screen and (max-width: 1200px) {
+    div#header-block {
+      margin-top: 85px
+    }
+    .col-s-2 {
+        width: 0;
+    }
+  }
+
+  /* If the screen size is 601px or more, set the font-size of <div> to 80px */
+/* @media only screen and (min-width: 601px) {
+    div.example {
+      font-size: 80px;
+    }
+  } */
+  
+  /* If the screen size is 600px or less, set the font-size of <div> to 30px */
+  /* @media only screen and (max-width: 600px) {
+    div.example {
+      font-size: 30px;
+    }
+  } */
+
+  /* If the width property is set to a percentage and the height property is set to "auto", the image will be responsive and scale up and down:
+  img {
+    width: 100%;
+    height: auto;
+  }
+
+  If the max-width property is set to 100%, the image will scale down if it has to, but never scale up to be larger than its original size:
+  img {
+    max-width: 100%;
+    height: auto;
+  } */
+
+[class*="col-"] {
+    float: left;
+    /* padding: 15px; */
+    border: 1px solid black;
+}
+
+.row::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.header {
+    background-color: #9933cc;
+    color: #ffffff;
+    padding: 15px;
+  }
+
+  #left-nav img {
+    width: 100%;
+    height: 100%;
+    opacity: 0.1;
+    position: absolute;
+    z-index: -1;
+    top: 0;
+  }
+  
+  .menu ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* .menu li {
+    padding: 8px;
+    margin-bottom: 7px;
+    background-color :#33b5e5;
+    color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); 
+  }*/
+  
+  .menu li:hover {
+    /* background-color: #0099cc; */
+    background-color: #00B4CC;
+  }
+
+  /* .nav-menu {
+    width: 25%;
+    float: left;
+  }
+
+ #main {
+    width: 50%;
+    float: left;
+  } */
+
+
+/* SIDENAV */
+
+/* The side navigation menu */
+.sidenav {
+    height: 100%; /* 100% Full-height */
+    /*width: 0;  0 width - change this with JavaScript */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Stay on top */
+  
+    background-color: #111; /* Black*/
+    overflow: hidden; /* Disable horizontal scroll */
+    padding-top: 75px;/*  Place content 60px from the top */
+    transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+
+    background-color: #0f151b;
+  }
+.left-side-nav{
+    top: 0;
+    left: 0;
+}
+.right-side-nav {
+    top: 0;
+    right: 0;
+}
+
+.left-menu-btn {
+    font-size: 30px;
+    cursor: pointer;
+    color: #FFF;
+    position: fixed;
+    left: 15px;
+    top: 10px;
+    z-index: 2;
+}
+
+.right-menu-btn {
+    font-size: 30px;
+    cursor: pointer;
+    color: #FFF;
+    position: fixed;
+    right: 15px;
+    top: 10px;
+    z-index: 2;
+}
+
+/* The navigation menu links */
+.sidenav a {
+padding: 8px 8px 8px 32px;
+text-decoration: none;
+font-size: 25px;
+color: #818181;
+display: block;
+transition: 0.3s;
+}
+
+/* When you mouse over the navigation links, change their color */
+.sidenav a:hover {
+color: #f1f1f1;
+}
+
+/* Position and style the close button (top right corner) */
+/* .sidenav .close-nav-btn, .sidenav .open-nav-btn {
+position: absolute;
+top: 0;
+right: 25px;
+font-size: 36px;
+margin-left: 50px;
+} */
+
+.closed-nav {
+    width: 0;
+}
+
+.all-closed-main {
+
+    margin: 0;
+}
+
+/* .all-open-main { */
+
+    /* margin: 0 16.33%; */
+/* } */
+
+.full-width {
+    width: 100%;
+}
+
+.half-width {
+    width: 50%;
+}
+
+.left-nav-closed-main {
+    margin-left: 0;
+}
+
+.right-nav-closed-main {
+    margin-right: 0;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+
+
+  /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
+
+  
+.transicion-left {
+    transition: margin-left .5s;
+
+}
+
+.transition-right {
+    transition: marging-right .5s;
+}
+
+  /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+  @media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+  }
+
+
+
+.aside {
+    margin-top: 40px;
+    position: relative;
+    z-index: 2;
+    color: #FFF;
+
+}
+
+
+.form-errors {
+    margin-bottom: 0px;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+
+}
+.form-errors ul {
+    width: 320px;
+    font-size: 1em;
+    padding: 5px;
+    line-height: 1em;
+}
+
+.form-errors ul li { 
+    margin-bottom: 8px;
+}
+
+.errors li, .errors, #error {
+    /* text-shadow: 0 0px #ff9494;
+    /* color: #ff0000; */
+    /* text-align: left; */
+    /* color: #c70000;  */
+
+    text-shadow: 0px 1px 2px #000000;
+    color: #ff0000;
+    text-align: left;
+    width: 100%;
+    font-weight: 400;
+}
