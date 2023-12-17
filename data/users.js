@@ -94,7 +94,7 @@ const exportedusersMethods = {
       progress: {
         lessonsTaken: 0,
         lessonsComplete: 0,
-        lessonCreated: 0,
+        lessonsCreated: 0,
         voteCount: 0,
         qaAnswerCount: 0,
         qaQuestionCount: 0,
@@ -366,14 +366,14 @@ const exportedusersMethods = {
 
     if (createdOrLearned === "created") {
       if (progress.createdLessonId) {
-        progress.lessonCreated = progress.lessonCreated + 1;
+        progress.lessonsCreated = progress.lessonsCreated + 1;
         progress.createdLessonId.push({ lessonId: lessonId });
       } else {
         progress.createdLessonId = [{ lessonId: lessonId }];
       }
     } else if (createdOrLearned === "learned") {
       if (progress.inProgressLessonId) {
-        progress.lessonTaken = progress.lessonTaken + 1;
+        progress.lessonsTaken = progress.lessonsTaken + 1;
         progress.inProgressLessonId.push({ lessonId: lessonId });
       } else {
         progress.inProgressLessonId = [{ lessonId: lessonId }];
