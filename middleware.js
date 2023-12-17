@@ -120,7 +120,7 @@ const middleware = {
         if (req.session.authenticated) {
           next();
         } else {
-          res.redirect('/login');
+          res.redirect('/user/login');
         }
       } else {
         next();
@@ -131,7 +131,7 @@ const middleware = {
         if (req.session.authenticated) {
           next();
         } else {
-          res.redirect('/login');
+          res.redirect('/user/login');
         }
       } else {
         next();
@@ -142,7 +142,7 @@ const middleware = {
         if (!req.session.authenticated) {
           return res.redirect("/user/login");
         } else {
-          return res.redirect("/lessonById");
+          return res.render("/lessonById");
         }
       }
       next();
@@ -152,7 +152,7 @@ const middleware = {
         if (req.session.user) {
           next();
         } else {
-          res.redirect('/login');
+          res.redirect("/user/login");
         }
       } else {
         next();
