@@ -141,7 +141,7 @@
         }
         try {
           if (text)
-            text = helpers.checkContent(text, "module content", 10, 60000);
+            text = helpers.checkContent(text, "module content", 20, 60000);
         } catch (e) {
           errorList += `<li>${e}</li>`;
         }
