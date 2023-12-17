@@ -94,10 +94,10 @@ router
   .route("/register")
   .get(async (req, res) => {
     //code here for GET
-    return res.render('user/register', {
-      title: 'Registration',
+    return res.render("user/register", {
+      title: "Registration",
       style_partial: "css_users",
-      script_partial: 'user-form',
+      script_partial: "user-form",
     });
   })
   .post(async (req, res) => {
@@ -156,10 +156,10 @@ router
     let userRegister;
 
     if (errors.length > 0) {
-      return res.status(400).render('user/register', {
-        title: 'Registration',
+      return res.status(400).render("user/register", {
+        title: "Registration",
         style_partial: "css_users",
-        script_partial: 'user-form',
+        script_partial: "user-form",
         errors: errors,
         hasErrors: true,
         firstName: firstName,
@@ -684,6 +684,7 @@ router.route("/profile").post(async (req, res) => {
   let firstName = xss(req.body.firstName);
   let lastName = xss(req.body.lastName);
   let emailAddress = xss(req.body.emailAddress);
+  let handle = xss(req.session.user.handle);
   let bio = xss(req.body.bio);
   let github = xss(req.body.github);
   let errors = [];
@@ -707,6 +708,12 @@ router.route("/profile").post(async (req, res) => {
   }
 
   try {
+    handle = validation.checkHandle(handle);
+  } catch (e) {
+    errors.push(`<li>${e}</li>`);
+  }
+
+  try {
     if (github.trim().length !== 0 && !new URL(github)) {
       throw "Invalid Github Link.";
     }
@@ -721,6 +728,7 @@ router.route("/profile").post(async (req, res) => {
     firstName: firstName,
     lastName: lastName,
     emailAddress: emailAddress,
+    handle: handle,
     bio: bio,
     github: github,
   };

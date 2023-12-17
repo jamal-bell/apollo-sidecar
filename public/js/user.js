@@ -352,7 +352,7 @@ if (profile) {
             }
           })
           .catch(function (e) {
-            errorList.push(`<li>${e}</li>`);
+            errorContainer.html(`<li>${e}</li>`);
             errorContainer.show();
           });
       }
@@ -370,12 +370,14 @@ if (profile) {
 
     editProfileButton.click(function (event) {
       event.preventDefault();
+      errorContainer.empty();
       errorContainer.hide();
       editProfileClick.call(this, event);
     });
 
     saveProfileButton.click(function (event) {
       event.preventDefault();
+      errorContainer.empty();
       errorContainer.hide();
       saveProfileClick.call(this, event);
     });

@@ -221,7 +221,7 @@ router
   .post(async (req, res) => {
     //   let { lessonId, moduleTitle, text, videoLink, order } = req.body;
 
-    let lessonTitle = xss(req.body.lessonTitleInput);
+    let lessonTitle = xss(req.body.lessonTitle);
     let subject = xss(req.body.subjectInput);
     let description = xss(req.body.descriptionInput);
     let handle = xss(req.body.handleInput);
@@ -229,6 +229,7 @@ router
     let text = xss(req.body.textInput);
     let videoLink = xss(req.body.videoLinkInput);
     let lessonId = xss(req.body.lessonId);
+    let order = xss(req.body.orderInput);
 
     let errors = [];
     try {
