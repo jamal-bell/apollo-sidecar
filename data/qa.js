@@ -182,14 +182,14 @@ const exportedMethods = {
     votedUsers.push(voteUserAndTime);
     const votes = { votedUsers: votedUsers, value: 1 };
     const qaCollection = await qa();
-    const result = await qaCollection.updateOne(
+    const result = await qaCollection.findOneAndUpdate(
       { _id: new ObjectId(qaId) },
       {
         $push: {
           answers: {
-            //BEGIN ANSWSER SCHEMA
+            //BEGIN ANSWER SCHEMA
             _id: commentId, //id of the comment itself
-            text: text, //text of hte comment
+            text: text, //text of the comment
             creatorId: author._id, //_id of the answer creator
             author: author.handle, //handle of the user
             votes: votes, //contains an (array votedUsers[] containing the user who voted, timestamp) and value
@@ -198,6 +198,10 @@ const exportedMethods = {
             locked: false, //locked - added after database proposal
           }, //END ANSWER SCHEMA
         },
+      },
+      {
+        returnDocument: 'after',
+        projection: { answers: 1 }, // Include only the 'answers' field
       }
     );
     if (result.modifiedCount === 0) {
@@ -217,6 +221,9 @@ const exportedMethods = {
     if (result2.modifiedCount === 0) {
       throw new Error('User not found or not updated');
     }
+    let answersTargetIndex = result.answers.length -1;
+    let targetAnswer = result.answers[answersTargetIndex];
+    return targetAnswer;
   },
   async deleteAnswer(qaId, commentId, creatorId, admin) {
     validation.checkId(qaId, 'QA ID');

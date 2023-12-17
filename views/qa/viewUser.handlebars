@@ -2,13 +2,14 @@
   <h2>{{qaTarget.title}}</h2>
   <p>{{qaTarget.text}}</p>
   <p>by <a href='../../user/{{qaTarget.author}}'>{{qaTarget.author}}</a> at {{qaTarget.timeStamp}}</p>
-  <form id='addAnswerForm' action='/qa/{{qaTarget._id}}/answers' method='post'>
+  <form id='addAnswerForm' action='/qa/{{qaTarget._id}}/answers' method='post' data-qaTarget="{{qaTarget._id}}">
     <input type='text' name='replyText' id='replyText' />
-    <input type='submit' />
+    <input type='submit' id="addAnswerFormButton" />
     <input type='reset' />
   </form>
   <div class='errorSpace' id='errorSpace'></div>
   {{#if qaTarget.answers}}
+  <div id="answersContainer">
     {{#each qaTarget.answers}}
       <div class="vote">
         <div class="iqPoint">{{this.votes.value}}</div>
@@ -23,6 +24,7 @@
       <div><a href='../../user/handle/{{this.author}}'>{{this.author}}</a> at {{this.timeStamp}}</div>
       <div>{{this.text}}</div>
     {{/each}}
+    </div>
   {{else}}  
     <p>No replies yet.</p>
   {{/if}}

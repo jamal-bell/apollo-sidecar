@@ -169,6 +169,7 @@ router
     }
     return res.redirect('../../');
   });
+
 router
   .route('/:id/answers')
   .get(async (req, res) => {})
@@ -177,65 +178,40 @@ router
     let error;
     let qaId = xss(req.params.id);
     let qaTarget;
-    let owner;
-    let admin;
-    let lessonCreatorId;
     let creatorId = req.session.sessionId;
     let text;
-    let loggedIn;
-    let viewSuffix;
-    req.session.previousUrl = req.get('referer') || '/';
-    if (req.session.user) {
-      loggedIn = true;
-      viewSuffix = 'User';
-    }
+    let targetAnswer;
     try {
       qaId = validation.checkId(qaId, 'QA ID');
       creatorId = validation.checkId(creatorId, 'creator ID');
 
       qaTarget = await qaMethods.getQa(qaId);
     } catch (e) {
-      return res.status(500).render('error', error);
-    }
-    try {
-      //rendering purpose only
-      const lessonRelatedId = await lessonMethods.getLessonById(
-        qaTarget.lessonId.toString()
-      );
-      lessonCreatorId = lessonRelatedId.creatorId.toString();
-    } catch (e) {
-      error = e.message;
-      return res.status(500).render('error', error);
-    }
-    if (req.session.user.role === 'admin' && creatorId === lessonCreatorId) {
-      admin = true;
-      viewSuffix = 'Admin';
-    } else {
-      admin = false;
+      return res.status(500).json({ error });
     }
     try {
       text = xss(req.body.replyText);
       text = validation.checkString(text, 'Answer text');
     } catch (e) {
       error = e.message;
-      return res.redirect(`http://localhost:3000/qa/${qaId}`);
+      return res.status(500).json({ error });
     }
     if (text.length < 15 || text.length > 10000) {
       error =
         'Answer length should be at least 15 characters and not absurdly long';
-      return res.redirect(`http://localhost:3000/qa/${qaId}`);
+      return res.status(500).json({ error });
     }
     try {
-      await qaMethods.createAnswer(creatorId, text, qaId);
+      targetAnswer = await qaMethods.createAnswer(creatorId, text, qaId);
     } catch (e) {
-      return res.status(500).render('error', error);
+      return res.status(500).json({ error });
     }
     try {
       qaTarget = await qaMethods.getQa(qaId);
     } catch (e) {
-      return res.status(500).render('error', error);
+      return res.status(500).json({ error });
     }
-    return res.redirect(`http://localhost:3000/qa/${qaId}`);
+    return res.status(200).json({targetAnswer});
   })
   .put(async (req, res) => {
     // Handle updating a reply
@@ -263,7 +239,7 @@ router
       voterId = validation.checkId(voterId, 'voter ID');
     } catch (e) {
       error = e.message;
-      return res.status(500).render('error', error);
+      return res.status(500).json({ error });
     }
     try {
       qaTarget = await qaMethods.getQa(qaId);
@@ -272,7 +248,7 @@ router
       );
       lessonCreatorId = lessonRelatedId.creatorId.toString();
     } catch (e) {
-      return res.status(500).render('error', error);
+      return res.status(500).json({ error });
     }
     if (req.session.user) {
       loggedIn = true;
@@ -290,7 +266,7 @@ router
       votedAlready = await qaMethods.iqPoint(qaId, voterId, answerId);
     } catch (e) {
       error = e.message;
-      return res.status(500).render('error', { title: error, error });
+      return res.status(500).json({ error });
     }
     return res.status(200).json({votedAlready: votedAlready});
   })
