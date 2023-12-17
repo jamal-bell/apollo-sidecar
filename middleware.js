@@ -115,10 +115,42 @@ const middleware = {
 
   //lesson middleware
   lessons: (app) => {
-    app.use('/lessons', async (req, res, next) => {
-      console.log("MIDDLEWARE");
+    //allow users and admins through
+    app.use('/lessons/newlesson', async (req, res, next) => {
+      if (req.method === 'GET') {
+        if (req.session.authenticated) {
+          next();
+        } else {
+          res.redirect('/login');
+        }
+      } else {
+        next();
+      }
+    });
+    app.use('/lessons/addmodule/:id', async (req, res, next) => {
+      if (req.method === 'GET') {
+        if (req.session.authenticated) {
+          next();
+        } else {
+          res.redirect('/login');
+        }
+      } else {
+        next();
+      }
+    });
+    app.use('/remove', async (req, res, next) => {
+      if (req.method === 'POST') {
+        if (req.session.user) {
+          next();
+        } else {
+          res.redirect('/login');
+        }
+      } else {
+        next();
+      }
     });
   },
+  
     
   //qa middleware
   qa: (app) => {

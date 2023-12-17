@@ -22,9 +22,6 @@ router.route("/lessons").get(async (req, res) => {
 });
 
 router.route("/lesson/:id").get(async (req, res) => {
-  // if (!req.session.authenticated) {
-  //   return res.redirect("/user/login");
-  // }
   try {
     req.params.id = validation.checkId(req.params.id, "Id URL Param");
   } catch (e) {
@@ -33,13 +30,41 @@ router.route("/lesson/:id").get(async (req, res) => {
       .render("/error", { error: "Unknown url id param", title: "Error" });
   }
   const lessonFound = await lessonsData.getLessonById(req.params.id);
+
+  const user = await usersData.getUserById(req.session.sessionId);
+
+  let alreadyTaken = false;
+  user.progress.inProgressLessonId.forEach((lesson) => {
+    if (lesson.lessonId.toString() === req.params.id) {
+      alreadyTaken = true
+    }
+  })
+  let handle = req.session.user.handle;
   return res.status(200).render("lesson/lessonById", {
+    handle: handle,
+    alreadyTaken: alreadyTaken,
     lessonId: req.params.id,
     title: lessonFound.title,
     moduleTitle: lessonFound.moduleTitle,
     description: lessonFound.description,
     contents: lessonFound.contents,
-  });
+  })
+}).post(async (req, res) => {
+  //Launch lesson
+  try {
+    req.params.id = validation.checkId(req.params.id, "Id URL Param");
+  } catch (e) {
+    return res
+      .status(400)
+      .render("/error", { error: "Unknown url id param", title: "Error" });
+  }
+  console.log("before addLesson()");
+  const lessonFound = await lessonsData.getLessonById(req.params.id);
+  let userId = req.session.sessionId;
+  let lessonId = req.params.id;
+  usersData.addLesson(userId, lessonId, "learned");
+  console.log("after addLesson()");
+
 });
 
 router
@@ -96,10 +121,7 @@ router
         lessonId,
         "created"
       );
-      if (!addedToUser) throw "Could not add Lesson to user on create lesson."
-
-
-      
+      if (!addedToUser) throw "Could not add Lesson to user on create lesson.";
 
       return res.status(200).render("lesson/publish", {
         title: "Create Lesson",
@@ -281,7 +303,7 @@ router
     //call data function
     try {
       const newlesson = await lessonsData.createModule(
-        lessonId, // I CHANGED THIS
+        lessonId,
         order,
         moduleTitle,
         text,
@@ -294,19 +316,10 @@ router
         "learned"
       );
 
-      if (!addedToUserAgain) throw "Could not add Lesson to user on launch lesson.";
-      //if successful, render lesson/:id
-      return res.status(200).redirect("/user/user")
-      // return res.status(200).render("lesson/lessonById", {
-      //   lessonTitle,
-      //   description,
-      //   order,
-      //   moduleTitle,
-      //   creatorId,
-      //   videoLink,
-      //   text,
-      //   author,
-      // });
+      if (!addedToUserAgain)
+        throw "Could not add Lesson to user on launch lesson.";
+      //if successful, go to user profile page to show lesson there
+      return res.status(200).redirect("/user/user");
     } catch (e) {
       errors.push(e);
       return res.status(400).render("lesson/publish", {
@@ -332,4 +345,18 @@ router.route("/error").get(async (req, res) => {
   });
 });
 
+router
+  .route("/remove/:id")
+  .post(async (req, res) => {
+    let lessonId = req.params.id; //is issues try to change req.method to get then back
+    let lesson = {};
+    try {
+      lesson = await lessonsData.getLessonById(lessonId);
+      lessonsData.removeLesson(lessonId);
+      return res.status(200).render("user/user", {
+      });
+    } catch (e) {
+      return res.status(500).json({ Error: e });
+    }
+  });
 export default router;
