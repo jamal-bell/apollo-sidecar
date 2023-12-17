@@ -298,7 +298,7 @@ try {
           creatorId: authorChosen._id,
           author: authorChosen.handle,
           text: `Text for Lesson ${index + 1}`,
-          videoLink: ["https://www.youtube.com/watch?v=dQw4w9WgXcQ"],
+          videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
           createdByRole: authorChosen.role,
           createdAt: new Date(),
           modifiedAt: new Date(),

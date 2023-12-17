@@ -1,12 +1,12 @@
 <div id="lessons-page">
-  <h2>Add Module {{this.moduleTitle}}</h2>
+  <h2>Add Module to: {{this.lessonTitle}}</h2>
   <h3 class="information">Create additional modules for this lesson. Click PUBLISH to make your lesson viewable to others.
   </h3>
   <section>
     <div id="module-wrapper">
       <form id="module-form" class="form">
-        <h1>lesson-id: {{this.lessonId}}</h1>
-        <input class="hide-id" value={{this.lessonId}} name="lessonId" />
+        <h1 hidden> lesson-id: {{this.lessonId}}</h1>
+        <input hidden class="hide-id" value={{this.lessonId}} name="lessonId" />
         <div>
           <input type-"text" id="lessonId" name="lessonId" value={{this.lessonId}} hidden />
         </div>

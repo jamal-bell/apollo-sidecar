@@ -3,6 +3,7 @@ import { usersData } from "../data/index.js";
 import validation from "../data/validation.js";
 import express from "express";
 import { Router } from "express";
+import xss from "xss";
 const app = express();
 const router = Router();
 
@@ -16,58 +17,61 @@ router.route("/lessons").get(async (req, res) => {
   const lessons = await lessonsData.getAllLessons();
 
   res.render("lesson/lessons", {
-    title: "Lessons",
+    title: "Lessons Library",
     lessons: lessons,
     style_partial: "css_content",
   });
 });
 
-router.route("/lesson/:id").get(async (req, res) => {
-  try {
-    req.params.id = validation.checkId(req.params.id, "Id URL Param");
-  } catch (e) {
-    return res
-      .status(400)
-      .render("/error", { error: "Unknown url id param", title: "Error" });
-  }
-  const lessonFound = await lessonsData.getLessonById(req.params.id);
-
-  const user = await usersData.getUserById(req.session.sessionId);
-
-  let alreadyTaken = false;
-  user.progress.inProgressLessonId.forEach((lesson) => {
-    if (lesson.lessonId.toString() === req.params.id) {
-      alreadyTaken = true
+router
+  .route("/lesson/:id")
+  .get(async (req, res) => {
+    try {
+      req.params.id = validation.checkId(req.params.id, "Id URL Param");
+    } catch (e) {
+      return res
+        .status(400)
+        .render("/error", { error: "Unknown url id param", title: "Error" });
     }
-  })
-  let handle = req.session.user.handle;
-  return res.status(200).render("lesson/lessonById", {
-    handle: handle,
-    alreadyTaken: alreadyTaken,
-    lessonId: req.params.id,
-    title: lessonFound.title,
-    moduleTitle: lessonFound.moduleTitle,
-    description: lessonFound.description,
-    contents: lessonFound.contents,
-    style_partial: "css_content",
-  })
-}).post(async (req, res) => {
-  //Launch lesson
-  try {
-    req.params.id = validation.checkId(req.params.id, "Id URL Param");
-  } catch (e) {
-    return res
-      .status(400)
-      .render("/error", { error: "Unknown url id param", title: "Error" });
-  }
-  console.log("before addLesson()");
-  const lessonFound = await lessonsData.getLessonById(req.params.id);
-  let userId = req.session.sessionId;
-  let lessonId = req.params.id;
-  usersData.addLesson(userId, lessonId, "learned");
-  console.log("after addLesson()");
+    const lessonFound = await lessonsData.getLessonById(req.params.id);
 
-});
+    const user = await usersData.getUserById(req.session.sessionId);
+
+    let alreadyTaken = false;
+    user.progress.inProgressLessonId.forEach((lesson) => {
+      if (lesson.lessonId.toString() === req.params.id) {
+        alreadyTaken = true;
+      }
+    });
+    let handle = req.session.user.handle;
+    return res.status(200).render("lesson/lessonById", {
+      title: "Lesson Detail",
+      handle: handle,
+      alreadyTaken: alreadyTaken,
+      lessonId: req.params.id,
+      lessonTitle: lessonFound.title,
+      moduleTitle: lessonFound.moduleTitle,
+      description: lessonFound.description,
+      contents: lessonFound.contents,
+      style_partial: "css_content",
+    });
+  })
+  .post(async (req, res) => {
+    //Launch lesson
+    try {
+      req.params.id = validation.checkId(req.params.id, "Id URL Param");
+    } catch (e) {
+      return res
+        .status(400)
+        .render("/error", { error: "Unknown url id param", title: "Error" });
+    }
+    console.log("before addLesson()");
+    const lessonFound = await lessonsData.getLessonById(req.params.id);
+    let userId = req.session.sessionId;
+    let lessonId = req.params.id;
+    usersData.addLesson(userId, lessonId, "learned");
+    console.log("after addLesson()");
+  });
 
 router
   .route("/newlesson")
@@ -84,14 +88,25 @@ router
     }
   })
   .post(async (req, res) => {
-    const { lessonTitle, description, moduleTitle, text, videoLink } = req.body;
+    // const { lessonTitle, description, moduleTitle, text, videoLink } = req.body;
+
+    let moduleTitle = xss(req.body.moduleTitleInput);
+    let subject = xss(req.body.subjectInput);
+    let description = xss(req.body.descriptionInput);
+    let text = xss(req.body.textInput);
+    let videoLink = xss(req.body.videoLinkInput);
+    let lessonId = xss(req.body.lessonId);
+    // let moduleTitle = req.body.contents.moduleTitle;
+    // let text = req.body.contents.text;
+    // let videoLink = req.body.contents.videoLink;
+
     try {
       const content = [
         {
           moduleTitle,
           subject,
-          videoLink,
           text,
+          videoLink,
           order: 1,
         },
       ];
@@ -116,7 +131,6 @@ router
       //   });
       // }
       // const creatorId = user.id;
-      // const author = user.firstName + user.lastName;
 
       const { _id } = lesson;
       const lessonId = _id.toString();
@@ -160,15 +174,6 @@ router
         style_partial: "css_content",
       });
     }
-    // const creatorId =
-    //   res.session.user.firstName + " " + res.session.user.lastName;
-    // let title = req.body.titleInput;
-    // let description = req.body.descriptionInput;
-    // let moduleTitle = req.body.contents.moduleTitle;
-    // let text = req.body.contents.text;
-    // let videoLink = req.body.contents.videoLink;
-    // let errors = [];
-    // let createdBy;
 
     // try {
     //   await lessonsData.createLesson(title, description, contents);
@@ -192,15 +197,20 @@ router
 router
   .route("/addmodule/:id")
   .get(async (req, res) => {
-    let lessonId = req.params.id;
-    let lesson = {};
+    let lessonId = validation.checkId(xss(req.params.id));
+    let lesson;
     try {
       lesson = await lessonsData.getLessonById(lessonId);
     } catch (e) {
-      return res.status(500).json({ Error: e });
+      return res.status(404).json({ error: e });
     }
+    let subject = lesson.subject;
+    let lessonTitle = lesson.lessonTitle;
+
     return res.status(200).render("lesson/publish", {
       title: "Publish Lesson",
+      order: lesson.contents.length+1,
+      lessonTitle,
       lessonId,
       subject,
       lesson,
@@ -209,12 +219,32 @@ router
     });
   })
   .post(async (req, res) => {
+    //   let { lessonId, moduleTitle, text, videoLink, order } = req.body;
+
+    let lessonTitle = xss(req.body.lessonTitleInput);
+    let subject = xss(req.body.subjectInput);
+    let description = xss(req.body.descriptionInput);
+    let handle = xss(req.body.handleInput);
+    let moduleTitle = xss(req.body.moduleTitleInput);
+    let text = xss(req.body.textInput);
+    let videoLink = xss(req.body.videoLinkInput);
+    let lessonId = xss(req.body.lessonId);
+
+    let errors = [];
     try {
-      let { lessonId, moduleTitle, text, videoLink, order } = req.body;
-      //console.log(order);
+      lessonTitle = validation.checkContent(
+        lessonTitle,
+        "lesson title",
+        3,
+        250
+      );
+      subject = validation.checkContent(subject, "subject", 3, 25);
+    } catch (e) {
+      errors.push(e);
+    }
 
-      order = "undefined" ? 1 : parseInt(order);
-
+    order = "undefined" ? 1 : parseInt(order);
+    try {
       const response = await lessonsData.createModule(
         lessonId,
         order,
@@ -255,7 +285,7 @@ router
     const lessonId = req.params.id;
     const lesson = await lessonsData.getLessonById(lessonId);
 
-    res.render("lessonById", {
+    res.render("lesson/lessonById", {
       title: "Lesson Published!",
       lesson,
       lessonId,
@@ -270,7 +300,6 @@ router
     const firstName = res.session.user.firstName;
     const lastName = res.session.user.lastName;
     let moduleTitle = req.body.contents.moduleTitle;
-    const author = `${firstName} ${lastName}`;
     let text = req.body.contents.text;
     let videoLink = req.body.contents.videoLink;
     let errors = [];
@@ -312,7 +341,6 @@ router
         videoLink: videoLink,
         style_partial: "css_content",
         script_partial: "lesson",
-        
       });
     }
 
@@ -362,18 +390,15 @@ router.route("/error").get(async (req, res) => {
   });
 });
 
-router
-  .route("/remove/:id")
-  .post(async (req, res) => {
-    let lessonId = req.params.id; //is issues try to change req.method to get then back
-    let lesson = {};
-    try {
-      lesson = await lessonsData.getLessonById(lessonId);
-      lessonsData.removeLesson(lessonId);
-      return res.status(200).render("user/user", {
-      });
-    } catch (e) {
-      return res.status(500).json({ Error: e });
-    }
-  });
+router.route("/remove/:id").post(async (req, res) => {
+  let lessonId = req.params.id; //is issues try to change req.method to get then back
+  let lesson = {};
+  try {
+    lesson = await lessonsData.getLessonById(lessonId);
+    lessonsData.removeLesson(lessonId);
+    return res.status(200).render("user/user", {});
+  } catch (e) {
+    return res.status(500).json({ Error: e });
+  }
+});
 export default router;
