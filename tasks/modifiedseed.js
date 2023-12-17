@@ -306,11 +306,16 @@ try {
       ],
     };
     const result = await lessonsCollection.insertOne(newLessonInfo);
-    console.log(result); // Log the inserted document
-    const result2 = await userCollection.updateOne(
-      { _id: authorChosen._id },
-      { $push: { "progress.createdLessonId": { lessonId: result.insertedId } } }
+    // console.log(result); // Log the inserted document
+    await userData.addLesson(
+      authorChosen._id.toString(),
+      result.insertedId.toString(),
+      "created"
     );
+    // const result2 = await userCollection.updateOne(
+    //   { _id: authorChosen._id },
+    //   { $push: { "progress.createdLessonId": { lessonId: result.insertedId } } }
+    // );
     // console.log(result2);
   }
   console.log("Seeding Lessons Completed!");
