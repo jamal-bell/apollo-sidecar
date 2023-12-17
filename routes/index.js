@@ -7,10 +7,11 @@ import searchResultsRoutes from "./search.js";
 
 const constructorMethod = (app) => {
   app.use("/", homeRoutes);
-  app.use("/user", userRoutes);
   app.use("/lessons", lessonRoutes);
-  app.use("/qa", qaRoutes);
-  app.use("/searchResults", userRoutes);
+  app.use("/qaforum", qaRoutes);
+  app.use("/user", userRoutes);
+  app.use("/search", searchRoutes);
+  app.use("/searchresults", searchResultsRoutes);
   app.use("*", (req, res) => {
     res.status(404).render("error", { errorMessage: `404` });
   });
