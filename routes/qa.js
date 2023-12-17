@@ -100,10 +100,16 @@ router
         admin = false;
       }
     }
+    if (admin) {
+      return res.status(200).render(`qa/view${viewSuffix}`, {
+        title: qaTarget.title,
+        qaTarget,
+        script_partial: 'qaAdmin',
+      });
+    }
     return res.status(200).render(`qa/view${viewSuffix}`, {
       title: qaTarget.title,
       qaTarget,
-      owner,
       script_partial: 'qaUser',
     });
   })
