@@ -397,6 +397,26 @@ const exportedusersMethods = {
     return true;
   },
 
+  async deleteLesson(userId, lessonId) {
+    userId = validation.checkId(userId, "userId");
+    lessonId = validation.checkId(lessonId, "lessonId");
+
+    const usersCollection = await users();
+    const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+
+    if (!user) throw "User not found in the system.";
+
+    const updatedUser = await usersCollection.updateOne(
+      { _id: new ObjectId(userId) },
+      { $pull: { "process.inProgressLessonId": { lessonId: lessonId } } }
+    );
+
+    if (updatedUser.modifiedCount !== 1)
+      throw "Error deleting lesson in user database.";
+
+    return true;
+  },
+
   async addQuestion(userId, lessonId, contentId, qaId, createdOrAnswered) {
     userId = validation.checkId(userId, "userId");
     qaId = validation.checkId(qaId, "qaId");
