@@ -1,17 +1,16 @@
-console.log('Document ready state:', document.readyState);
-
+  errorSpace = document.getElementById('errorSpace')
   // Add a click event listener to all upvote buttons
   const upvoteButtons = document.querySelectorAll('[id^="upvote-btn-"]');
-console.log('Starting button stuff');
   upvoteButtons.forEach(button => {
     button.addEventListener('click', async function (event) {
       event.preventDefault();
-   
+      errorSpace.innerHTML = ""
+      errorSpace.hide;
       const qaId = this.getAttribute('data-qa-id');
       const answerId = this.getAttribute('data-answer-id');
-      console.log('added button stuff successflly')
+
       try {
-        console.log('Before fetch');
+        
         const response = await fetch(`/qa/${qaId}/answers/${answerId}`, {
           method: 'POST',
           headers: {
@@ -24,9 +23,9 @@ console.log('Starting button stuff');
         });
 
         if (!response.ok) {
-          console.error('Error:', response.statusText);
+          errorSpace.innerHTML = `Voting isn't available right now!`
+          errorSpace.show;
         } else {
-          console.log('After fetch');
           const responseData = await response.json();
 
           const voteCountElement = this.closest('.vote').querySelector('.iqPoint');
