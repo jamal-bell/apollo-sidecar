@@ -115,7 +115,17 @@ const middleware = {
 
   //lesson middleware
   lessons: (app) => {
-    //allow users and admins through
+    app.use('/lessons/lesson/:id', async (req, res, next) => {
+      if (req.method === 'GET') {
+        if (req.session.authenticated) {
+          next();
+        } else {
+          res.redirect('/login');
+        }
+      } else {
+        next();
+      }
+    });
     app.use('/lessons/newlesson', async (req, res, next) => {
       if (req.method === 'GET') {
         if (req.session.authenticated) {
@@ -128,15 +138,14 @@ const middleware = {
       }
     });
     app.use('/lessons/addmodule/:id', async (req, res, next) => {
-      if (req.method === 'GET') {
-        if (req.session.authenticated) {
-          next();
+      if (req.method == "GET") {
+        if (!req.session.authenticated) {
+          return res.redirect("/user/login");
         } else {
-          res.redirect('/login');
+          return res.redirect("/lessonById");
         }
-      } else {
-        next();
       }
+      next();
     });
     app.use('/remove', async (req, res, next) => {
       if (req.method === 'POST') {

@@ -15,5 +15,5 @@ The seed file will load a variable number of users, lessons, and questions/answe
 
 ## Permissions
 
-Register, Login, and Lessons Library, and Lesson Detail pages are available to the public.
-Lesson creation and uploads are restricted to authenticated users and administrators. Contributions such as posting questions and answers, and upvoting lessons also require users and administrators to be signed in.
+Register, Login, and Lessons Library pages are viewable by the public.
+Access to lesson detail page, lesson creation are restricted to authenticated users and administrators. Contributions such as posting questions and answers, and upvoting lessons also require users and administrators to be signed in.
