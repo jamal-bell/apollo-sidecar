@@ -221,25 +221,20 @@ router
   .post(async (req, res) => {
     //   let { lessonId, moduleTitle, text, videoLink, order } = req.body;
 
-    let lessonTitle = xss(req.body.lessonTitle);
-    let subject = xss(req.body.subjectInput);
-    let description = xss(req.body.descriptionInput);
-    let handle = xss(req.body.handleInput);
-    let moduleTitle = xss(req.body.moduleTitleInput);
-    let text = xss(req.body.textInput);
-    let videoLink = xss(req.body.videoLinkInput);
+    let moduleTitle = xss(req.body.moduleTitle);
+    let text = xss(req.body.text);
+    let videoLink = xss(req.body.videoLink);
     let lessonId = xss(req.body.lessonId);
-    let order = xss(req.body.orderInput);
+    let order = xss(req.body.order);
 
     let errors = [];
     try {
-      lessonTitle = validation.checkContent(
-        lessonTitle,
-        "lesson title",
+      moduleTitle = validation.checkContent(
+        moduleTitle,
+        "module Title",
         3,
         250
       );
-      subject = validation.checkContent(subject, "subject", 3, 25);
     } catch (e) {
       errors.push(e);
     }
