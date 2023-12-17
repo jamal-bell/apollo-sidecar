@@ -89,6 +89,7 @@ router
       const content = [
         {
           moduleTitle,
+          subject,
           videoLink,
           text,
           order: 1,
@@ -97,6 +98,7 @@ router
 
       const lesson = await lessonsData.createLesson(
         lessonTitle,
+        subject,
         description,
         content,
         moduleTitle,
@@ -128,6 +130,7 @@ router
 
       return res.status(200).render("lesson/publish", {
         title: "Create Lesson",
+        subject,
         hasErrors: false,
         lessonTitle,
         lessonId: lessonId.toString(),
@@ -146,6 +149,7 @@ router
       return res.status(400).render(`lesson/newlesson`, {
         title: "Creating lesson failed",
         pageTitle: "Oops, Try again",
+        subject,
         error: error,
         hasErrors: true,
         lessonTitle,
@@ -198,6 +202,7 @@ router
     return res.status(200).render("lesson/publish", {
       title: "Publish Lesson",
       lessonId,
+      subject,
       lesson,
       style_partial: "css_content",
       script_partial: "lesson",
