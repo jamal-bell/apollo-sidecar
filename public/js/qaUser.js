@@ -1,29 +1,34 @@
-let errors = [];
-let addAnswerForm = document.getElementById('addAnswerForm');
-let errorSpace = document.getElementById('errorSpace');
+document.addEventListener('DOMContentLoaded', function () {
+  const upvoteButtons = document.querySelectorAll('.upvote-btn');
 
-if (addAnswerForm) {
-  const form = addAnswerForm;
-  errors = [];
-  form.addEventListener('submit', (event) => {
-    errorSpace.innerHTML = '';
-    replyText = document.getElementById('replyText');
-    replyText_trimmed = replyText.value.trim();
-    if (replyText_trimmed <= 15)
-      errors.push('Reply must be at least 15 characters.');
-    if (replyText_trimmed > 10000)
-      errors.push('Reply must be less than 10k characters.');
-    if (errors.length > 0) {
+  upvoteButtons.forEach((button) => {
+    button.addEventListener('click', async function (event) {
       event.preventDefault();
-      let errorsList = document.createElement('ul');
-      errors.forEach((element) => {
-        let listItem = document.createElement('li');
-        listItem.classList.add('errorSpace');
-        listItem.innerHTML = element;
-        errorsList.appendChild(listItem);
-      });
-      errorSpace.appendChild(errorsList);
-      errors = [];
-    }
+
+      const qaId = this.getAttribute('data-qa-id');
+      const answerId = this.getAttribute('data-answer-id');
+
+      try {
+        const response = await fetch(`/qa/${qaId}/answers/${answerId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({}),
+        });
+
+        if (!response.ok) {
+          alert('Error upvoting. Please try again later.');
+          console.error('Error:', response.statusText);
+        } else {
+          const voteCountElement =
+            this.closest('.vote').querySelector('.iqPoint');
+          const currentVoteCount = parseInt(voteCountElement.innerText, 10);
+          voteCountElement.innerText = currentVoteCount + 1;
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
   });
-}
+});

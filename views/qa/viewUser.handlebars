@@ -10,25 +10,23 @@
   <div class='errorSpace' id='errorSpace'></div>
   {{#if qaTarget.answers}}
     {{#each qaTarget.answers}}
-    <a href='/qa/{{../qaTarget._id}}/answers/{{this._id}}'>URL DECODER</a>
-    <div id="iqPoint" class="iqPoint">{{this.votes.value}}</div>
-      <form
-        class='vote'
-        action='/qa/{{../qaTarget._id}}/answers/{{this._id}}'
-        method='post'
-      >
-        <button type='submit'>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
-        <path d="M12 2L0 10l3 2v10h18v-10l3-2z"/>
-        </svg>
+      <div class="vote">
+      <div class="iqPoint">
+        {{this.votes.value}}
+      </div>
+      <form class="vote" action="/qa/{{../qaTarget._id}}/answers/{{this._id}}" method="post">
+        <button type="submit" class="upvote-btn" data-qa-id="{{../qaTarget._id}}" data-answer-id="{{this._id}}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
+              <path d="M12 2L0 10l3 2v10h18v-10l3-2z"/>
+            </svg>
         </button>
       </form>
-    
-      <div><a href='../../user/{{this.author}}'>{{this.author}}</a> at {{this.timeStamp}}</div>
-      <div>{{this.text}}</div>
-    {{/each}}
-  {{else}}  
+    </div>
+    <div><a href='../../user/{{this.author}}'>{{this.author}}</a> at {{this.timeStamp}}</div>
+    <div>{{this.text}}</div>
+  {{/each}}
+{{else}}  
     <p>No replies yet.</p>
   {{/if}}
-<script src="http://localhost:3000/public/js/qaUser.js"></script>
+<!-- <script src="http://localhost:3000/public/js/qaUser.js"></script> -->
 </article>

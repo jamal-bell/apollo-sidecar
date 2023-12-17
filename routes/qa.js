@@ -104,6 +104,7 @@ router
       title: qaTarget.title,
       qaTarget,
       owner,
+      script_partial: 'qaUser',
     });
   })
   .delete(async (req, res) => {
