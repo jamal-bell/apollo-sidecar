@@ -440,6 +440,7 @@ router.route("/user").get(async (req, res) => {
   return res.status(200).render("user/user", {
     title: "Overview",
     style_partial: "css_userprofile",
+    leftmenu_partial: "html_userMenu",
     script_partial: "overview",
     user: user,
     lessons: userLessons,
@@ -612,6 +613,7 @@ router.route("/admin").get(async (req, res) => {
   return res.status(200).render("user/admin", {
     title: "Overview",
     style_partial: "css_userprofile",
+    leftmenu_partial: "html_userMenu",
     script_partial: "overview",
     user: user,
     lessons: adminLessons,
@@ -639,6 +641,7 @@ router.route("/handle/:handle").get(async (req, res) => {
     return res.status(200).render("user/public", {
       title: "User Overview",
       style_partial: "css_userprofile",
+      leftmenu_partial: "html_userMenu",
       script_partial: "overview",
       user: user,
     });
@@ -664,6 +667,7 @@ router.route("/public/:userId").get(async (req, res) => {
     return res.status(200).render("user/public", {
       title: "User Overview",
       style_partial: "css_userprofile",
+      leftmenu_partial: "html_userMenu",
       script_partial: "overview",
       user: user,
     });

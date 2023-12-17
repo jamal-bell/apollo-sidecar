@@ -9,8 +9,8 @@
   {{/if}}
 
   <h2>{{this.lessonTitle}}</h2>
-  <h3>{{this.description}}</h3>
-  {{!-- <h3>{{this.lessonId}}</h3> --}}
+    <h3>{{this.description}}</h3>
+
 
   <ul>
     {{#each contents}}
@@ -18,7 +18,7 @@
         <h4>{{this.order}}: {{this.moduleTitle}}</h4>
         <h5>Author: {{this.handle}}</h5>
 
-        <h5>Video Resource:</h5>
+      <h5>Video Resource:</h5>
 
         <iframe width="560" height="315" src="{{this.videoLink}}" frameborder="0" allowfullscreen></iframe>
 

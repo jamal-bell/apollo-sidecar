@@ -29,11 +29,13 @@
       $("#close-right-nav").addClass("hidden ");
       $("#open-right-nav").removeClass("hidden ");
   
+      $(".home-pic").addClass("hide");
       /* open and close side navigation menue*/
   
       $( "#open-left-nav" ).on( "click", function() {
           $("#left-nav").removeClass("col-s-2");
           $("#left-nav").addClass("full-width");
+
        });
        
          $( "#open-right-nav" ).on( "click", function() {
@@ -77,17 +79,25 @@
   //          $("#right-nav").removeClass("half-width");
   //      });
   } else if (window.matchMedia('(max-width: 768px)').matches){
+     
+    $(".home-pic").addClass("hide");
+      // $("#registration-form .form-footer").css({width: "65%", margin: "0 auto" });
+      // $("#registration-form .form-errors").css("padding", "0 10px");
+
       $( "#close-left-nav" ).on( "click", function() {
           $("#left-nav").addClass("closed-nav");
+          $("#right-nav").addClass("closed-nav");
           $("#close-left-nav").addClass("hidden ");
           $("#open-left-nav").removeClass("hidden ");
+          $("#close-right-nav").addClass("hidden ");
+          $("#open-right-nav").removeClass("hidden ");
        });
        
-         $( "#close-right-nav" ).on( "click", function() {
-           $("#right-nav").addClass("closed-nav");
-           $("#close-right-nav").addClass("hidden ");
-           $("#open-right-nav").removeClass("hidden ");
-       });
+        //  $( "#close-right-nav" ).on( "click", function() {
+          //  $("#right-nav").addClass("closed-nav");
+          //  $("#close-right-nav").addClass("hidden ");
+          //  $("#open-right-nav").removeClass("hidden ");
+      //  });
        
        $( "#open-left-nav" ).on( "click", function() {
            $("#left-nav").removeClass("closed-nav");
@@ -101,55 +111,74 @@
             $("#close-right-nav").removeClass("hidden ");
         });
       }else if (window.matchMedia('(max-width: 1200px)').matches){
-          $( "#close-left-nav" ).on( "click", function() {
-              $("#left-nav").addClass("closed-nav");
-              $("#close-left-nav").addClass("hidden ");
+        $("#close-left-nav").addClass("mid-btn");
+        $("#open-left-nav").addClass("mid-btn");
+        $("#lesson-menu").css({"padding-top":"90%", "margin-left": "20%"});
+        $(".menu-link").addClass("menu-link-update");
+        $("#header-block").addClass("header-adj");
+        $(".home-pic").class("visibility", "hidden");
+
+        $().addClass("")
+           $( "#close-left-nav" ).on( "click", function() {
+              $("#left-nav").removeClass("col-s-2");
+              $("#left-nav").addClass("half-width");
+              $("#close-left-nav").addClass("hidden");
               $("#open-left-nav").removeClass("hidden ");
+              $("#open-left-nav").css("color", "#FFF");
            });
-           
-             $( "#close-right-nav" ).on( "click", function() {
-               $("#right-nav").addClass("closed-nav");
-               $("#close-right-nav").addClass("hidden ");
-               $("#open-right-nav").removeClass("hidden ");
-           });
-           
+
            $( "#open-left-nav" ).on( "click", function() {
+            // $("#close-left-nav").addClass("mid-btn");
               $("#left-nav").removeClass("half-width");
                $("#left-nav").removeClass("closed-nav");
                $("#open-left-nav").addClass("hidden");
                $("#close-left-nav").removeClass("hidden ");
+               $("#right-nav").addClass("hidden");
+            });
+          // $( "#close-left-nav" ).on( "click", function() {
+          //     $("#left-nav").addClass("closed-nav");
+          //     $("#close-left-nav").addClass("hidden ");
+          //     $("#open-left-nav").removeClass("hidden ");
+          //  });
+           
+          //    $( "#close-right-nav" ).on( "click", function() {
+          //      $("#right-nav").addClass("closed-nav");
+          //      $("#close-right-nav").addClass("hidden ");
+          //      $("#open-right-nav").removeClass("hidden ");
+          //  });
+           
+          //  $( "#open-left-nav" ).on( "click", function() {
+          //     $("#left-nav").removeClass("half-width");
+          //      $("#left-nav").removeClass("closed-nav");
+          //      $("#open-left-nav").addClass("hidden");
+          //      $("#close-left-nav").removeClass("hidden ");
                
-            });
+          //   });
             
-              $( "#open-right-nav" ).on( "click", function() {
-                $("#right-nav").removeClass("closed-nav");
-                $("#open-right-nav").addClass("hidden ");
-                $("#close-right-nav").removeClass("hidden ");
-            });
+          //     $( "#open-right-nav" ).on( "click", function() {
+          //       $("#right-nav").removeClass("closed-nav");
+          //       $("#open-right-nav").addClass("hidden ");
+          //       $("#close-right-nav").removeClass("hidden ");
+          //   });
   } else {
-      $( "#close-left-nav" ).on( "click", function() {
+      $( "#close-left-nav" ).on( "click", function() { // done
           $("#left-nav").addClass("closed-nav");
           $("#close-left-nav").addClass("hidden ");
           $("#open-left-nav").removeClass("hidden ");
+          $("#right-nav").addClass("closed-nav");
+          $("#right-nav").addClass("closed-nav");
+          $("#right-nav").addClass("closed-nav");
        });
        
-         $( "#close-right-nav" ).on( "click", function() {
-           $("#right-nav").addClass("closed-nav");
-           $("#close-right-nav").addClass("hidden ");
-           $("#open-right-nav").removeClass("hidden ");
-       });
-       
-       $( "#open-left-nav" ).on( "click", function() {
+       $( "#open-left-nav" ).on( "click", function() { // done
            $("#left-nav").removeClass("closed-nav");
            $("#open-left-nav").addClass("hidden ");
            $("#close-left-nav").removeClass("hidden ");
+           $("#right-nav").removeClass("closed-nav");
+          //  $("#open-right-nav").addClass("hidden ");
+           $("#close-right-nav").removeClass("hidden ");
         });
-        
-          $( "#open-right-nav" ).on( "click", function() {
-            $("#right-nav").removeClass("closed-nav");
-            $("#open-right-nav").addClass("hidden ");
-            $("#close-right-nav").removeClass("hidden ");
-        });
+
   }
   console.log($(window).width())
   })(window.jQuery);

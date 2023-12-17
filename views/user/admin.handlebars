@@ -100,8 +100,9 @@
     </div>
 </section>
 
-<h2>Lessons Created</h2>
-<section class="lessons">
+
+<div class="lessons col">
+    <h2>Lessons Created</h2>
     {{#if hasLessons}}
         <div>
             <ul>
@@ -119,8 +120,7 @@
     {{/if}}
 </section>
 
-<br />
-<br />
+
 
 <h2>Q&A Contributions</h2>
 <section id="qas">
@@ -148,9 +148,9 @@
             {{/each}}
         </ul>
     {{else}}
-        <main>
+        <div class="qa-posts">
             <p>No contributions yet, help others and earn IQ points now <a href="/qa">here</a>.</p>
-        </main>
+        </div>
     {{/if}}
 </section>
 

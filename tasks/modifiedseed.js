@@ -274,22 +274,42 @@ try {
   lessonsCollection = await lessons();
   const lessonTitlePrefix = "Lesson";
   userCollection = await users();
+
+  const start = new Date(1999, 1, 1); // Minimum start date
+  const now = new Date(); // Current date
+  const end = new Date(2024, 11, 31); // Maximum end date (specificFutureDate)
+
+  // Calculate range for randomStart (1999 - now)
+  const startRangeMilliseconds = now.getTime() - start.getTime();
+
+  // Generate random start date within the range
+  const randomStartOffset = Math.floor(Math.random() * startRangeMilliseconds);
+  const randomStart = new Date(start.getTime() + randomStartOffset);
+
+  // Calculate range for modifiedDate (randomStart - end)
+  const modifiedRangeMilliseconds = randomStart.getTime() - end.getTime();
+
+// Generate random modified date within the range
+const randomModifiedOffset = Math.floor(Math.random() * modifiedRangeMilliseconds);
+const modifiedDate = new Date(randomStart.getTime() - randomModifiedOffset);
+
+
   for (let index = 0; index < numLessons; index++) {
-    const lessonTitlePrefix =
-      LessonTitlePrefixList[
-        Math.floor(Math.random() * LessonTitlePrefixList.length)
-      ];
+    const lessonTitlePrefix = LessonTitlePrefixList[ Math.floor(Math.random() * LessonTitlePrefixList.length)];
     const randomUserId = userIds[Math.floor(Math.random() * userIds.length)];
     const randomSubject = subjects[Math.floor(Math.random() * subjects.length)];
     const authorChosen = await userCollection.findOne({ _id: randomUserId });
+
+
+
     const newLessonInfo = {
       lessonTitle: `${lessonTitlePrefix} ${randomSubject} ${index + 1}`,
       subject: randomSubject,
       description: `${randomSubject} Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an, saat seorang tukang cetak yang tidak dikenal mengambil sebuah kumpulan teks dan mengacaknya untuk menjadi sebuah buku contoh huruf. Ia tidak hanya bertahan selama 5 abad, tapi juga telah beralih ke penataan huruf elektronik, tanpa ada perubahan apapun. Ia mulai dipopulerkan pada tahun 1960 dengan diluncurkannya lembaran-lembaran Letraset yang menggunakan kalimat-kalimat dari Lorem Ipsum, dan seiring munculnya perangkat lunak Desktop Publishing seperti Aldus PageMaker juga memiliki versi Lorem Ipsum.`,
       creatorId: authorChosen._id,
       handle: "gerneric",
-      createdAt: new Date(),
-      modifiedAt: new Date(),
+      createdAt: "I need random date between 1999 until now",
+      modifiedAt: "need a randome date between createdAt and now ",
       contents: [
         {
           _id: new ObjectId(),
@@ -300,14 +320,15 @@ try {
           text: `Text for Lesson ${index + 1}`,
           videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ",
           createdByRole: authorChosen.role,
-          createdAt: new Date(),
-          modifiedAt: new Date(),
+          createdAt: "I need this date to equal the newLessonInfo createdAt above",
+          modifiedAt: "I need this date to be a random date beween createdAt and now"
         },
       ],
     };
+
     const result = await lessonsCollection.insertOne(newLessonInfo);
     
-    console.log(result); // Log the inserted document
+    // console.log(result); // Log the inserted document
     // const result2 = await userCollection.updateOne(
     //   { _id: authorChosen._id },
     //   { $push: { "progress.createdLessonId": { lessonId: result.insertedId } } }

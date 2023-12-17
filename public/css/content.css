@@ -21,9 +21,16 @@ main, #main, footer {
 }
 
 .sidenav a {
-    padding: 0px 8px 0px 32px;
+    /* padding: 0px 8px 0px 32px;
     text-decoration: none;
     font-size: 1.1em;
+    color: #22313F;
+    display: flex;
+    justify-content: left !important;
+    transition: 0.3s; */
+    padding: 2px 8px 0px 32px;
+    text-decoration: none;
+    font-size: 1.6em;
     color: #22313F;
     display: flex;
     justify-content: left !important;

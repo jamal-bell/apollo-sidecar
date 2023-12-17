@@ -20,6 +20,7 @@ router.route("/lessons").get(async (req, res) => {
     title: "Lessons Library",
     lessons: lessons,
     style_partial: "css_content",
+    leftmenu_partial: "html_lessonMenu",
   });
 });
 
@@ -36,7 +37,7 @@ router
     const lessonFound = await lessonsData.getLessonById(req.params.id);
 
     const user = await usersData.getUserById(req.session.sessionId);
-
+console.log(user)
     let isLink;
 
     let alreadyTaken = false;
@@ -56,6 +57,7 @@ router
       description: lessonFound.description,
       contents: lessonFound.contents,
       style_partial: "css_content",
+    leftmenu_partial: "html_lessonMenu",
     });
   })
   .post(async (req, res) => {
@@ -83,6 +85,7 @@ router
       return res.status(200).render("lesson/newlesson", {
         title: "Create Lesson",
         style_partial: "css_content",
+        leftmenu_partial: "html_lessonMenu",
         //script_partial: "lesson",//ERROR HERE?
       });
     } catch (e) {
@@ -161,6 +164,7 @@ router
         lesson: lesson,
         style_partial: "css_content",
         script_partial: "lesson",
+        leftmenu_partial: "html_lessonMenu",
         //createdBy: null,
         //creatorId,
         //author,
@@ -179,6 +183,7 @@ router
         text: text,
         videoLink,
         style_partial: "css_content",
+        leftmenu_partial: "html_lessonMenu",
       });
     }
 
@@ -222,6 +227,7 @@ router
       subject,
       lesson,
       style_partial: "css_content",
+      leftmenu_partial: "html_lessonMenu",
       script_partial: "lesson",
     });
   })
@@ -268,6 +274,7 @@ router
         order: order,
         videoLink: videoLink,
         style_partial: "css_content",
+        leftmenu_partial: "html_lessonMenu",
       });
     } catch (error) {
       return res.status(400).json({
@@ -278,6 +285,7 @@ router
         text: "",
         videoLink: "",
         style_partial: "css_content",
+        leftmenu_partial: "html_lessonMenu",
       });
     }
   });
@@ -291,6 +299,7 @@ router.route("published/:id").get(async (req, res) => {
     lesson,
     lessonId,
     style_partial: "css_content",
+      leftmenu_partial: "html_lessonMenu",
   });
 });
 // .post(async (req, res) => {

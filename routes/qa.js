@@ -35,6 +35,7 @@ router.route('/').get(async (req, res) => {
       lessonQuestions,
       admin,
       user,
+      leftmenu_partial: "html_qaMenu",
     });
   } catch (e) {
     error = e.message;
@@ -64,6 +65,7 @@ router
         error,
         admin,
         owner,
+        leftmenu_partial: "html_qaMenu",
       });
     }
     try {
@@ -101,6 +103,7 @@ router
       pageTitle: qaTarget.title,
       qaTarget,
       owner,
+      leftmenu_partial: "html_qaMenu",
     });
   })
   .delete(async (req, res) => {
@@ -150,6 +153,7 @@ router
         pageTitle: 'FORBIDDEN',
         qaTarget,
         owner,
+        leftmenu_partial: "html_qaMenu",
       });
     }
     try {
@@ -222,6 +226,7 @@ router
         admin,
         owner,
         loggedIn,
+        leftmenu_partial: "html_qaMenu",
       });
     }
     if (text.length < 15 || text.length > 10000) {
@@ -234,6 +239,7 @@ router
         admin,
         owner,
         loggedIn,
+        
       });
     }
     try {
@@ -367,6 +373,7 @@ router
         admin,
         owner,
         loggedIn,
+        leftmenu_partial: "html_qaMenu",
       });
     }
     try {
