@@ -306,6 +306,7 @@ try {
       ],
     };
     const result = await lessonsCollection.insertOne(newLessonInfo);
+    
     console.log(result); // Log the inserted document
     // const result2 = await userCollection.updateOne(
     //   { _id: authorChosen._id },
@@ -313,7 +314,6 @@ try {
     // );
 
     await userData.addLesson(authorChosen._id.toString(), result.insertedId.toString(), "created")
-
     // console.log(result2);
   }
   console.log("Seeding Lessons Completed!");
