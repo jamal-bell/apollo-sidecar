@@ -471,7 +471,7 @@ router.route("/admin").get(async (req, res) => {
       let currLesson;
       try {
         let lessonId = validation.checkId(
-          user.progress.createdLessonId[i].toString(),
+          user.progress.createdLessonId[i].lessonId.toString(),
           "lessonId"
         );
         currLesson = await lessonsData.getLessonById(lessonId);

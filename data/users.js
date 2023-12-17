@@ -372,7 +372,7 @@ const exportedusersMethods = {
         progress.createdLessonId = [{ lessonId: lessonId }];
       }
     } else if (createdOrLearned === "learned") {
-      if (lessons.inProgressLessonId) {
+      if (progress.inProgressLessonId) {
         progress.lessonTaken = progress.lessonTaken + 1;
         progress.inProgressLessonId.push({ lessonId: lessonId });
       } else {
