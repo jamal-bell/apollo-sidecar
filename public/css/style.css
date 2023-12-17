@@ -51,6 +51,14 @@ header {
     z-index: 5;
 }
 
+.min-search-input {
+  padding: 9px 16px;
+}
+
+.search-bar {
+  display: inline ;
+}
+
 footer {
     background-image: url("https://png.pngtree.com/thumb_back/fh260/back_pic/03/83/26/7857c8e8de71d6a.jpg");
     -webkit-background-size: cover;
@@ -679,4 +687,32 @@ margin-left: 50px;
 .menu-link-update {
   font-size: 3em !important;
   padding-bottom: 1em !important;
+}
+
+.password-field {
+  text-align: center;
+}
+
+.email-field {
+  text-align: center
+}
+
+.email-login-label {
+  position: absolute !important;
+  top: 15% !important;
+}
+
+.password-login-label {
+  position: absolute !important;
+  top: 36% !important;
+}
+
+#emailAddressInput{
+top: 24%;
+position: absolute;
+}
+
+#passwordInput{ 
+  top: 45%;
+  position: absolute;
 }

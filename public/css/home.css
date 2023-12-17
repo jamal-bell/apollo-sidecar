@@ -1,6 +1,6 @@
 /* home page */
 
-main, #main, footer {
+main, #outer-main, footer {
     background-color: #FFF !important;
     margin: 0 !important;
     width: 100% !important;
@@ -142,7 +142,7 @@ a.register-btn:active {
 .content-box-left{
     width: 45%;
     position: absolute;
-    left: 10%;
+    right: 10%;
 }
 
 ul.content-text {

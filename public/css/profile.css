@@ -6,7 +6,7 @@
 
 } */
 
-main, #main, footer {
+main, #outer-main, footer {
     background-color: #FFF !important;
     margin: 0 !important;
     width: 100% !important;
