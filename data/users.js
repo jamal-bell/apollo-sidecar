@@ -366,14 +366,14 @@ const exportedusersMethods = {
 
     if (createdOrLearned === "created") {
       if (progress.createdLessonId) {
-        process.lessonCreated = process.lessonCreated + 1;
+        progress.lessonCreated = progress.lessonCreated + 1;
         progress.createdLessonId.push({ lessonId: lessonId });
       } else {
         progress.createdLessonId = [{ lessonId: lessonId }];
       }
     } else if (createdOrLearned === "learned") {
       if (lessons.inProgressLessonId) {
-        process.lessonTaken = process.lessonTaken + 1;
+        progress.lessonTaken = progress.lessonTaken + 1;
         progress.inProgressLessonId.push({ lessonId: lessonId });
       } else {
         progress.inProgressLessonId = [{ lessonId: lessonId }];
