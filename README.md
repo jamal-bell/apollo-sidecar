@@ -10,9 +10,10 @@ Description
 4. run `npm run seed`
 
 ## Seeding the database
+
 The seed file will load a variable number of users, lessons, and questions/answers. You can set the numbers at the top of the seed at path /tasks/seed.js
 
 ## Permissions
-Register, Login, and Lessons Library pages are available to the public. 
-Lesson detail pages are accessible to authenticated users or administrators.
-Lesson uploads are restricted to authenticated administrators.
+
+Register, Login, and Lessons Library, and Lesson Detail pages are available to the public.
+Lesson creation and uploads are restricted to authenticated users and administrators. Contributions such as posting questions and answers, and upvoting lessons also require users and administrators to be signed in.
