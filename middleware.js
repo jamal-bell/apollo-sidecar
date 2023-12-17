@@ -139,12 +139,13 @@ const middleware = {
       }
       next();
     });
-    app.use('/qa/create/', async (req, res, next) => {
+   app.use('/qa/create/', async (req, res, next) => {
       if (!req.session.authenticated) {
         return res.redirect('user/login');
       }
       next();
     });
+    
   },
   //   });
   // new lesson middleware

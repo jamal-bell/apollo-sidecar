@@ -351,8 +351,10 @@ router
       error = e.message;
       return res.status(500).render('error', error);
     }
-    return res.status(200).render('qa/create', { originLesson },
-    {script_partial: 'qaCreate' });
+    return res.status(200).render('qa/create', {
+      originLesson,
+      script_partial: 'qaCreate',
+    });
   })
   .post(async (req, res) => {
     //CREATE QA DB SIDE
