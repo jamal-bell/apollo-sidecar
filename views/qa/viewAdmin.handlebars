@@ -24,7 +24,7 @@
         </button>
       </form>
     
-      <div><a href='../../user/{{this.author}}'>{{this.author}}</a> at {{this.timeStamp}}</div>
+      <div><a href='../../user/handle/{{this.author}}'>{{this.author}}</a> at {{this.timeStamp}}</div>
       <div>{{this.text}}</div>
 
       <form id="deleteAnswerForm" class="delete" action="/qa/{{../qaTarget._id}}/{{this._id}}" method="">
@@ -34,5 +34,5 @@
   {{else}}
     <p>No replies yet.</p>
   {{/if}}
-<script src="http://localhost:3000/public/js/qaAdmin.js"></script>
+
 </article>

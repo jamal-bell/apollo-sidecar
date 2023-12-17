@@ -348,6 +348,7 @@ const exportedMethods = {
         },
         { returnDocument: 'after' }
       );
+      return true;
     } else {
       //if they didn't vote
       const currentDate = new Date();
@@ -383,6 +384,7 @@ const exportedMethods = {
         }
       );
     }
+    return false;
   },
   async getRecentQAs() {
     try {

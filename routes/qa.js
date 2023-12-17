@@ -285,18 +285,14 @@ router
         admin = false;
       }
     }
-
+    let votedAlready;
     try {
-      await qaMethods.iqPoint(qaId, voterId, answerId);
+      votedAlready = await qaMethods.iqPoint(qaId, voterId, answerId);
     } catch (e) {
       error = e.message;
       return res.status(500).render('error', { title: error, error });
     }
-    return res.status(200).render(`qa/view${viewSuffix}`, {
-      title: qaTarget.title,
-      qaTarget,
-      owner,
-    });
+    return res.status(200).json({votedAlready: votedAlready});
   })
   .delete(async (req, res) => {
     //DELETING AN ANSWER
