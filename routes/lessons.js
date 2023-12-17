@@ -18,6 +18,7 @@ router.route("/lessons").get(async (req, res) => {
   res.render("lesson/lessons", {
     title: "Lessons",
     lessons: lessons,
+    style_partial: "css_content",
   });
 });
 
@@ -48,6 +49,7 @@ router.route("/lesson/:id").get(async (req, res) => {
     moduleTitle: lessonFound.moduleTitle,
     description: lessonFound.description,
     contents: lessonFound.contents,
+    style_partial: "css_content",
   })
 }).post(async (req, res) => {
   //Launch lesson
@@ -74,6 +76,7 @@ router
     try {
       return res.status(200).render("lesson/newlesson", {
         title: "Create Lesson",
+        style_partial: "css_content",
         //script_partial: "lesson",//ERROR HERE?
       });
     } catch (e) {
@@ -132,6 +135,7 @@ router
         moduleTitle,
         text,
         videoLink,
+        style_partial: "css_content",
         script_partial: "lesson",
         //createdBy: null,
         //creatorId,
@@ -149,6 +153,7 @@ router
         moduleTitle,
         text: text,
         videoLink,
+        style_partial: "css_content",
       });
     }
     // const creatorId =
@@ -194,6 +199,7 @@ router
       title: "Publish Lesson",
       lessonId,
       lesson,
+      style_partial: "css_content",
       script_partial: "lesson",
     });
   })
@@ -223,6 +229,7 @@ router
         text: text,
         order: order,
         videoLink: videoLink,
+        style_partial: "css_content",
       });
     } catch (error) {
       return res.status(400).json({
@@ -232,6 +239,7 @@ router
         moduleTitle: "",
         text: "",
         videoLink: "",
+        style_partial: "css_content",
       });
     }
   });
@@ -246,6 +254,7 @@ router
       title: "Lesson Published!",
       lesson,
       lessonId,
+      style_partial: "css_content",
     });
   })
   .post(async (req, res) => {
@@ -296,7 +305,9 @@ router
         moduleTitle: moduleTitle,
         text: text,
         videoLink: videoLink,
+        style_partial: "css_content",
         script_partial: "lesson",
+        
       });
     }
 
@@ -329,6 +340,7 @@ router
         moduleTitle: moduleTitle,
         text: text,
         videoLink: videoLink,
+        style_partial: "css_content",
         script_partial: "lesson",
       });
     }

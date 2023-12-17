@@ -1,5 +1,6 @@
-<section id="detail">
-  {{#if alreadyTaken}}
+<div id="lessons-page">
+  <section id="detail">
+    {{#if alreadyTaken}}
 
   {{else}}
   <form id="launch" method="POST">
@@ -9,8 +10,8 @@
   {{/if}}
 
   <h2>{{this.lessonTitle}}</h2>
-  <h3>{{this.description}}</h3>
-  {{!-- <h3>{{this.lessonId}}</h3> --}}
+    <h3>{{this.description}}</h3>
+    {{!-- <h3>{{this.lessonId}}</h3> --}}
 
   <ul>
     {{#each contents}}
@@ -18,7 +19,7 @@
       <h4>{{this.order}}: {{this.moduleTitle}}</h4>
       <h5>Author: {{this.handle}}</h5>
 
-      <h5>Video Resource: <a href="{{this.videoLink}}" target="_blank">{{this.videoLink}} </a></h5>
+        <h5>Video Resource: <a href="{{this.videoLink}}" target="_blank">{{this.videoLink}} </a></h5>
 
       <h5>Video Resource: {{this.videoLink}}</h5>
 

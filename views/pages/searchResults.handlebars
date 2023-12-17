@@ -12,8 +12,8 @@
     <div class="lesson-list">
     {{#each lessons}}
         <div class="lesson-item">
-        <h4><a href="/lessons/lesson/{{{this._id}}}" target="_blank">{{title}}</a> </h4>
-        <p> <span class="subject">{{subject}}</span><span class="date-return">{{createdAt}}</span><span class="date-return">{{mosifiedAt}}</span><span class="">{{author.firstName}}</span><span>{{author.lastName}}</span><span>{{description}}</span></p>
+        <h4><a href="/lessons/lesson/{{{this._id}}}" target="_blank">{{this.title}}</a> </h4>
+        <p> <span class="subject">{{subject}}</span><span class="date-return">{{createdAt}}</span><span class="date-return">{{modifiedAt}}</span><span class="">{{author}}</span><span>{{description}}</span></p>
         </div>
     {{/each}}
     </div>
