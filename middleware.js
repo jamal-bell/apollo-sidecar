@@ -141,9 +141,7 @@ const middleware = {
       if (req.method == "GET") {
         if (!req.session.authenticated) {
           return res.redirect("/user/login");
-        } else {
-          return res.render("/lessonById");
-        }
+        }  
       }
       next();
     });

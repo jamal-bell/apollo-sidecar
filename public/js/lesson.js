@@ -92,7 +92,6 @@
 
     newModuleButton.addEventListener("click", (e) => {
       e.preventDefault();
-
       let order = orderInput.value?.trim();
       let moduleTitle = moduleTitleInput.value?.trim();
       let text = textInput.value?.trim();
