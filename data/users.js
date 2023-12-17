@@ -180,6 +180,14 @@ const exportedusersMethods = {
     return user;
   }, //end getUserById()
 
+  async getUserByHandle(handle) {
+    handle = validation.checkHandle(handle);
+    const usersCollection = await users();
+    const user = await usersCollection.findOne({ handle: handle });
+    if (!user) throw "User not found in the system.";
+    return user;
+  }, //end getUserById()
+
   async getUserByEmail(emailAddress) {
     emailAddress = validation.checkEmail(emailAddress);
     const usersCollection = await users();
@@ -355,19 +363,20 @@ const exportedusersMethods = {
     if (!user) throw "User not found in the system.";
 
     let progress = user.progress;
-    process.lessonCreated = process.lessonCreated + 1;
 
     if (createdOrLearned === "created") {
       if (progress.createdLessonId) {
+        process.lessonCreated = process.lessonCreated + 1;
         progress.createdLessonId.push({ lessonId: lessonId });
       } else {
-        lessons.created = [{ lessonId: lessonId }];
+        progress.createdLessonId = [{ lessonId: lessonId }];
       }
     } else if (createdOrLearned === "learned") {
       if (lessons.inProgressLessonId) {
-        lessons.inProgressLessonId.push({ lessonId: lessonId });
+        process.lessonTaken = process.lessonTaken + 1;
+        progress.inProgressLessonId.push({ lessonId: lessonId });
       } else {
-        lessons.inProgressLessonId = [{ lessonId: lessonId }];
+        progress.inProgressLessonId = [{ lessonId: lessonId }];
       }
     } else {
       throw `Invalid argument for 'createdOrLearned'. Must be either 'created' or 'learned'`;
