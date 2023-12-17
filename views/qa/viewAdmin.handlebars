@@ -8,11 +8,17 @@
     <input type='reset' />
   </form>
   <div class='errorSpace' id='errorSpace'></div>
+  <form id="showDeletedForm">
+        <button type="button" id="showDeletedButton">Toggle Deleted Responses</button>
+    </form>
    {{#if qaTarget.answers}}
   <div id="answersContainer">
     {{#each qaTarget.answers}}
+    <div class ="answer" data-locked="{{this.locked}}">
       <div class="vote">
         <div class="iqPoint">{{this.votes.value}}</div>
+        {{#if this.locked}}
+        {{else}}
         <form class="vote-form" action="/qa/{{../qaTarget._id}}/answers/{{this._id}}" method="post">
           <button type="submit" class="upvote-btn" id="upvote-btn-{{this._id}}" data-qa-id="{{../qaTarget._id}}" data-answer-id="{{this._id}}">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
@@ -20,13 +26,21 @@
             </svg>
           </button>
         </form>
+        {{/if}}
       </div>
+      {{#if this.locked}}
+      <div>Deleted</div>
+      {{else}}
       <div><a href='../../user/handle/{{this.author}}'>{{this.author}}</a> at {{this.timeStamp}}</div>
+      {{/if}}
       <div>{{this.text}}</div>
-
+      {{#if this.locked}}
+      {{else}}
       <form id="deleteAnswerForm" class="delete" action="/qa/{{../qaTarget._id}}/{{this._id}}" method="">
-      <button type="submit">delete?</button>
+      <button type="submit" class="delete-btn" id="delete-btn-{{this._id}}" data-qa-id="{{../qaTarget._id}}" data-answer-id="{{this._id}}">delete?</button>
       </form>
+      {{/if}}
+      </div>
     {{/each}}
   {{else}}
     <p>No replies yet.</p>

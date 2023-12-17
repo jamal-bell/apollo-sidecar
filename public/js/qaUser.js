@@ -2,6 +2,37 @@
   const upvoteButtons = document.querySelectorAll('[id^="upvote-btn-"]');
   const addAnswerForm = document.getElementById('addAnswerForm')
 
+//BEGIN LOCKED SECTION
+let areLockedResponsesHidden = true; 
+let askedBefore = false;
+const lockedAnswers = document.querySelectorAll('[data-locked="true"]');
+lockedAnswers.forEach(answer => {
+  answer.style.display = 'none';
+});
+
+function toggleDeletedResponses() {
+  if (areLockedResponsesHidden && !askedBefore) {
+    const confirmMessage = "This action may expose you to inappropriate or upsetting content. Are you sure you want to proceed?";
+    askedBefore = true;
+    if (!confirm(confirmMessage)) {
+      return; 
+    }
+  }
+
+  lockedAnswers.forEach(answer => {
+    answer.style.display = areLockedResponsesHidden ? '' : 'none';
+  });
+
+  areLockedResponsesHidden = !areLockedResponsesHidden;
+}
+
+const showDeletedButton = document.getElementById('showDeletedButton');
+if (showDeletedButton) {
+    showDeletedButton.addEventListener('click', toggleDeletedResponses);
+}
+
+// END LOCKED SECTION
+
   upvoteButtons.forEach(button => {
     button.addEventListener('click', async function (event) {
       event.preventDefault();

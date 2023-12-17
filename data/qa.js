@@ -129,7 +129,7 @@ const exportedMethods = {
     try {
       ansId = validation.checkId(ansId, 'answer ID');
       const qaCollection = await qa();
-      const result = qaCollection.findOne(
+      const result = await qaCollection.findOne(
         {
           'answers._id': new ObjectId(ansId),
         },
@@ -225,58 +225,53 @@ const exportedMethods = {
     let targetAnswer = result.answers[answersTargetIndex];
     return targetAnswer;
   },
-  async deleteAnswer(qaId, commentId, creatorId, admin) {
+  async deleteAnswer(qaId, answerId) {
     validation.checkId(qaId, 'QA ID');
-    if (!admin) {
-      validation.checkId(creatorId, 'creator ID');
-    }
-    validation.checkId(commentId, 'comment ID');
+    validation.checkId(answerId, 'comment ID');
+    let replyTarget;
+    let qaCollection;
+    let usersCollection;
+
     try {
-      const qaCollection = await qa();
-      const replyTarget = await qaCollection.findOne({
-        'answers._id': new ObjectId(commentId),
-      });
+      qaCollection = await qa();
+      usersCollection = await users();
+    } catch(e) {
+      throw new Error('Database Connection Error');
+    }
+    try {
+      replyTarget = await this.getAnswer(answerId)
       if (!replyTarget) {
         throw new Error('reply not found');
-      }
-      if (replyTarget.creatorId.toString() !== creatorId && !admin) {
-        throw new Error('NP');
-      }
-      if (!author) {
-        throw new Error('Author not found');
       }
     } catch (e) {
       throw new Error(`Error deleting reply - validation: ${e.message}`);
     }
     try {
-      commentId = validation.checkId(commentId);
-      const qaCollection = await qa();
+      answerId = validation.checkId(answerId);
+
       const result = await qaCollection.updateOne(
-        { 'answers._id': new ObjectId(commentId) },
+        { 'answers._id': new ObjectId(answerId) },
         {
           $set: {
             'answers.$.author': 'Deleted',
             'answers.$.creatorId': null,
-            'answer.$.text': '[This contribution has been deleted]',
-            'answer.$.locked': true,
+            'answers.$.locked': true,
           },
         }
       );
-      if (admin === true) {
-        creatorId = replyTarget.creatorId;
-      }
-      const usersCollection = await users();
+      const creatorId = replyTarget.creatorId;
       const result2 = await usersCollection.updateOne(
         { _id: new ObjectId(creatorId) },
         {
           $pull: {
             'progress.qaPlatform.answers': {
               postId: new ObjectId(qaId),
-              answerId: new ObjectId(commentId),
+              answerId: new ObjectId(answerId),
             },
           },
         }
       );
+      return true;
     } catch (e) {
       throw new Error(`Error deleting reply: ${e.message}`);
     }
@@ -314,16 +309,6 @@ const exportedMethods = {
     const result = votersIdsOnly.includes(voterId);
     if (result) {
       //if they already voted
-      /* const result1 = await qaCollection.updateOne(
-        { _id: qaId, 'answers._id': new ObjectId(answerId) },
-        {
-          $inc: { 'answers.$.votes.value': -1 },
-          $pull: {
-            'answers.$.votes.votedUsers': { userId: new ObjectId(voterId) },
-          },
-        }
-      ); */
-
       const result1 = await qaCollection.findOneAndUpdate(
         { _id: new ObjectId(qaId), 'answers._id': new ObjectId(answerId) },
         {

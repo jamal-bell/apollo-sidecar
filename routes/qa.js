@@ -107,11 +107,19 @@ router
         script_partial: 'qaAdmin',
       });
     }
-    return res.status(200).render(`qa/view${viewSuffix}`, {
-      title: qaTarget.title,
-      qaTarget,
-      script_partial: 'qaUser',
-    });
+    if (loggedIn) {
+      return res.status(200).render(`qa/view${viewSuffix}`, {
+        title: qaTarget.title,
+        qaTarget,
+        script_partial: 'qaUser',
+      }); 
+    } else {
+      return res.status(200).render(`qa/view${viewSuffix}`, {
+        title: qaTarget.title,
+        qaTarget,
+        script_partial: 'qaNonAuth',
+      });
+    }
   })
   .delete(async (req, res) => {
     //DELETING QA
@@ -281,24 +289,18 @@ router
     let error;
     let qaTarget;
     let answerTarget;
-    const creatorId = req.session.sessionId;
-    const qaId = xss(req.params.id);
-    const commentId = xss(req.params.aId);
-    let admin;
+    let creatorId = req.session.sessionId;
+    let qaId = xss(req.params.id);
+    let answerId = xss(req.params.aId);
     let lessonCreatorId;
-    let loggedIn;
-    let viewSuffix;
-    if (req.session.user) {
-      loggedIn = true;
-    }
     try {
       creatorId = validation.checkId(creatorId, 'creator ID');
       qaId = validation.checkId(qaId, 'QA ID');
-      commentId = validation.checkId(commentId, 'comment ID');
+      answerId = validation.checkId(answerId, 'comment ID');
       qaTarget = await qaMethods.getQa(qaId);
     } catch (e) {
       error = e.message;
-      return res.status(500).render('error', error);
+      return res.status(500).json({ error });
     }
     try {
       const lessonRelatedId = await lessonMethods.getLessonById(
@@ -307,37 +309,28 @@ router
       lessonCreatorId = lessonRelatedId.creatorId.toString();
     } catch (e) {
       error = e.message;
-      return res.status(500).render('error', error);
+      return res.status(500).json({ error });
     }
-    if (req.session.user.role === 'admin' && creatorId === lessonCreatorId) {
-      admin = true;
-    } else {
-      admin = false;
+    if (!(req.session.user.role === 'admin' && creatorId === lessonCreatorId)) {
+      error = 'FORBIDDEN';
+      return res.status(403).json({ error });
     }
     try {
       answerTarget = await qaMethods.getAnswer(answerId);
     } catch (e) {
       return res.status(500).render('error', error);
     }
-    if (!admin) {
-      return res.status(403).render('qa/view', {
-        title: 'FORBIDDEN',
-        qaTarget,
-      });
-    }
     try {
-      await qaMethods.deleteAnswer(qaId, commentId, creatorId, admin);
+      const replyDeleted = await qaMethods.deleteAnswer(qaId, answerId);
+      return res.status(200).json({replyDeleted: replyDeleted});
     } catch (e) {
       error = e.message;
       if (error === 'NP') {
-        return res.status(403).render('qa/view', {
-          title: 'FORBIDDEN',
-          qaTarget,
-        });
+        error = 'FORBIDDEN'
+        return res.status(403).json({ error });
       }
-      return res.status(500).render('error', { title: error, error });
+      return res.status(500).json({ error });
     }
-    return res.redirect(req.session.previousUrl);
   });
 
 router
@@ -358,7 +351,8 @@ router
       error = e.message;
       return res.status(500).render('error', error);
     }
-    return res.status(200).render('qa/create', { originLesson });
+    return res.status(200).render('qa/create', { originLesson },
+    {script_partial: 'qaCreate' });
   })
   .post(async (req, res) => {
     //CREATE QA DB SIDE

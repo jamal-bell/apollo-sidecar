@@ -196,14 +196,19 @@ console.log("Seeding Lessons Completed!")
 }
 console.log('Seeding users completed!');
 let userIds;
+let adminIds;
 try {
-  userCollection = await users();
-  userIds = await userCollection
-    .find()
+    userCollection = await users();
+    adminIds = await userCollection
+    .find({ role: 'admin' }) // Added admin only to create lessons
+    .map((user) => user._id)
+    .toArray();
+    userIds = await userCollection
+    .find() // Users typically create the QA
     .map((user) => user._id)
     .toArray();
 } catch (e) {
-  throw new Error(`Flattening CreatorIds failed: ${e.message}`);
+  throw new Error(`Flattening CreatorIds who are ADMIN failed: ${e.message}`);
 }
 console.log('Flattening IDs for random lesson creation completed!');
 try {
@@ -212,9 +217,9 @@ try {
   userCollection = await users();
   for (let index = 0; index < numLessons; index++) {
     const lessonTitlePrefix = LessonTitlePrefixList[Math.floor(Math.random() * LessonTitlePrefixList.length)];
-    const randomUserId = userIds[Math.floor(Math.random() * userIds.length)];
+    const randomAdminId = adminIds[Math.floor(Math.random() * adminIds.length)];
     const randomSubject = subjects[Math.floor(Math.random() * subjects.length)];
-    const authorChosen = await userCollection.findOne({ _id: randomUserId });
+    const authorChosen = await userCollection.findOne({ _id: randomAdminId });
     const newLessonInfo = {
       lessonTitle: `${lessonTitlePrefix} ${randomSubject} ${index + 1}`,
       subject: randomSubject,
