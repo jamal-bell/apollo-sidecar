@@ -397,6 +397,65 @@ const exportedusersMethods = {
     return true;
   },
 
+  async addQuestion(userId, lessonId, contentId, qaId, createdOrAnswered) {
+    userId = validation.checkId(userId, "userId");
+    qaId = validation.checkId(qaId, "qaId");
+    lessonId = validation.checkId(lessonId, "lessonId");
+    contentId = validation.checkId(contentId, "contentId");
+    createdOrAnswered = createdOrAnswered.trim().toLowerCase();
+
+    const usersCollection = await users();
+    const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+
+    if (!user) throw "User not found in the system.";
+
+    let progress = user.progress;
+
+    if (createdOrAnswered === "created") {
+      if (progress.qaPlatform.questions) {
+        progress.qaQuestionCount = progress.qaQuestionCount + 1;
+        progress.qaPlatform.questions.push({
+          postId: lessonId,
+          contentId: contentId,
+          questionId: qaId,
+        });
+      } else {
+        progress.qaPlatform.questions = [
+          { postId: lessonId, contentId: contentId, questionId: qaId },
+        ];
+      }
+    } else if (createdOrAnswered === "learned") {
+      if (progress.qaPlatform.answers) {
+        progress.qaAnswerCount = progress.qaAnswerCount + 1;
+        progress.qaPlatform.answers.push({
+          postId: lessonId,
+          contentId: contentId,
+          questionId: qaId,
+        });
+      } else {
+        progress.qaPlatform.answers = [
+          { postId: lessonId, contentId: contentId, questionId: qaId },
+        ];
+      }
+    } else {
+      throw `Invalid argument for 'createdOrAnswered'. Must be either 'created' or 'learned'`;
+    }
+    const updatedprogress = {
+      progress: progress,
+      updatedAt: new Date(),
+    };
+
+    const updatedUser = await usersCollection.findOneAndUpdate(
+      { _id: new ObjectId(userId) },
+      { $set: updatedprogress },
+      { returnDocument: "after" }
+    );
+
+    if (!updatedUser) throw "Could not update the user successfully.";
+
+    return true;
+  },
+
   async updatePhoto(emailAddress, url) {
     emailAddress = validation.checkEmail(emailAddress);
     if (url.length === 0 || !new URL(url)) {

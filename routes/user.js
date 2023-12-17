@@ -679,7 +679,6 @@ router.route("/profile").post(async (req, res) => {
   let firstName = xss(req.body.firstName);
   let lastName = xss(req.body.lastName);
   let emailAddress = xss(req.body.emailAddress);
-  let handle = xss(req.body.handle);
   let bio = xss(req.body.bio);
   let github = xss(req.body.github);
   let errors = [];
@@ -703,12 +702,6 @@ router.route("/profile").post(async (req, res) => {
   }
 
   try {
-    handle = validation.checkHandle(handle);
-  } catch (e) {
-    errors.push(`<li>${e}</li>`);
-  }
-
-  try {
     if (github.trim().length !== 0 && !new URL(github)) {
       throw "Invalid Github Link.";
     }
@@ -723,7 +716,6 @@ router.route("/profile").post(async (req, res) => {
     firstName: firstName,
     lastName: lastName,
     emailAddress: emailAddress,
-    handle: handle,
     bio: bio,
     github: github,
   };
