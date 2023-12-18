@@ -10,6 +10,8 @@ addQaForm.addEventListener('submit', async function (event) {
   const lessonId = addQaForm.dataset.lessonid;
   
   let problemArray = [];
+  const contentId = document.getElementById('contentId');
+  var selectedContentId = contentId.value;
   const qaTitle = document.getElementById('qaTitle');
   if (qaTitle.value.length < 10 || qaTitle.value.length > 50) {
     problemArray.push("QA title must be between 10 and 50 characters.");
@@ -30,14 +32,15 @@ addQaForm.addEventListener('submit', async function (event) {
     return;
   }
 try {
-  const response = await fetch(`qa/create/${lessonId}`, {
+  const response = await fetch(`${lessonId}`, {
     method: 'POST',
     headers: { 
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      qaText: qaText,
-      qaTitle: qaTitle
+      qaText: qaText.value,
+      qaTitle: qaTitle.value,
+      contentId: selectedContentId
     }),
   });
 
@@ -51,7 +54,7 @@ try {
       errorSpace.style.display = '';
       return;
     }
-
+    window.location.href = `http://localhost:3000/qa/${responseData.insertedId}`;
   }
 } catch (error) {
   console.error('Error', error);

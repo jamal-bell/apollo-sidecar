@@ -359,12 +359,14 @@ router
   .post(async (req, res) => {
     //CREATE QA DB SIDE
     let title;
+    let text;
     let originLesson;
-    let contentId;
+    let  contentId = req.body.contentId;
     let creatorId = req.session.sessionId;
     let lessonId = xss(req.params.lessonId);
     let newQaId;
     let loggedIn;
+    let error;
     if (req.session.user) {
       loggedIn = true;
     }
@@ -377,7 +379,7 @@ router
       originLesson = await lessonMethods.getLessonById(lessonId);
     } catch (e) {
       error = e.message;
-      return res.status(500).render('error', error);
+      return res.status(400).json({ error });
     }
     try {
       text = xss(req.body.qaText);
@@ -385,19 +387,16 @@ router
       title = xss(req.body.qaTitle);
       title = validation.checkString(title, 'title text');
     } catch (e) {
-      return res
-        .status(400)
-        .render('qa/create', { title: 'Error', originLesson });
+      error = e.message
+      return res.status(400).json({ error });
     }
     if (text.length < 25 || text.length > 10000) {
-      return res
-        .status(400)
-        .render('qa/create', { title: 'Error', originLesson });
+      error = 'text length must be between 25 and 10,000 characters'
+      return res.status(400).json({ error });
     }
     if (title.length < 10 || title.length > 50) {
-      return res
-        .status(400)
-        .render('qa/create', { title: 'Error', originLesson });
+      error = 'title length must be between 10 and 50 characters'
+      return res.status(400).json({ error });
     }
     try {
       newQaId = await qaMethods.createQa(
@@ -411,7 +410,7 @@ router
       error = e.message;
       return res.status(500).render('error', error);
     }
-    return res.redirect(`/${newQaId}`);
+    return res.status(200).json( {insertedId: newQaId.insertedId});
   });
 
 export default router;
