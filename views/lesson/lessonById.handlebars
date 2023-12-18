@@ -18,14 +18,9 @@
         <h4>{{this.order}}: {{this.moduleTitle}}</h4>
         <h5>Author: {{this.handle}}</h5>
 
-        <h5>Video Resource: <a href="{{this.videoLink}}" target="_blank">{{this.videoLink}} </a></h5>
-        {{!-- <video width="500px" height="500px" controls="controls">
-        <source src="https://media.geeksforgeeks.org/wp-
-                    content/uploads/20231020155223/Full-Stack-Development-_-
-                    LIVE-Classes-_-GeeksforGeeks.mp4" type="video/mp4" />
-      </video> --}}
+        <h5>Video Resource:</h5>
 
-        <h5>Video Resource: {{this.videoLink}}</h5>
+        <iframe width="560" height="315" src="{{this.videoLink}}" frameborder="0" allowfullscreen></iframe>
 
         <h5>{{this.text}}</h5>
         {{!-- <button type="button" id="completeButton" onclick="location.href='/user/user'">Mark Complete!</button> --}}

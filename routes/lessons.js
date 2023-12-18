@@ -37,6 +37,8 @@ router
 
     const user = await usersData.getUserById(req.session.sessionId);
 
+    let isLink;
+
     let alreadyTaken = false;
     user.progress.inProgressLessonId.forEach((lesson) => {
       if (lesson.lessonId.toString() === req.params.id) {
