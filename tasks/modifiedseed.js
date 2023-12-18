@@ -197,6 +197,7 @@ console.log("Seeding Lessons Completed!")
 console.log('Seeding users completed!');
 let userIds;
 let adminIds;
+let allIds
 try {
     userCollection = await users();
     adminIds = await userCollection
@@ -205,6 +206,10 @@ try {
     .toArray();
     userIds = await userCollection
     .find() // Users typically create the QA
+    .map((user) => user._id)
+    .toArray();
+    allIds = await userCollection
+    .find({}) // Added admin only to create lessons
     .map((user) => user._id)
     .toArray();
 } catch (e) {
