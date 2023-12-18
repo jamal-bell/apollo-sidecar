@@ -27,9 +27,9 @@
                     {{> (lookup . 'leftmenu_partial') }}
                 {{/if}}
             </ul>
-        </div>
+    </div>
       
-        <div id="main" class="all-open-main">
+        <div id="outer-main" class="all-open-main">
             <header>
                 <div id="top-menu-block">
                     <ul id="top-menu">
@@ -42,24 +42,24 @@
                 <div id="header-block">
                     <a href="/"><img id="logo" class="left-adj" alt="APOLLO SIDECAR" src="/public/assets/aslogo2.png" /></a>
                     <h1>{{title}}</h1>
-                    <span class="search-bar">
+                    <div class="search-bar">
                             <div class="search">
                                 <form method="POST" action="/search/searchresults" id="search-form">
-                                <label for="keywords" content=""></label>
-                                <input type="text" class="min-search-input" name="keywords" placeholder="What are you looking for?">
+                                {{!-- <label for="keywords">search</label> --}}
+                                <input type="text" class="min-search-input" name="keywords" placeholder="REST, Javascript, html, etc">
                                 <button type="submit" class="searchButton">
                                     <i class="bi bi-search"></i>
                                 </button>
                                 </form>
                             </div>
-                    </span>
+                    </div>
                 </div>
                     
             </header>
             <main>
                 {{{body}}}
             </main>
-                    </div>
+        </div>
                     <div id="right-nav" class="sidenav right-side-nav col-s-2 menu">
                     <span id="open-right-nav" class="right-menu-btn hidden">&#9776; <span class="menu-action-text">open</span></span>
                     <span id="close-right-nav" class="right-menu-btn">&#9776; <span class="menu-action-text">close</span></span>
@@ -73,14 +73,14 @@
                         </div>
                     </div>
                     
-                <footer> 
+            <footer> 
                 {{!-- <div class="row"> --}}
                 <h3>TOGETHER WE KNOW, TOGETHER WE GROW</h3> 
                 <div id="footer-content">
                     STuff
                 </div>
                 {{!-- </div> --}}
-                <div class="base">&copy 2023 Apollo Sidecar </div>
+                <div class="base">2023 Apollo Sidecar </div>
             </footer>
     </div>
 
