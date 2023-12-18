@@ -115,39 +115,9 @@ const middleware = {
 
   //lesson middleware
   lessons: (app) => {
-    app.use('/lessons/lesson/:id', async (req, res, next) => {
-      if (req.method === 'GET') {
+    app.use("/lessons/lesson/:id", async (req, res, next) => {
+      if (req.method === "GET") {
         if (req.session.authenticated) {
-          next();
-        } else {
-          res.redirect('/user/login');
-        }
-      } else {
-        next();
-      }
-    });
-    app.use('/lessons/newlesson', async (req, res, next) => {
-      if (req.method === 'GET') {
-        if (req.session.authenticated) {
-          next();
-        } else {
-          res.redirect('/user/login');
-        }
-      } else {
-        next();
-      }
-    });
-    app.use('/lessons/addmodule/:id', async (req, res, next) => {
-      if (req.method == "GET") {
-        if (!req.session.authenticated) {
-          return res.redirect("/user/login");
-        }  
-      }
-      next();
-    });
-    app.use('/remove', async (req, res, next) => {
-      if (req.method === 'POST') {
-        if (req.session.user) {
           next();
         } else {
           res.redirect("/user/login");
@@ -156,31 +126,65 @@ const middleware = {
         next();
       }
     });
-  },
-  
-    
-  //qa middleware
-  qa: (app) => {
-    app.use('/qa/:id', async (req, res, next) => {
-      if (req.method !== 'GET' && !req.session.authenticated) {
-        return res.redirect('/user/login');
+    app.use("/lessons/newlesson", async (req, res, next) => {
+      if (req.method === "GET") {
+        if (req.session.authenticated) {
+          next();
+        } else {
+          res.redirect("/user/login");
+        }
+      } else {
+        next();
+      }
+    });
+    app.use("/lessons/addmodule/:id", async (req, res, next) => {
+      if (req.method == "GET") {
+        if (!req.session.authenticated) {
+          return res.redirect("/user/login");
+        }
       }
       next();
     });
-    app.use('/qa/:id/:aId', async (req, res, next) => {
+    app.use("/lessons/remove", async (req, res, next) => {
+      if (req.method == "GET") {
+        if (!req.session.authenticated) {
+          return res.redirect("/user/login");
+        } else {
+          if (req.session.user.role === "admin") {
+            next();
+          } else {
+            return res.status(400).render("error", {
+              error: "Don not have access deleting lessons.",
+            });
+          }
+        }
+      } else {
+        return res.redirect("/user");
+      }
+    });
+  },
+
+  //qa middleware
+  qa: (app) => {
+    app.use("/qa/:id", async (req, res, next) => {
+      if (req.method !== "GET" && !req.session.authenticated) {
+        return res.redirect("/user/login");
+      }
+      next();
+    });
+    app.use("/qa/:id/:aId", async (req, res, next) => {
       if (!req.session.authenticated) {
         return res.redirect("/user/login");
       }
       next();
     });
-    app.use('/qa/create/', async (req, res, next) => {
+    app.use("/qa/create/", async (req, res, next) => {
       if (!req.session.authenticated) {
         return res.redirect("user/login");
       }
       next();
     });
   },
-
 };
 
 export default middleware;
