@@ -1,0 +1,57 @@
+<div id="lessons-page">
+    <h2>{{pageTitle}}</h2>
+    <h2>Create Lesson</h2>
+    <h3 class="information">Upon saving your lesson with first module, you will have the option to create additional
+        modules. Click PUBLISH to make your lesson viewable to others. </h3>
+    <section id="lesson">
+        <form id="lesson-form" method="POST" action="/lessons/newlesson" class="form">
+            <div>
+                <label for="titleInput">Lesson Title:</label>
+                <input type="text" id="titleInput" name="lessonTitle" value="{{lessonTitle}}">
+            </div>
+            <div>
+                <label for="subjectInput">Lesson subject:</label>
+                <input type="text" id="subjectInput" name="subject" value="{{subject}}">
+            </div>
+            <div>
+                <label for="descriptionInput">Lesson Description:</label>
+                <input type="text" id="descriptionInput" name="description" value="{{description}}">
+            </div>
+            <div>
+                <label for="moduleTitleInput">Module Title:</label>
+                <input type="text" id="moduleTitleInput" name="moduleTitle" value="{{moduleTitle}}">
+            </div>
+            <div>
+                <label for="textInput">Module Content:</label>
+                <input type="text" id="textInput" name="text" value="{{text}}">
+            </div>
+            <div>
+                <label for="videoLinkInput">Module Video Link:</label>
+                <input type="videoLink" id="videoLinkInput" name="videoLink" value="{{videoLink}}">
+            </div>
+
+            <div class="buttons">
+                <button type="submit">Save and Preview</button>
+            </div>
+
+
+            <div class="form-errors">
+                <ul id="errors" class="errors">
+                    {{#if hasErrors}}
+                    {{#each errors}}
+                    {{this}}
+                    {{/each}}
+                    {{/if}}
+                </ul>
+            </div>
+            <div class="form-errors">
+                <ul id="errors" class="errors">
+                    {{#if error}}
+                    {{error}}
+                    {{/if}}
+                </ul>
+            </div>
+        </form>
+
+    </section>
+</div>

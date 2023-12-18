@@ -1,0 +1,47 @@
+<h2>{{{title}}}</h2>
+<div id="userProfileContainer">
+    <table>
+        <tr>
+            <th>First Name</th>
+            <td id="firstName">{{{user.firstName}}}</td>
+            <td rowspan="9" class="photo-cell">
+                <img src="{{{user.photo}}}" alt="User Photo" id="user-Photo">
+            </td>
+        </tr>
+        <tr>
+            <th>Last Name</th>
+            <td id="lastName">{{{user.lastName}}}</td>
+        </tr>
+        <tr>
+            <th>Email Address</th>
+            <td id="email">{{{user.emailAddress}}}</td>
+        </tr>
+        <tr>
+                <th>Handle</th>
+                <td id="handle">{{{user.handle}}}</td>
+            </tr>
+        <tr>
+            <th>Bio</th>
+            <td id="bio">{{{user.bio}}}</td>
+        </tr>
+        <tr>
+            <th>GitHub</th>
+            <td><a href="{{{user.github}}}" id="githubLink">{{{user.github}}}</a></td>
+        </tr>
+        <tr>
+            <th>Role</th>
+            <td id="role">{{{user.role}}}</td>
+        </tr>
+        <tr>
+            <th>Account Created At</th>
+            <td id="accountCreatedAt">{{{user.createdAt}}}</td>
+        </tr>
+        <tr>
+            <th>Last Login</th>
+            <td id="lastLogin">{{{user.lastLogin}}}</td>
+        </tr>
+    </table>
+</div>
+<fdiv class="go-back">
+    <a href="javascript:history.back()">Go Back</a>
+</div>

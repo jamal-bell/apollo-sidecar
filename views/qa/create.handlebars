@@ -1,0 +1,27 @@
+<div id="qa-page">
+<section id='qaMain'>
+  <h1>You have a question about {{originLesson.title}}?</h1>
+  <h1>Let's know and grow together!</h1>
+  <h2>Create a Question and Answer</h2>
+  <form
+    id='addQaForm'
+    action='/qa/create/{{originLesson.lessonId}}'
+    method='post'
+  >
+    <label for ='contentId'>What content specifically?</label>
+    <select id="contentId" name="contentId"></select>
+    {{#each originalLesson.content}}
+    <option value="{{this.contentId}}">{{this.title}}</option>
+    {{/each}}
+    </select>
+    <label for='qaTitle'>Question TItle:</label>
+    <input type='text' name='qaTitle' id='qaTitle' />
+    <label for='qaText'>What's Your Question?</label>
+    <input type='text' name='qaText' id='qaText' />
+    <input type='submit' />
+    <input type='reset' />
+  </form>
+  <div class='errorSpace' id='errorSpace'></div>
+  <script src='../../public/js/qaScript.js'></script>
+</section>
+</div>

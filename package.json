@@ -5,6 +5,7 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
+    "seed": "node ./tasks/seed.js",
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,10 +20,18 @@
   },
   "homepage": "https://github.com/jamal-bell/apollo-sidecar#readme",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.473.0",
+    "@aws-sdk/s3-request-presigner": "^3.473.0",
+    "aws-sdk": "^2.1518.0",
     "axios": "^1.5.1",
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^1.41.0",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-handlebars": "^7.1.2",
+    "express-session": "^1.17.3",
     "find": "^0.3.0",
-    "mongodb": "^6.1.0"
+    "mongodb": "^6.3.0",
+    "xss": "^1.0.14"
   }
 }

@@ -1,0 +1,53 @@
+{{!-- <h1>{{title}}</h1> Jamal --}}
+<form id="registration-form" method="POST" action="/user/register" class="form">
+    <div>
+        <label for="firstNameInput">First Name:</label>
+        <input type="text" name="firstNameInput" id="firstNameInput" required value="{{firstName}}">
+    </div>
+    <div>
+        <label for="lastNameInput">Last Name:</label>
+        <input type="text" name="lastNameInput" id="lastNameInput" required value="{{lastName}}">
+    </div>
+    <div>
+        <label for="emailAddressInput">Email Address:</label>
+        <input type="email" name="emailAddressInput" id="emailAddressInput" required value="{{emailAddress}}">
+    </div>
+    <div>
+        <label for="handleInput">Handle:</label>
+        <input type="text" name="handleInput" id="handleInput" required value="{{handle}}">
+    </div>
+    <div>
+        <label for="passwordInput">Password:</label>
+        <input type="password" name="passwordInput" id="passwordInput" required>
+    </div>
+    <div>
+        <label for="confirmPasswordInput">Confirm Password:</label>
+        <input type="password" name="confirmPasswordInput" id="confirmPasswordInput" required> 
+    </div>
+    <div>
+        <label for="roleInput">Role:</label>
+        <select name="roleInput" id="roleInput" required>
+            <option value="" disabled selected>Select your option</option>
+            <option value="admin">Admin</option>
+            <option value="user">User</option>
+        </select>
+    </div>
+    <div>
+        <button type="submit">Register</button>
+    </div>
+
+    <div class="form-errors">
+        <ul id="errors" class="errors">
+        {{#if hasErrors}}
+            {{#each errors}}
+                <li>
+                    {{this}}
+                </li>
+            {{/each}}
+        {{/if}}
+        </ul>
+    </div>
+    <div class="form-footer">
+        <a href="/user/login">Already have an account? Click here to login</a>
+    </div>
+</form>
