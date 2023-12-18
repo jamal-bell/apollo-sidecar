@@ -2,9 +2,9 @@
   {{#if alreadyTaken}}
 
   {{else}}
-  <form id="launch" method="POST">
-    <button id="launchButton" type="submit" action="/lesson/lessons/{{this.lessonId}}">Launch Lesson</button>
-  </form>
+    <form id="launch" method="POST">
+      <button id="launchButton" type="submit" action="/lesson/lessons/{{this.lessonId}}">Launch Lesson</button>
+    </form>
 
   {{/if}}
 
@@ -14,33 +14,31 @@
 
   <ul>
     {{#each contents}}
-    <li>
-      <h4>{{this.order}}: {{this.moduleTitle}}</h4>
-      <h5>Author: {{this.handle}}</h5>
+      <li>
+        <h4>{{this.order}}: {{this.moduleTitle}}</h4>
+        <h5>Author: {{this.handle}}</h5>
 
-      <h5>Video Resource: <a href="{{this.videoLink}}" target="_blank">{{this.videoLink}} </a></h5>
-      {{!-- <video width="500px" height="500px" controls="controls">
+        <h5>Video Resource: <a href="{{this.videoLink}}" target="_blank">{{this.videoLink}} </a></h5>
+        {{!-- <video width="500px" height="500px" controls="controls">
         <source src="https://media.geeksforgeeks.org/wp-
                     content/uploads/20231020155223/Full-Stack-Development-_-
                     LIVE-Classes-_-GeeksforGeeks.mp4" type="video/mp4" />
       </video> --}}
 
-      <h5>Video Resource: {{this.videoLink}}</h5>
+        <h5>Video Resource: {{this.videoLink}}</h5>
 
-      <h5>{{this.text}}</h5>
-      <button type="button" id="completeButton" onclick="location.href='/user/user'">Mark Complete!</button>
-    </li>
+        <h5>{{this.text}}</h5>
+        {{!-- <button type="button" id="completeButton" onclick="location.href='/user/user'">Mark Complete!</button> --}}
+      </li>
     {{/each}}
   </ul>
 
 
   <div>
-    <button type="button" onclick="location.href='/lessons/addmodule/{{this.lessonId}}'" >
+    <button type="button" onclick="location.href='/lessons/addmodule/{{this.lessonId}}'">
       Add Modules
     </button>
-    <button type="button" onclick="location.href='/lessons/remove/{{this.lessonId}}'">
-        Delete this Lesson
-      </button>
+      <button type="button" onclick="location.href='/lessons/remove/{{this.lessonId}}'">Delete this Lesson</button>
   </div>
   <div>
     <a href="/qa/create/{{this.lessonId}}">

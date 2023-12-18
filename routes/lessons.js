@@ -90,12 +90,13 @@ router
   .post(async (req, res) => {
     // const { lessonTitle, description, moduleTitle, text, videoLink } = req.body;
 
-    let moduleTitle = xss(req.body.moduleTitleInput);
-    let subject = xss(req.body.subjectInput);
-    let description = xss(req.body.descriptionInput);
-    let text = xss(req.body.textInput);
-    let videoLink = xss(req.body.videoLinkInput);
-    let lessonId = xss(req.body.lessonId);
+    let moduleTitle = xss(req.body.moduleTitle);
+    let lessonTitle = xss(req.body.lessonTitle);
+    let subject = xss(req.body.subject);
+    let description = xss(req.body.description);
+    let text = xss(req.body.text);
+    let videoLink = xss(req.body.videoLink);
+    let handle = xss(req.session.user.handle);
     // let moduleTitle = req.body.contents.moduleTitle;
     // let text = req.body.contents.text;
     // let videoLink = req.body.contents.videoLink;
@@ -118,7 +119,8 @@ router
         content,
         moduleTitle,
         text,
-        videoLink
+        videoLink,
+        handle
       );
 
       // const user = await usersData.getUserByEmail(
@@ -152,6 +154,9 @@ router
         moduleTitle,
         text,
         videoLink,
+        order: lesson.contents.length + 1,
+        subject: lesson.subject,
+        lesson: lesson,
         style_partial: "css_content",
         script_partial: "lesson",
         //createdBy: null,
@@ -209,7 +214,7 @@ router
 
     return res.status(200).render("lesson/publish", {
       title: "Publish Lesson",
-      order: lesson.contents.length+1,
+      order: lesson.contents.length + 1,
       lessonTitle,
       lessonId,
       subject,
@@ -275,108 +280,107 @@ router
     }
   });
 
-router
-  .route("published/:id")
-  .get(async (req, res) => {
-    const lessonId = req.params.id;
-    const lesson = await lessonsData.getLessonById(lessonId);
+router.route("published/:id").get(async (req, res) => {
+  const lessonId = req.params.id;
+  const lesson = await lessonsData.getLessonById(lessonId);
 
-    res.render("lesson/lessonById", {
-      title: "Lesson Published!",
-      lesson,
-      lessonId,
-      style_partial: "css_content",
-    });
-  })
-  .post(async (req, res) => {
-    // if (!req.session.authenticated) {
-
-    //   return res.redirect("/user/login");
-    // }
-    const firstName = res.session.user.firstName;
-    const lastName = res.session.user.lastName;
-    let moduleTitle = req.body.contents.moduleTitle;
-    let text = req.body.contents.text;
-    let videoLink = req.body.contents.videoLink;
-    let errors = [];
-    let createdBy;
-
-    try {
-      moduleTitle = validation.checkContent(
-        moduleTitle,
-        "lesson title",
-        3,
-        250
-      );
-    } catch (e) {
-      errors.push(e);
-    }
-    try {
-      text = validation.checkContent(text, "lesson title", 10, 250);
-    } catch (e) {
-      errors.push(e);
-    }
-
-    try {
-      videoLink = validation.checkString(videoLink, "lesson title");
-    } catch (e) {
-      errors.push(e);
-    }
-
-    req.session.user.role == "admin"
-      ? createdBy == "admin"
-      : createdBy == "user";
-
-    if (errors.length > 0) {
-      return res.status(400).render("lesson/publish", {
-        title: "Error Publishing - Try Again",
-        errors: errors,
-        hasErrors: true,
-        moduleTitle: moduleTitle,
-        text: text,
-        videoLink: videoLink,
-        style_partial: "css_content",
-        script_partial: "lesson",
-      });
-    }
-
-    //call data function
-    try {
-      const newlesson = await lessonsData.createModule(
-        lessonId,
-        order,
-        moduleTitle,
-        text,
-        videoLink
-      );
-
-      const addedToUserAgain = await usersData.addLesson(
-        req.session.sessionId,
-        lessonId,
-        "learned"
-      );
-
-      if (!addedToUserAgain)
-        throw "Could not add Lesson to user on launch lesson.";
-      //if successful, go to user profile page to show lesson there
-      return res.status(200).redirect("/user/user");
-    } catch (e) {
-      errors.push(e);
-      return res.status(400).render("lesson/publish", {
-        title: "Edit Lesson",
-        errors: errors,
-        hasErrors: true,
-        moduleTitle: moduleTitle,
-        text: text,
-        videoLink: videoLink,
-        style_partial: "css_content",
-        script_partial: "lesson",
-      });
-    }
-    res
-      .status(500)
-      .render("/error", { error: "Internal Server Error", title: "Error" });
+  res.render("lesson/lessonById", {
+    title: "Lesson Published!",
+    lesson,
+    lessonId,
+    style_partial: "css_content",
   });
+});
+// .post(async (req, res) => {
+//   // if (!req.session.authenticated) {
+
+//   //   return res.redirect("/user/login");
+//   // }
+
+//   let lessonId = xss(req.params.id);
+
+//   let moduleTitle = xss(req.body.contents.moduleTitle);
+//   let text = xss(req.body.contents.text);
+//   let videoLink = xss(req.body.contents.videoLink);
+//   let errors = [];
+//   let createdBy;
+
+//   try {
+//     moduleTitle = validation.checkContent(
+//       moduleTitle,
+//       "lesson title",
+//       3,
+//       250
+//     );
+//   } catch (e) {
+//     errors.push(e);
+//   }
+//   try {
+//     text = validation.checkContent(text, "lesson title", 10, 250);
+//   } catch (e) {
+//     errors.push(e);
+//   }
+
+//   try {
+//     videoLink = validation.checkString(videoLink, "lesson title");
+//   } catch (e) {
+//     errors.push(e);
+//   }
+
+//   req.session.user.role == "admin"
+//     ? createdBy == "admin"
+//     : createdBy == "user";
+
+//   if (errors.length > 0) {
+//     return res.status(400).render("lesson/publish", {
+//       title: "Error Publishing - Try Again",
+//       errors: errors,
+//       hasErrors: true,
+//       moduleTitle: moduleTitle,
+//       text: text,
+//       videoLink: videoLink,
+//       style_partial: "css_content",
+//       script_partial: "lesson",
+//     });
+//   }
+
+//   //call data function
+//   try {
+//     const newlesson = await lessonsData.createModule(
+//       lessonId,
+//       order,
+//       moduleTitle,
+//       text,
+//       videoLink
+//     );
+
+//     const addedToUserAgain = await usersData.addLesson(
+//       req.session.sessionId,
+//       lessonId,
+//       "learned"
+//     );
+
+//     if (!addedToUserAgain)
+//       throw "Could not add Lesson to user on launch lesson.";
+//     //if successful, go to user profile page to show lesson there
+//     return res.status(200).redirect("/user/user");
+//   } catch (e) {
+//     errors.push(e);
+//     return res.status(400).render("lesson/publish", {
+//       title: "Edit Lesson",
+//       errors: errors,
+//       hasErrors: true,
+//       moduleTitle: moduleTitle,
+//       text: text,
+//       videoLink: videoLink,
+//       style_partial: "css_content",
+//       script_partial: "lesson",
+//     });
+//   }
+//   res
+//     .status(500)
+//     .render("/error", { error: "Internal Server Error", title: "Error" });
+// });
 
 router.route("/error").get(async (req, res) => {
   //code here for GET
@@ -386,15 +390,32 @@ router.route("/error").get(async (req, res) => {
   });
 });
 
-router.route("/remove/:id").post(async (req, res) => {
-  let lessonId = req.params.id; //is issues try to change req.method to get then back
-  let lesson = {};
+router.route("/remove/:id").get(async (req, res) => {
+  let userId = xss(req.session.sessionId);
+  let lessonId = xss(req.params.id);
+
   try {
-    lesson = await lessonsData.getLessonById(lessonId);
-    lessonsData.removeLesson(lessonId);
-    return res.status(200).render("user/user", {});
+    if (xss(req.session.user.role) !== "admin")
+      throw "User does not have access to delete this lesson.";
+
+    const lesson = await lessonsData.getLessonById(lessonId);
+
+    if (userId !== lesson.creatorId.toString()) {
+      userId = lesson.creatorId.toString();
+    }
+
+    const deleted = await lessonsData.removeLesson(lessonId);
+    if (deleted.deleted !== true) {
+      throw "";
+    }
+
+    if (await usersData.deleteLesson(userId, lessonId)) {
+      return res.status(200).redirect("/user/user");
+    }
   } catch (e) {
-    return res.status(500).json({ Error: e });
+    return res
+      .status(400)
+      .render("error", { error: "Error deleting lesson " + e, title: "Error" });
   }
 });
 export default router;

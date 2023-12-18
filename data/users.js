@@ -406,13 +406,32 @@ const exportedusersMethods = {
 
     if (!user) throw "User not found in the system.";
 
-    const updatedUser = await usersCollection.updateOne(
+    const progress = user.progress;
+
+    let index;
+    for (let i = 0; i < progress.createdLessonId.length; i++) {
+      if (progress.createdLessonId[i].lessonId === lessonId) {
+        index = i;
+        break;
+      }
+    }
+
+    progress.createdLessonId.splice(index, 1);
+
+    progress.lessonsCreated = progress.lessonsCreated - 1;
+
+    const updatedUser = await usersCollection.findOneAndUpdate(
       { _id: new ObjectId(userId) },
-      { $pull: { "process.inProgressLessonId": { lessonId: lessonId } } }
+      {
+        $set: {
+          progress: progress,
+          updatedAt: new Date(),
+        },
+      },
+      { returnDocument: "after" }
     );
 
-    if (updatedUser.modifiedCount !== 1)
-      throw "Error deleting lesson in user database.";
+    if (!updatedUser) throw "Error deleting lesson in user database.";
 
     return true;
   },

@@ -10,11 +10,11 @@ const exportedLessonsMethods = {
     lessonTitle,
     subject,
     description,
-    handle,
-    contents = null,
+    contents,
     moduleTitle,
     text,
-    videoLink
+    videoLink,
+    handle
   ) {
     lessonTitle = validation.checkContent(lessonTitle, "lesson title", 3, 250);
     description = validation.checkContent(
