@@ -140,7 +140,7 @@ router
       qaId = validation.checkId(qaId, 'QA ID');
       qaTarget = await qaMethods.getQa(qaId);
     } catch (e) {
-      return res.status(500).render('error', error);
+      return res.status(500).json({ error });
     }
     try {
       const lessonRelatedId = await lessonMethods.getLessonById(
@@ -149,7 +149,7 @@ router
       lessonCreatorId = lessonRelatedId.creatorId.toString();
     } catch (e) {
       error = e.message;
-      return res.status(500).render('error', error);
+      return res.status(500).json({ error });
     }
     if (req.session.user.role === 'admin' && creatorId === lessonCreatorId) {
       admin = true;
@@ -163,23 +163,17 @@ router
       owner = false;
     }
     if (owner === false && admin === false) {
-      return res.status(403).render(`qa/view${viewSuffix}`, {
-        title: 'FORBIDDEN',
-        qaTarget,
-        owner,
-      });
+      return res.status(403).json({ error });
     }
     try {
       await qaMethods.deleteQA(qaId, creatorId, admin);
     } catch (e) {
       error = e.message;
       if (error === 'NP') {
-        return res.status(403).render('error', {
-          title: 'FORBIDDEN',
-          error,
-        });
+        error = 'FORBIDDEN'
+        return res.status(403).json({ error });
       }
-      return res.status(500).render('error', { title: error, error });
+      return res.status(500).json({ error });
     }
     return res.redirect('../../');
   });

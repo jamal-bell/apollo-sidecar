@@ -115,26 +115,6 @@ try {
       errorSpace.hidden = false;
       return;
     }
-    /* ADDING DYNAMICALLY HAVING ISSUES, RELOAD WINDOW INSTEAD 
-    const answersContainer = document.getElementById('answersContainer');
-    const newAnswerDiv = document.createElement('div');
-    newAnswerDiv.classList.add('vote')
-    let newAnswer = `
-      <div class="iqPoint">${responseData.targetAnswer.votes.value}</div>
-      <form class="vote-form" action="/qa/${qaTarget_id}/answers/${responseData.targetAnswer._id}" method="post">
-        <button type="submit" class="upvote-btn" id="upvote-btn-${responseData.targetAnswer._id}" data-qa-id="${qaTarget_id}" data-answer-id="${responseData.targetAnswer._id}">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
-            <path d="M12 2L0 10l3 2v10h18v-10l3-2z"></path>
-          </svg>
-        </button>
-      </form>
-    </div>
-    <div><a href="../../user/handle/${responseData.targetAnswer.author}">${responseData.targetAnswer.author}</a> at ${responseData.targetAnswer.timeStamp}</div>
-    <div>${responseData.targetAnswer.text}
-  `; 
-    newAnswerDiv.innerHTML= newAnswer
-    answersContainer.appendChild(newAnswerDiv);
-    */
     addAnswerForm.reset();
     window.location.reload();
   }
