@@ -3,6 +3,29 @@ import { ObjectId } from "mongodb";
 import validation from "./validation.js";
 import usersData from "./users.js";
 
+function getYouTubeVideoID(url) {
+  let videoID = '';
+  if (url.includes('youtube.com')) {
+      // Extract the "v" parameter from the URL
+      const params = new URLSearchParams(new URL(url).search);
+      videoID = params.get('v');
+  } else if (url.includes('youtu.be')) {
+      // Extract the ID from the short URL
+      videoID = url.split('youtu.be/')[1];
+  } else {
+    "Not a valid youtube video link."
+  }
+  return videoID;
+}
+function generateYouTubeEmbedCode(url) {
+  const videoID = getYouTubeVideoID(url);
+  if (videoID) {
+      return `<iframe width="560" height="315" src="https://www.youtube.com/embed/${videoID}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+  } else {
+      return 'Invalid YouTube URL';
+  }
+}
+
 const exportedLessonsMethods = {
   //Creates a lesson + 1 module
   //Option to create additional modules via createModule()
@@ -35,8 +58,11 @@ const exportedLessonsMethods = {
           );
         if (c.text)
           text = validation.checkContent(c.text, "module text", 20, 60000);
-        if (c.videoLink)
-          videoLink = validation.checkString(c.videoLink, "src/video link");
+        if (c.videoLink) {
+          c.videoLink = validation.checkString(c.videoLink, "src/video link");
+          c.videoLink = generateYouTubeEmbedCode(c.videoLink);
+
+        }
       });
     }
 
