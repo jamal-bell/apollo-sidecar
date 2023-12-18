@@ -1,101 +1,104 @@
-  const errorSpace = document.getElementById('errorSpace')
-  const upvoteButtons = document.querySelectorAll('[id^="upvote-btn-"]');
-  const addAnswerForm = document.getElementById('addAnswerForm')
+const errorSpace = document.getElementById("errorSpace");
+const upvoteButtons = document.querySelectorAll('[id^="upvote-btn-"]');
+const addAnswerForm = document.getElementById("addAnswerForm");
 
 //BEGIN LOCKED SECTION
-let areLockedResponsesHidden = true; 
+let areLockedResponsesHidden = true;
 let askedBefore = false;
 const lockedAnswers = document.querySelectorAll('[data-locked="true"]');
-lockedAnswers.forEach(answer => {
-  answer.style.display = 'none';
+lockedAnswers.forEach((answer) => {
+  answer.style.display = "none";
 });
 
 function toggleDeletedResponses() {
   if (areLockedResponsesHidden && !askedBefore) {
-    const confirmMessage = "This action may expose you to inappropriate or upsetting content. Are you sure you want to proceed?";
+    const confirmMessage =
+      "This action may expose you to inappropriate or upsetting content. Are you sure you want to proceed?";
     askedBefore = true;
     if (!confirm(confirmMessage)) {
-      return; 
+      return;
     }
   }
 
-  lockedAnswers.forEach(answer => {
-    answer.style.display = areLockedResponsesHidden ? '' : 'none';
+  lockedAnswers.forEach((answer) => {
+    answer.style.display = areLockedResponsesHidden ? "" : "none";
   });
 
   areLockedResponsesHidden = !areLockedResponsesHidden;
 }
 
-const showDeletedButton = document.getElementById('showDeletedButton');
+const showDeletedButton = document.getElementById("showDeletedButton");
 if (showDeletedButton) {
-    showDeletedButton.addEventListener('click', toggleDeletedResponses);
+  showDeletedButton.addEventListener("click", toggleDeletedResponses);
 }
 
 // END LOCKED SECTION
 
-  upvoteButtons.forEach(button => {
-    button.addEventListener('click', async function (event) {
-      event.preventDefault();
-      errorSpace.innerHTML = ""
-      errorSpace.hide;
-      const qaId = this.getAttribute('data-qa-id');
-      const answerId = this.getAttribute('data-answer-id');
+upvoteButtons.forEach((button) => {
+  button.addEventListener("click", async function (event) {
+    event.preventDefault();
+    errorSpace.innerHTML = "";
+    errorSpace.hide;
+    const qaId = this.getAttribute("data-qa-id");
+    const answerId = this.getAttribute("data-answer-id");
 
-      try {
-        
-        const response = await fetch(`/qa/${qaId}/answers/${answerId}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          
-          body: JSON.stringify({
-            //PASS STUFF IN FORM IF I HAD ANY
-          }),
-        });
+    try {
+      const response = await fetch(`/qa/${qaId}/answers/${answerId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
 
-        if (!response.ok) {
-          errorSpace.innerHTML = `Voting isn't available right now!`
-          errorSpace.show;
-        } else {
-          const responseData = await response.json();
+        body: JSON.stringify({
+          //PASS STUFF IN FORM IF I HAD ANY
+        }),
+      });
 
-          const voteCountElement = this.closest('.vote').querySelector('.iqPoint');
+      if (!response.ok) {
+        errorSpace.innerHTML = `Voting isn't available right now!`;
+        errorSpace.show;
+      } else {
+        const responseData = await response.json();
 
-          if (voteCountElement) {
-            if (responseData.votedAlready) {
-              voteCountElement.innerText = parseInt(voteCountElement.innerText, 10) - 1;
-            } else {
-              voteCountElement.innerText = parseInt(voteCountElement.innerText, 10) + 1;
-            }
+        const voteCountElement =
+          this.closest(".vote").querySelector(".iqPoint");
+
+        if (voteCountElement) {
+          if (responseData.votedAlready) {
+            voteCountElement.innerText =
+              parseInt(voteCountElement.innerText, 10) - 1;
           } else {
-            console.error('Error: voteCountElement is null');
+            voteCountElement.innerText =
+              parseInt(voteCountElement.innerText, 10) + 1;
           }
+        } else {
+          console.error("Error: voteCountElement is null");
         }
-      } catch (error) {
-        console.error('Error:', error);
       }
-    });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  });
 });
 
-addAnswerForm.addEventListener('submit', async function (event) {
+addAnswerForm.addEventListener("submit", async function (event) {
   event.preventDefault();
-  errorSpace.innerHTML = '';
+  errorSpace.innerHTML = "";
   errorSpace.hide;
 
   const qaTarget_id = addAnswerForm.dataset.qatarget;
 
-  const replyText = document.getElementById('replyText').value;
+  const replyText = document.getElementById("replyText").value;
   if (replyText.length < 15 || replyText.length > 10000) {
-    errorSpace.innerHTML='Reply must be between 15 and 10,000 characters';
+    errorSpace.innerHTML = "Reply must be between 15 and 10,000 characters";
     errorSpace.show;
     return;
   }
 
   try {
     const response = await fetch(`/qa/${qaTarget_id}/answers`, {
-      method: 'POST',
-      headers: { 
+      method: "POST",
+      headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
@@ -109,34 +112,34 @@ addAnswerForm.addEventListener('submit', async function (event) {
     } else {
       const responseData = await response.json();
       if (responseData.error) {
-        errorSpace.innerHTML= responseData.error;
+        errorSpace.innerHTML = responseData.error;
         errorSpace.show;
         return;
       }
       /* ADDING DYNAMICALLY HAVING ISSUES, RELOAD WINDOW INSTEAD 
-      const answersContainer = document.getElementById('answersContainer');
-      const newAnswerDiv = document.createElement('div');
-      newAnswerDiv.classList.add('vote')
-      let newAnswer = `
-        <div class="iqPoint">${responseData.targetAnswer.votes.value}</div>
-        <form class="vote-form" action="/qa/${qaTarget_id}/answers/${responseData.targetAnswer._id}" method="post">
-          <button type="submit" class="upvote-btn" id="upvote-btn-${responseData.targetAnswer._id}" data-qa-id="${qaTarget_id}" data-answer-id="${responseData.targetAnswer._id}">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
-              <path d="M12 2L0 10l3 2v10h18v-10l3-2z"></path>
-            </svg>
-          </button>
-        </form>
-      </div>
-      <div><a href="../../user/handle/${responseData.targetAnswer.author}">${responseData.targetAnswer.author}</a> at ${responseData.targetAnswer.timeStamp}</div>
-      <div>${responseData.targetAnswer.text}
-    `; 
-      newAnswerDiv.innerHTML= newAnswer
-      answersContainer.appendChild(newAnswerDiv);
-      */
+    const answersContainer = document.getElementById('answersContainer');
+    const newAnswerDiv = document.createElement('div');
+    newAnswerDiv.classList.add('vote')
+    let newAnswer = `
+      <div class="iqPoint">${responseData.targetAnswer.votes.value}</div>
+      <form class="vote-form" action="/qa/${qaTarget_id}/answers/${responseData.targetAnswer._id}" method="post">
+        <button type="submit" class="upvote-btn" id="upvote-btn-${responseData.targetAnswer._id}" data-qa-id="${qaTarget_id}" data-answer-id="${responseData.targetAnswer._id}">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
+            <path d="M12 2L0 10l3 2v10h18v-10l3-2z"></path>
+          </svg>
+        </button>
+      </form>
+    </div>
+    <div><a href="../../user/handle/${responseData.targetAnswer.author}">${responseData.targetAnswer.author}</a> at ${responseData.targetAnswer.timeStamp}</div>
+    <div>${responseData.targetAnswer.text}
+  `; 
+    newAnswerDiv.innerHTML= newAnswer
+    answersContainer.appendChild(newAnswerDiv);
+    */
       addAnswerForm.reset();
       window.location.reload();
     }
   } catch (error) {
-    console.error('Error', error);
+    console.error("Error", error);
   }
 });

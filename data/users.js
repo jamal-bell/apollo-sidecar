@@ -94,7 +94,7 @@ const exportedusersMethods = {
       progress: {
         lessonsTaken: 0,
         lessonsComplete: 0,
-        lessonCreated: 0,
+        lessonsCreated: 0,
         voteCount: 0,
         qaAnswerCount: 0,
         qaQuestionCount: 0,
@@ -176,6 +176,14 @@ const exportedusersMethods = {
     id = validation.checkId(id);
     const usersCollection = await users();
     const user = await usersCollection.findOne({ _id: new ObjectId(id) });
+    if (!user) throw "User not found in the system.";
+    return user;
+  }, //end getUserById()
+
+  async getUserByHandle(handle) {
+    handle = validation.checkHandle(handle);
+    const usersCollection = await users();
+    const user = await usersCollection.findOne({ handle: handle });
     if (!user) throw "User not found in the system.";
     return user;
   }, //end getUserById()
@@ -355,22 +363,121 @@ const exportedusersMethods = {
     if (!user) throw "User not found in the system.";
 
     let progress = user.progress;
-    process.lessonCreated = process.lessonCreated + 1;
 
     if (createdOrLearned === "created") {
       if (progress.createdLessonId) {
+        progress.lessonsCreated = progress.lessonsCreated + 1;
         progress.createdLessonId.push({ lessonId: lessonId });
       } else {
-        lessons.created = [{ lessonId: lessonId }];
+        progress.createdLessonId = [{ lessonId: lessonId }];
       }
     } else if (createdOrLearned === "learned") {
-      if (lessons.inProgressLessonId) {
-        lessons.inProgressLessonId.push({ lessonId: lessonId });
+      if (progress.inProgressLessonId) {
+        progress.lessonsTaken = progress.lessonsTaken + 1;
+        progress.inProgressLessonId.push({ lessonId: lessonId });
       } else {
-        lessons.inProgressLessonId = [{ lessonId: lessonId }];
+        progress.inProgressLessonId = [{ lessonId: lessonId }];
       }
     } else {
       throw `Invalid argument for 'createdOrLearned'. Must be either 'created' or 'learned'`;
+    }
+    const updatedprogress = {
+      progress: progress,
+      updatedAt: new Date(),
+    };
+
+    const updatedUser = await usersCollection.findOneAndUpdate(
+      { _id: new ObjectId(userId) },
+      { $set: updatedprogress },
+      { returnDocument: "after" }
+    );
+
+    if (!updatedUser) throw "Could not update the user successfully.";
+
+    return true;
+  },
+
+  async deleteLesson(userId, lessonId) {
+    userId = validation.checkId(userId, "userId");
+    lessonId = validation.checkId(lessonId, "lessonId");
+
+    const usersCollection = await users();
+    const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+
+    if (!user) throw "User not found in the system.";
+
+    const progress = user.progress;
+
+    let index;
+    for (let i = 0; i < progress.createdLessonId.length; i++) {
+      if (progress.createdLessonId[i].lessonId === lessonId) {
+        index = i;
+        break;
+      }
+    }
+
+    progress.createdLessonId.splice(index, 1);
+
+    progress.lessonsCreated = progress.lessonsCreated - 1;
+
+    const updatedUser = await usersCollection.findOneAndUpdate(
+      { _id: new ObjectId(userId) },
+      {
+        $set: {
+          progress: progress,
+          updatedAt: new Date(),
+        },
+      },
+      { returnDocument: "after" }
+    );
+
+    if (!updatedUser) throw "Error deleting lesson in user database.";
+
+    return true;
+  },
+
+  async addQuestion(userId, lessonId, contentId, qaId, createdOrAnswered) {
+    userId = validation.checkId(userId, "userId");
+    qaId = validation.checkId(qaId, "qaId");
+    lessonId = validation.checkId(lessonId, "lessonId");
+    contentId = validation.checkId(contentId, "contentId");
+    createdOrAnswered = createdOrAnswered.trim().toLowerCase();
+
+    const usersCollection = await users();
+    const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+
+    if (!user) throw "User not found in the system.";
+
+    let progress = user.progress;
+
+    if (createdOrAnswered === "created") {
+      if (progress.qaPlatform.questions) {
+        progress.qaQuestionCount = progress.qaQuestionCount + 1;
+        progress.qaPlatform.questions.push({
+          postId: lessonId,
+          contentId: contentId,
+          questionId: qaId,
+        });
+      } else {
+        progress.qaPlatform.questions = [
+          { postId: lessonId, contentId: contentId, questionId: qaId },
+        ];
+      }
+    } else if (createdOrAnswered === "learned") {
+      if (progress.qaPlatform.answers) {
+        progress.qaAnswerCount = progress.qaAnswerCount + 1;
+        progress.qaPlatform.answers.push({
+          postId: lessonId,
+          contentId: contentId,
+          questionId: qaId,
+        });
+      } else {
+        progress.qaPlatform.answers = [
+          { postId: lessonId, contentId: contentId, questionId: qaId },
+        ];
+      }
+    } else {
+      throw `Invalid argument for 'createdOrAnswered'. Must be either 'created' or 'learned'`;
     }
     const updatedprogress = {
       progress: progress,

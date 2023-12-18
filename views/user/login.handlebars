@@ -1,12 +1,12 @@
-<h1>{{title}}</h1>
+{{!-- <h1>{{title}}</h1> Jamal --}}
 
 <form id="login-form" method="POST" action="/user/login" class="form">
-    <div>
-        <label for="emailAddressInput">Email Address:</label>
+    <div class="email-field">
+        <label class="email-login-label" for="emailAddressInput">Email Address:</label>
         <input type="email" name="emailAddressInput" id="emailAddressInput" required>
     </div>
-    <div>
-        <label for="passwordInput">Password:</label>
+    <div class="password-field">
+        <label class="password-login-label" for="passwordInput">Password:</label>
         <input type="password" name="passwordInput" id="passwordInput" required>
     </div>
     <div>

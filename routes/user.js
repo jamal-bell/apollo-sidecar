@@ -96,6 +96,7 @@ router
     //code here for GET
     return res.render("user/register", {
       title: "Registration",
+      style_partial: "css_users",
       script_partial: "user-form",
     });
   })
@@ -157,6 +158,7 @@ router
     if (errors.length > 0) {
       return res.status(400).render("user/register", {
         title: "Registration",
+        style_partial: "css_users",
         script_partial: "user-form",
         errors: errors,
         hasErrors: true,
@@ -184,6 +186,7 @@ router
       errors.push(e);
       return res.status(400).render("user/register", {
         title: "Registration",
+        style_partial: "css_users",
         script_partial: "user-form",
         errors: errors,
         hasErrors: true,
@@ -204,6 +207,7 @@ router
     //code here for GET
     return res.render("user/login", {
       title: "Login",
+      style_partial: "css_users",
       script_partial: "user-form",
     });
   })
@@ -249,6 +253,7 @@ router
       errors.push(e);
       return res.status(400).render("user/login", {
         title: "Login",
+        style_partial: "css_users",
         script_partial: "user-form",
         hasErrors: true,
         errors: errors,
@@ -278,7 +283,7 @@ router.route("/user").get(async (req, res) => {
       let currLesson;
       try {
         let lessonId = validation.checkId(
-          user.progress.inProgressLessonId[i].toString(),
+          user.progress.inProgressLessonId[i].lessonId.toString(),
           "lessonId"
         );
         currLesson = await lessonsData.getLessonById(lessonId);
@@ -300,7 +305,7 @@ router.route("/user").get(async (req, res) => {
       let currLesson;
       try {
         let lessonId = validation.checkId(
-          user.progress.createdLessonId[i].toString(),
+          user.progress.createdLessonId[i].lessonId.toString(),
           "lessonId"
         );
         currLesson = await lessonsData.getLessonById(lessonId);
@@ -396,10 +401,17 @@ router.route("/user").get(async (req, res) => {
 
         currLesson = await lessonsData.getLessonById(lessonId);
         currLesson._id = currLesson._id.toString();
-        currContent = await lessonsCollection.findOne({
-          _id: lessonId,
-          "contents._id": contentId,
-        });
+        currContent = await lessonsCollection.findOne(
+          {
+            _id: new ObjectId(lessonId),
+            "contents._id": new ObjectId(contentId),
+          },
+          {
+            projection: {
+              "contents.$": 1,
+            },
+          }
+        );
         currContent._id = currContent._id.toString();
         answers = currQa.answers
           .filter((answer) => answer.creatorId.equals(user._id))
@@ -425,9 +437,10 @@ router.route("/user").get(async (req, res) => {
     hasAnswers = false;
   }
 
-  return res.render("user/user", {
+  return res.status(200).render("user/user", {
     title: "Overview",
     style_partial: "css_userprofile",
+    leftmenu_partial: "html_userMenu",
     script_partial: "overview",
     user: user,
     lessons: userLessons,
@@ -464,7 +477,7 @@ router.route("/admin").get(async (req, res) => {
       let currLesson;
       try {
         let lessonId = validation.checkId(
-          user.progress.createdLessonId[i].toString(),
+          user.progress.createdLessonId[i].lessonId.toString(),
           "lessonId"
         );
         currLesson = await lessonsData.getLessonById(lessonId);
@@ -561,10 +574,17 @@ router.route("/admin").get(async (req, res) => {
 
         currLesson = await lessonsData.getLessonById(lessonId);
         currLesson._id = currLesson._id.toString();
-        currContent = await lessonsCollection.findOne({
-          _id: lessonId,
-          "contents._id": contentId,
-        });
+        currContent = await lessonsCollection.findOne(
+          {
+            _id: new ObjectId(lessonId),
+            "contents._id": new ObjectId(contentId),
+          },
+          {
+            projection: {
+              "contents.$": 1,
+            },
+          }
+        );
         currContent._id = currContent._id.toString();
         answers = currQa.answers
           .filter((answer) => answer.creatorId.equals(user._id))
@@ -590,9 +610,10 @@ router.route("/admin").get(async (req, res) => {
     hasAnswers = false;
   }
 
-  return res.render("user/admin", {
+  return res.status(200).render("user/admin", {
     title: "Overview",
     style_partial: "css_userprofile",
+    leftmenu_partial: "html_userMenu",
     script_partial: "overview",
     user: user,
     lessons: adminLessons,
@@ -604,16 +625,38 @@ router.route("/admin").get(async (req, res) => {
   });
 });
 
-router.route("/public/:handle").get(async (req, res) => {
+router.route("/handle/:handle").get(async (req, res) => {
   //code here for GET
-  if (!req.session.authenticated) {
-    return res.redirect("/user/login");
+  try {
+    req.params.handle = validation.checkHandle(req.params.handle);
+  } catch (e) {
+    return res.status(400).render("user/error", { title: "Error", error: e });
   }
 
   try {
-    req.params.userId = validation.checkHandle(req.params.userId, "User Id");
+    const user = await users.getUserByHandle(req.params.handle);
+
+    if (user) {
+    }
+    return res.status(200).render("user/public", {
+      title: "User Overview",
+      style_partial: "css_userprofile",
+      leftmenu_partial: "html_userMenu",
+      script_partial: "overview",
+      user: user,
+    });
   } catch (e) {
-    return res.status(400).render("/user/error", { title: "Error", error: e });
+    return res.status(400).render("user/error", { title: "Error", error: e });
+  }
+});
+
+router.route("/public/:userId").get(async (req, res) => {
+  //code here for GET
+
+  try {
+    req.params.userId = validation.checkId(req.params.userId, "User Id");
+  } catch (e) {
+    return res.status(400).render("user/error", { title: "Error", error: e });
   }
 
   try {
@@ -621,14 +664,15 @@ router.route("/public/:handle").get(async (req, res) => {
 
     if (user) {
     }
-    return res.render("user/public", {
+    return res.status(200).render("user/public", {
       title: "User Overview",
       style_partial: "css_userprofile",
+      leftmenu_partial: "html_userMenu",
       script_partial: "overview",
       user: user,
     });
   } catch (e) {
-    return res.status(400).render("/user/error", { title: "Error", error: e });
+    return res.status(400).render("user/error", { title: "Error", error: e });
   }
 });
 
@@ -644,7 +688,7 @@ router.route("/profile").post(async (req, res) => {
   let firstName = xss(req.body.firstName);
   let lastName = xss(req.body.lastName);
   let emailAddress = xss(req.body.emailAddress);
-  let handle = xss(req.body.handle);
+  let handle = xss(req.session.user.handle);
   let bio = xss(req.body.bio);
   let github = xss(req.body.github);
   let errors = [];
@@ -731,8 +775,9 @@ router
       return res.redirect("/user/login");
     }
 
-    return res.render("user/password", {
+    return res.status(200).render("user/password", {
       title: "Change Password",
+      style_partial: "css_users",
       script_partial: "user-form",
     });
   })
@@ -777,6 +822,7 @@ router
     if (errors.length > 0) {
       return res.status(400).render("user/password", {
         title: "Change Password",
+        style_partial: "css_users",
         script_partial: "user-form",
         errors: errors,
         hasErrors: true,
@@ -789,7 +835,7 @@ router
       if (userRegister && userRegister.updated) {
         users.logoutUser(emailAddress);
         req.session.destroy();
-        return res.render("user/logout", {
+        return res.status(200).render("user/logout", {
           title: "Password Updated",
           message: "Your password have been updated, please login again.",
         });
@@ -797,6 +843,7 @@ router
     } catch (e) {
       return res.status(400).render("user/password", {
         title: "Change Password",
+        style_partial: "css_users",
         script_partial: "user-form",
         errors: errors,
         hasErrors: true,
@@ -819,7 +866,7 @@ router.route("/logout").get(async (req, res) => {
   if (req.session) {
     users.logoutUser(emailAddress);
     req.session.destroy();
-    return res.render("user/logout", {
+    return res.status(200).render("user/logout", {
       title: "Logout",
       message: "You have been logged out.",
     });
@@ -836,7 +883,7 @@ router.route("/cancel").get(async (req, res) => {
 
   if (cancel && cancel.deleted) {
     req.session.destroy();
-    return res.render("user/logout", {
+    return res.status(200).render("user/logout", {
       title: "Account canceled",
       message: "Your account have been canceled.",
     });
@@ -943,5 +990,68 @@ router.route("/s3").post(async (req, res) => {
     title: "Error",
   });
 });
+
+router.get("/*", (req, res) => {
+  res.status(404).render("user/error", {
+    error: "Page Not Found",
+    title: "No Such Page Exists.",
+  });
+});
+
+// router.get("/user/*", (req, res) => {
+//   res.status(404).render("user/error", {
+//     error: "Page Not Found",
+//     title: "No Such Page Exists.",
+//   });
+// });
+
+// router.get("/public/*", (req, res) => {
+//   res.status(404).render("user/error", {
+//     error: "Page Not Found",
+//     title: "No Such Page Exists.",
+//   });
+// });
+
+// router.get("/admin/*", (req, res) => {
+//   res.status(404).render("user/error", {
+//     error: "Page Not Found",
+//     title: "No Such Page Exists.",
+//   });
+// });
+
+// router.get("/password/*", (req, res) => {
+//   res.status(404).render("user/error", {
+//     error: "Page Not Found",
+//     title: "No Such Page Exists.",
+//   });
+// });
+
+// router.get("/cancel/*", (req, res) => {
+//   res.status(404).render("user/error", {
+//     error: "Page Not Found",
+//     title: "No Such Page Exists.",
+//   });
+// });
+
+// router.get("/register/*", (req, res) => {
+//   res.status(404).render("user/error", {
+//     error: "Page Not Found",
+//     title: "No Such Page Exists.",
+//   });
+// });
+
+// router.get("/login/*", (req, res) => {
+//   res.status(404).render("user/error", {
+//     error: "Page Not Found",
+//     title: "No Such Page Exists.",
+//   });
+// });
+
+// router.get("/cancel/*", (req, res) => {
+//   res.status(404).render("user/error", {
+//     error: "Page Not Found",
+//     title: "No Such Page Exists.",
+//   });
+// });
 
 export default router;
