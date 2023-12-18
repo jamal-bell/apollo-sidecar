@@ -12,6 +12,7 @@ let newLesson = undefined;
 let newQaPost = undefined;
 let newQaResponse = undefined;
 let userCollection;
+let lessonsCollection;
 try {
   userCollection = await users();
 } catch (e) {
@@ -19,117 +20,149 @@ try {
 }
 try {
   await Promise.all([
-    userData.registerUser(
-      'Alice',
-      'Johnson',
-      'alice.j@example.com',
-      'Password123!',
-      'user'
+    await userData.registerUser(
+      "Mario",
+      "Plumber",
+      "mario.plumber@example.com",
+      "mario",
+      "Luigi123!",
+      "admin"
     ),
-    userData.registerUser(
-      'Bob',
-      'Smith',
-      'bob.smith@example.com',
-      'Secure789!',
-      'user'
+    await userData.registerUser(
+      "Luigi",
+      "Green",
+      "luigi.green@example.com",
+      "luigi",
+      "Mario456!",
+      "user"
     ),
-    userData.registerUser(
-      'Charlie',
-      'Brown',
-      'charlie.b@example.com',
-      'StrongPass1!',
-      'user'
+    await userData.registerUser(
+      "Princess",
+      "Peach",
+      "princess.peach@example.com",
+      "peach",
+      "Toadstool789!",
+      "admin"
     ),
-    userData.registerUser(
-      'David',
-      'Miller',
-      'david.m@example.com',
-      'SafePassword42#',
-      'user'
+    await userData.registerUser(
+      "Bowser",
+      "King",
+      "bowser.king@example.com",
+      "bowser",
+      "Koopa1234!",
+      "admin"
     ),
-    userData.registerUser(
-      'Sam',
-      'Hill',
-      'sam.h@example.com',
-      'GuardedXYZ1@',
-      'admin'
+    await userData.registerUser(
+      "Yoshi",
+      "Dino",
+      "yoshi.dino@example.com",
+      "yoshi",
+      "EggEater567!",
+      "user"
     ),
-    userData.registerUser(
-      'Tom',
-      'Fisher',
-      'tom.f@example.com',
-      'SecurePass123@',
-      'user'
+    await userData.registerUser(
+      "Wario",
+      "Greedy",
+      "wario.greedy@example.com",
+      "wario",
+      "GoldCoins789!",
+      "user"
     ),
-    userData.registerUser(
-      'Mario',
-      'Plumber',
-      'mario.plumber@example.com',
-      'Luigi123!',
-      'user'
+    await userData.registerUser(
+      "Toad",
+      "Mushroom",
+      "toad.mushroom@example.com",
+      "toad",
+      "SporeGuard1@",
+      "user"
     ),
-    userData.registerUser(
-      'Luigi',
-      'Green',
-      'luigi.green@example.com',
-      'Mario456!',
-      'user'
+    await userData.registerUser(
+      "Koopa",
+      "Troopa",
+      "koopa.troopa@example.com",
+      "koopa",
+      "ShellShield456!",
+      "user"
     ),
-    userData.registerUser(
-      'Princess',
-      'Peach',
-      'princess.peach@example.com',
-      'Toadstool789!',
-      'user'
+    await userData.registerUser(
+      "Donkey",
+      "Kong",
+      "donkey.kong@example.com",
+      "donkey",
+      "BananaGuard1@",
+      "admin"
     ),
-    userData.registerUser(
-      'Bowser',
-      'King',
-      'bowser.king@example.com',
-      'Koopa1234!',
-      'user'
+    await userData.registerUser(
+      "Princess",
+      "Daisy",
+      "princess.daisy@example.com",
+      "daisy",
+      "FlowerPower123@",
+      "admin"
     ),
-    userData.registerUser(
-      'Yoshi',
-      'Dino',
-      'yoshi.dino@example.com',
-      'EggEater567!',
-      'user'
+    await userData.registerUser(
+      "Bowser",
+      "Jr",
+      "bowser.jr@example.com",
+      "bowserjr",
+      "Junior789!",
+      "user"
     ),
-    userData.registerUser(
-      'Wario',
-      'Greedy',
-      'wario.greedy@example.com',
-      'GoldCoins789!',
-      'user'
+    await userData.registerUser(
+      "Toadette",
+      "Mushroom",
+      "toadette.mushroom@example.com",
+      "toadette",
+      "PinkShroom456!",
+      "user"
     ),
-    userData.registerUser(
-      'Toad',
-      'Mushroom',
-      'toad.mushroom@example.com',
-      'SporeGuard1@',
-      'user'
+    await userData.registerUser(
+      "Waluigi",
+      "Purple",
+      "waluigi.purple@example.com",
+      "waluigi",
+      "Purple123!",
+      "user"
     ),
-    userData.registerUser(
-      'Koopa',
-      'Troopa',
-      'koopa.troopa@example.com',
-      'ShellShield456!',
-      'user'
+    await userData.registerUser(
+      "Rosalina",
+      "Galaxy",
+      "rosalina.galaxy@example.com",
+      "rosalina",
+      "Galaxy456!",
+      "admin"
     ),
-    userData.registerUser(
-      'Donkey',
-      'Kong',
-      'donkey.kong@example.com',
-      'BananaGuard1@',
-      'admin'
+    await userData.registerUser(
+      "Kamek",
+      "Magikoopa",
+      "kamek.magikoopa@example.com",
+      "kamek",
+      "Magic789!",
+      "user"
     ),
-    userData.registerUser(
-      'Princess',
-      'Daisy',
-      'princess.daisy@example.com',
-      'FlowerPower123@',
-      'user'
+    await userData.registerUser(
+      "Boo",
+      "Ghost",
+      "boo.ghost@example.com",
+      "boo",
+      "Ghostly123@",
+      "user"
+    ),
+    await userData.registerUser(
+      "Dry",
+      "Bones",
+      "dry.bones@example.com",
+      "drybones",
+      "BoneBone123!",
+      "user"
+    ),
+    await userData.registerUser(
+      "Shy",
+      "Guy",
+      "shy.guy@example.com",
+      "shyguy",
+      "ShyGuy123!",
+      "user"
     ),
   ]);
 } catch (e) {
@@ -148,7 +181,7 @@ try {
 }
 console.log('Flattening IDs for random lesson creation completed!');
 try {
-  const lessonsCollection = await lessons();
+  lessonsCollection = await lessons();
   const lessonTitlePrefix = 'Lesson';
   userCollection = await users();
   for (let index = 0; index < 30; index++) {

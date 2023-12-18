@@ -75,7 +75,7 @@ router
         .render('error', { title: 'Internal Server Error', error });
     }
     if (!qaTarget) {
-      qaTarget.text = 'No QA Found :(';
+      error = 'No QA Found :(';
       return res.status(404).render('error', { title: 'No QA found!', error });
     }
     if (req.session.user) {

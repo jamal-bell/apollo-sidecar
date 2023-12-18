@@ -679,7 +679,9 @@ margin-left: 50px;
   padding-right: 5%;
   display: block;
 }
-
+#misc-page {
+  text-align: center;
+}
 #lesson-page #right-nav, #lesson-page #close-left-nav, #lesson-page #close-left-nav {
   width: 0  !important;
 
