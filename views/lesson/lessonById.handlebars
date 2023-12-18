@@ -1,42 +1,32 @@
 <section id="detail">
-  {{#if alreadyTaken}}
-
-  {{else}}
-    <form id="launch" method="POST">
-      <button id="launchButton" type="submit" action="/lesson/lessons/{{this.lessonId}}">Launch Lesson</button>
-    </form>
-
-  {{/if}}
-
   <h2>{{this.lessonTitle}}</h2>
-    <h3>{{this.description}}</h3>
-
+  <h3>{{this.description}}</h3>
+  {{!-- <h3>{{this.lessonId}}</h3> --}}
 
   <ul>
     {{#each contents}}
-      <li>
-        <h4>{{this.order}}: {{this.moduleTitle}}</h4>
-        <h5>Author: {{this.handle}}</h5>
+    <li>
+      <h4>{{this.order}}: {{this.moduleTitle}}</h4>
+      <h5>Author: {{this.author}} with creatorId: {{this.creatorId}}</h5>
 
-      <h5>Video Resource:</h5>
+      <h5>Video Resource: <a href="{{this.videoLink}}" target="_blank">{{this.videoLink}} </a></h5>
 
-        <iframe width="560" height="315" src="{{this.videoLink}}" frameborder="0" allowfullscreen></iframe>
+      //<h5>Video Resource: {{this.videoLink}}</h5>
 
-        <h5>{{this.text}}</h5>
-        {{!-- <button type="button" id="completeButton" onclick="location.href='/user/user'">Mark Complete!</button> --}}
-      </li>
+      <h5>{{this.text}}</h5>
+      <button type="button" onclick="location.href='/user/profile'">Mark Complete!</button>
+    </li>
     {{/each}}
   </ul>
 
 
   <div>
-    <button type="button" onclick="location.href='/lessons/addmodule/{{this.lessonId}}'">
-      Add Modules
-    </button>
-      <button type="button" onclick="location.href='/lessons/remove/{{this.lessonId}}'">Delete this Lesson</button>
+    <a href="/lessons/addmodule/{{this.lessonId}}">
+      Add Modules to this Lesson
+    </a>
   </div>
   <div>
-    <a href="/qa/create/{{this.lessonId}}">
+    <a href="/qa/create/{{lessonId}}">
       Ask a question about this Lesson
     </a>
   </div>
@@ -45,6 +35,3 @@
 
 
 </section>
-
-<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
-<script src="/public/js/lesson.js"></script>
