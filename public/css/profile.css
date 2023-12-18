@@ -16,11 +16,6 @@ main, #main, footer {
     background-color: #e1e3d7;
     box-shadow: -10px 0 8px -8px rgb(124, 124, 124), 10px 0 8px -8px rgb(170, 170, 170);
 }
-#left-nav {
-    visibility: visible !important;
-    width: 16.66% !important;
-}
-
 .sidenav {
     z-index: 0;
 }
@@ -43,10 +38,10 @@ main, #main, footer {
     visibility: hidden;
 }
 
-/* footer {
+footer {
     position: absolute;
     bottom: 0;
-} */
+}
 
 #login-page {
     position: absolute;
@@ -93,9 +88,3 @@ table td a {
   #profile-page form label {
     width: 20%;
   } */
-
-  .go-back {
-    width: 100%;
-    text-align: center;
-    display: block;
-  }
