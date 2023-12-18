@@ -260,7 +260,6 @@ if (profile) {
     const firstNameInput = $("#firstNameInput");
     const lastNameInput = $("#lastNameInput");
     const emailAddressInput = $("#emailAddressInput");
-    const handleInput = $("#handleInput");
     const bioInput = $("#bioInput");
     const githubInput = $("#githubInput");
     const errorContainer = $("#errors");
@@ -277,7 +276,6 @@ if (profile) {
       let firstName = firstNameInput.val().trim();
       let lastName = lastNameInput.val().trim();
       let emailAddress = emailAddressInput.val().trim();
-      let handle = handleInput.val().trim();
       let bio = bioInput.val().trim();
       let github = githubInput.val().trim();
 
@@ -295,12 +293,6 @@ if (profile) {
 
       try {
         emailAddress = validation.checkEmail(emailAddress);
-      } catch (e) {
-        errorList += `<li>${e}</li>`;
-      }
-
-      try {
-        handle = validation.checkHandle(handle);
       } catch (e) {
         errorList += `<li>${e}</li>`;
       }
@@ -327,7 +319,6 @@ if (profile) {
             firstName: firstName,
             lastName: lastName,
             emailAddress: emailAddress,
-            handle: handle,
             bio: bio,
             github: github,
           }),
@@ -342,14 +333,12 @@ if (profile) {
               firstName = response.user.firstName;
               lastName = response.user.lastName;
               email = response.user.emailAddress;
-              handle = response.user.handle;
               bio = response.user.bio;
               github = response.user.github;
 
               firstNameInput.val(firstName);
               lastNameInput.val(lastName);
               emailAddressInput.val(email);
-              handleInput.val(handle);
               bioInput.val(bio);
               githubInput.val(github);
 
@@ -363,7 +352,7 @@ if (profile) {
             }
           })
           .catch(function (e) {
-            errorList.push(`<li>${e}</li>`);
+            errorContainer.html(`<li>${e}</li>`);
             errorContainer.show();
           });
       }
@@ -381,12 +370,14 @@ if (profile) {
 
     editProfileButton.click(function (event) {
       event.preventDefault();
+      errorContainer.empty();
       errorContainer.hide();
       editProfileClick.call(this, event);
     });
 
     saveProfileButton.click(function (event) {
       event.preventDefault();
+      errorContainer.empty();
       errorContainer.hide();
       saveProfileClick.call(this, event);
     });

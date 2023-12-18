@@ -15,11 +15,9 @@ router.route('/').get(async (req, res) => {
   let lessonQuestions;
   let recentQaArray;
   let error;
-  let loggedIn;
   try {
-    if (req.session.user) {
+    if (req.session.authenticated) {
       user = true;
-      loggedIn = true;
       const userId = req.session.sessionId;
       creatorQuestions = await qaMethods.getRecentQAsByCreator(userId);
 
@@ -31,12 +29,13 @@ router.route('/').get(async (req, res) => {
 
     recentQaArray = await qaMethods.getRecentQAs();
     res.render('qa/home', {
+      title: 'QA Central',
       recentQaArray,
       creatorQuestions,
       lessonQuestions,
       admin,
       user,
-      loggedIn,
+      leftmenu_partial: "html_qaMenu",
     });
   } catch (e) {
     error = e.message;
@@ -50,20 +49,23 @@ router
     // VIEWING QA
     let qaTarget;
     let error;
-    let qaId = xss(req.params.id);
+    let qaId;
     let owner = false;
     let admin = false;
-    let loggedIn = false;
     let lessonCreatorId;
     let lessonRelatedId;
     let viewSuffix = '';
     try {
-      qaId = validation.checkId(qaId, 'QA ID');
+      qaId = validation.checkId(req.params.id, 'QA ID');
     } catch (e) {
       error = e.message;
-      return res.status(404).render('error', {
-        title: 'Error 404: Invalid Lesson ID?',
+      return res.status(400).render('qa/view', {
+        title: 'QA Centeral',
+        errors: 'Invalid Lesson ID?',
         error,
+        admin,
+        owner,
+        leftmenu_partial: "html_qaMenu",
       });
     }
     try {
@@ -72,28 +74,24 @@ router
       error = e.message;
       return res
         .status(500)
-        .render('error', { title: 'Internal Server Error', error });
+        .render('error', { title: 'QA Central', pageTitle: 'Internal Server Error', error });
     }
     if (!qaTarget) {
       qaTarget.text = 'No QA Found :(';
-      return res.status(404).render('error', { title: 'No QA found!', error });
+      return res
+        .status(404)
+        .render('qa/view', { title: 'No QA found!', qaTarget });
     }
     if (req.session.user) {
-      loggedIn = true;
       viewSuffix = 'User';
       try {
-        lessonRelatedId = await lessonMethods.getLessonById(
-          qaTarget.lessonId.toString()
-        );
-        lessonCreatorId = lessonRelatedId.creatorId.toString();
+        lessonRelatedId = await lessonMethods.getLessonById(qaTarget.lessonId);
+        lessonCreatorId = lessonRelatedId.creatorId;
       } catch (e) {
         error = e.message;
         return res.status(500).render('error', error);
       }
-      if (
-        req.session.user.role === 'admin' &&
-        req.session.sessionId === lessonCreatorId
-      ) {
+      if (req.session.user.role === 'admin' && creatorId === lessonCreatorId) {
         admin = true;
         viewSuffix = 'Admin';
       } else {
@@ -124,7 +122,7 @@ router
   .delete(async (req, res) => {
     //DELETING QA
     let error;
-    let qaId = xss(req.params.id);
+    let qaId = req.params.id;
     let owner;
     let admin;
     let qaTarget;
@@ -144,9 +142,9 @@ router
     }
     try {
       const lessonRelatedId = await lessonMethods.getLessonById(
-        qaTarget.lessonId.toString()
+        qaTarget.lessonId
       );
-      lessonCreatorId = lessonRelatedId.creatorId.toString();
+      lessonCreatorId = lessonRelatedId.creatorId;
     } catch (e) {
       error = e.message;
       return res.status(500).json({ error });
@@ -184,7 +182,6 @@ router
   .post(async (req, res) => {
     //CREATING ANSWER
     let error;
-    let qaId = xss(req.params.id);
     let qaTarget;
     let creatorId = req.session.sessionId;
     let text;
@@ -298,9 +295,9 @@ router
     }
     try {
       const lessonRelatedId = await lessonMethods.getLessonById(
-        qaTarget.lessonId.toString()
+        qaTarget.lessonId
       );
-      lessonCreatorId = lessonRelatedId.creatorId.toString();
+      lessonCreatorId = lessonRelatedId.creatorId;
     } catch (e) {
       error = e.message;
       return res.status(500).json({ error });
@@ -365,7 +362,6 @@ router
       loggedIn = true;
     }
     try {
-      contentId = xss(req.body.contentId);
       lessonId = validation.checkId(lessonId, 'Lesson ID');
       contentId = validation.checkId(contentId, 'content ID');
       creatorId = validation.checkId(creatorId, 'creator ID');
