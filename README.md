@@ -9,7 +9,7 @@
 1. Clone or download the repo
 2. run `npm install`
 3. run `npm start`
-4. run `npm run ./tasks/modifiedseed.js`
+4. run `npm run seed`
 
 The app is built using `nodeJS`. Open [http://localhost:3000](http://localhost:3000) to view it in the browser. 
 The seed file will load a variable number of users, lessons, and questions/answers. You can set the numbers at the top of the seed at path /tasks/seed.js
