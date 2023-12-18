@@ -289,18 +289,20 @@ try {
   // Calculate range for modifiedDate (randomStart - end)
   const modifiedRangeMilliseconds = randomStart.getTime() - end.getTime();
 
-// Generate random modified date within the range
-const randomModifiedOffset = Math.floor(Math.random() * modifiedRangeMilliseconds);
-const modifiedDate = new Date(randomStart.getTime() - randomModifiedOffset);
-
+  // Generate random modified date within the range
+  const randomModifiedOffset = Math.floor(
+    Math.random() * modifiedRangeMilliseconds
+  );
+  const modifiedDate = new Date(randomStart.getTime() - randomModifiedOffset);
 
   for (let index = 0; index < numLessons; index++) {
-    const lessonTitlePrefix = LessonTitlePrefixList[ Math.floor(Math.random() * LessonTitlePrefixList.length)];
+    const lessonTitlePrefix =
+      LessonTitlePrefixList[
+        Math.floor(Math.random() * LessonTitlePrefixList.length)
+      ];
     const randomUserId = userIds[Math.floor(Math.random() * userIds.length)];
     const randomSubject = subjects[Math.floor(Math.random() * subjects.length)];
     const authorChosen = await userCollection.findOne({ _id: randomUserId });
-
-
 
     const newLessonInfo = {
       lessonTitle: `${lessonTitlePrefix} ${randomSubject} ${index + 1}`,
@@ -320,21 +322,27 @@ const modifiedDate = new Date(randomStart.getTime() - randomModifiedOffset);
           text: `Text for Lesson ${index + 1}`,
           videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ",
           createdByRole: authorChosen.role,
-          createdAt: "I need this date to equal the newLessonInfo createdAt above",
-          modifiedAt: "I need this date to be a random date beween createdAt and now"
+          createdAt:
+            "I need this date to equal the newLessonInfo createdAt above",
+          modifiedAt:
+            "I need this date to be a random date beween createdAt and now",
         },
       ],
     };
 
     const result = await lessonsCollection.insertOne(newLessonInfo);
-    
+
     // console.log(result); // Log the inserted document
     // const result2 = await userCollection.updateOne(
     //   { _id: authorChosen._id },
     //   { $push: { "progress.createdLessonId": { lessonId: result.insertedId } } }
     // );
 
-    await userData.addLesson(authorChosen._id.toString(), result.insertedId.toString(), "created")
+    await userData.addLesson(
+      authorChosen._id.toString(),
+      result.insertedId.toString(),
+      "created"
+    );
     // console.log(result2);
   }
   console.log("Seeding Lessons Completed!");
@@ -401,4 +409,3 @@ try {
 }
 
 await closeConnection();
-
