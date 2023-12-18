@@ -1,55 +1,28 @@
-<div id="qa-page">
-  <article id='qaMain'>
-    <p>{{errors}}</p>
-    {{!-- <h2>{{qaTarget.title}}</h2> --}}
-    <h2>{{pageTitle}}</h2>
-    <p>{{qaTarget.text}}</p>
-    <p>by <a href='../../user/{{qaTarget.author}}'>{{qaTarget.author}}</a> at {{qaTarget.timeStamp}}</p>
-    {{#if loggedIn}}
-    <form id='addAnswerForm' action='/qa/{{qaTarget._id}}/answers' method='post'>
-      <input type='text' name='replyText' id='replyText' />
-      <input type='submit' />
-      <input type='reset' />
+<article id='qaMain'>
+  <h2>{{qaTarget.title}}</h2>
+  <p>{{qaTarget.text}}</p>
+  <p>by <a href='../../user/handle/{{qaTarget.author}}'>{{qaTarget.author}}</a> at {{qaTarget.timeStamp}}</p>
+  <div class='errorSpace' id='errorSpace'></div>
+  <form id="noLoginShowDeletedForm">
+        <button type="button" id="noLoginShowDeletedButton">Toggle Deleted Responses</button>
     </form>
-    {{/if}}
-    <div class="errorSpace" id="errorSpace"></div>
-    {{#if qaTarget.answers}}
-      {{#each qaTarget.answers}}
-      {{#if loggedIn}}
-      <div id="iqPoint" class="iqPoint">{{this.votes.value}}</div>
-        <form
-          class='vote'
-          action='/qa/{{../qaTarget._id}}/answers/{{this._id}}'
-          method='post'
-        >
-          <button type='submit'>
-            <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='16' height='16'>
-              <use href='../../public/assets/up_arrow.svg' />
-            </svg>
-          </button>
-        </form>
-        {{/if}}
-        <div><a href='../../user/{{this.author}}'>{{this.author}}</a></div>
-        <div>{{this.text}}</div>
-        {{#if admin}}
-        <form id="deleteAnswerAdminForm" class="delete" action="/qa/{{../qaTarget._id}}/{{this._id}}" method="">
-        <input type="submit">delete?</input>
-        </form>
-        {{/if}}
-      {{/each}}
-    {{else}}
-      <p>No replies yet.</p>
-    {{/if}}
-    {{#if admin}}
-  <form id="deleteQaAdminForm" class="delete" action="/qa/{{qaTarget._id}}" method="">
-        <input type="submit">ADMIN: delete this QA?</input>
-        </form>
-    {{/if}}
-  {{#if owner}}
-  <form id="deleteQaForm" class="delete" action="/qa/{{qaTarget._id}}" method="">
-        <input type="submit">OWNER: delete this QA?</input>
-        </form>
-    {{/if}}
-  <script src="../../public/js/qaScript.js"></script>
-  </article>
-</div>
+    <div><a href="../../user/login">You need to login to reply!</a></div>
+   {{#if qaTarget.answers}}
+  <div id="answersContainer">
+    {{#each qaTarget.answers}}
+    <div class ="answer" data-locked="{{this.locked}}">
+      <div class="vote">
+        <div class="iqPoint">{{this.votes.value}}</div>
+      </div>
+      {{#if this.locked}}
+      <div>Deleted</div>
+      {{else}}
+      <div><a href='../../user/handle/{{this.author}}'>{{this.author}}</a> at {{this.timeStamp}}</div>
+      {{/if}}
+      <div>{{this.text}}</div>
+      </div>
+    {{/each}}
+  {{else}}
+    <p>No replies yet.</p>
+  {{/if}}
+</article>
