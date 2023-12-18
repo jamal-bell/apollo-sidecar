@@ -63,7 +63,7 @@ The Apollo-Sidecar platform allows faculty and students to easily create, modify
 
 ## Extra Features Implemented
 
-- Gamificatio: Incentivize users with recognition and goals. IQ Points and progress tracking in user profile.
+- Gamification: Incentivize users with recognition and goals. IQ Points and progress tracking in user profile.
 - User Notifications: Notifications when certain actions are completed.
 - Progress Tracking: Provide analytics for users to track their progress and learning performance over time.
 
