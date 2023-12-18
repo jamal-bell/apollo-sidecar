@@ -440,7 +440,7 @@ if (profile) {
 //AWS S3 Photo Uploading
 if (uploadPhotoButton) {
   const userPhotoDisplay = document.getElementById("userPhotoDisplay");
-  const file = document.getElementById("photoInput");
+  const file = document.getElementById("awsphoto");
   const photoUploadMessage = document.getElementById("photoMessage");
 
   uploadPhotoButton.addEventListener("click", async function (event) {

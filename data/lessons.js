@@ -4,25 +4,25 @@ import validation from "./validation.js";
 import usersData from "./users.js";
 
 function getYouTubeVideoID(url) {
-  let videoID = '';
-  if (url.includes('youtube.com')) {
-      // Extract the "v" parameter from the URL
-      const params = new URLSearchParams(new URL(url).search);
-      videoID = params.get('v');
-  } else if (url.includes('youtu.be')) {
-      // Extract the ID from the short URL
-      videoID = url.split('youtu.be/')[1];
+  let videoID = "";
+  if (url.includes("youtube.com")) {
+    // Extract the "v" parameter from the URL
+    const params = new URLSearchParams(new URL(url).search);
+    videoID = params.get("v");
+  } else if (url.includes("youtu.be")) {
+    // Extract the ID from the short URL
+    videoID = url.split("youtu.be/")[1];
   } else {
-    "Not a valid youtube video link."
+    ("Not a valid youtube video link.");
   }
   return videoID;
 }
 function generateYouTubeEmbedCode(url) {
   const videoID = getYouTubeVideoID(url);
   if (videoID) {
-      return `<iframe width="560" height="315" src="https://www.youtube.com/embed/${videoID}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+    return `<iframe width="560" height="315" src="https://www.youtube.com/embed/${videoID}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
   } else {
-      return 'Invalid YouTube URL';
+    return "Invalid YouTube URL";
   }
 }
 
@@ -39,6 +39,8 @@ const exportedLessonsMethods = {
     videoLink,
     handle
   ) {
+    handle = validation.checkHandle(handle);
+    const user = await usersData.getUserByHandle(handle);
     lessonTitle = validation.checkContent(lessonTitle, "lesson title", 3, 250);
     description = validation.checkContent(
       description,
@@ -61,7 +63,6 @@ const exportedLessonsMethods = {
         if (c.videoLink) {
           c.videoLink = validation.checkString(c.videoLink, "src/video link");
           c.videoLink = generateYouTubeEmbedCode(c.videoLink);
-
         }
       });
     }
@@ -76,7 +77,7 @@ const exportedLessonsMethods = {
       lessonTitle: lessonTitle, //string
       subject: subject,
       description: description, //string
-      creatorId: ObjectId, //from user ID
+      creatorId: user._id, //from user ID
       handle: handle,
       createdAt: new Date(),
       modifiedAt: new Date(),
@@ -85,8 +86,8 @@ const exportedLessonsMethods = {
           _id: new ObjectId(),
           order: 1,
           moduleTitle: contents[0].moduleTitle, //string
-          creatorId: new ObjectId(),
-          author: null,
+          creatorId: user._id,
+          author: handle,
           text: contents[0].text, //string
           videoLink: contents[0].videoLink, // array of string urls to the resource video
           votes: {

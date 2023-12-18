@@ -268,6 +268,7 @@ router.route("/user").get(async (req, res) => {
   }
 
   const user = await users.getUserByEmail(req.session.user.emailAddress);
+  const lessonsCollection = await lessons();
 
   if (req.session.sessionId !== user._id.toString()) {
     return res.render("user/error", {
@@ -330,7 +331,7 @@ router.route("/user").get(async (req, res) => {
       let currContent;
       try {
         const qaId = validation.checkId(
-          user.progress.qaPlatform.questions[i].toString()
+          user.progress.qaPlatform.questions[i].questionId.toString()
         );
         currQa = await qaData.getQa(qaId);
         currQa._id = currQa._id.toString();
@@ -363,7 +364,7 @@ router.route("/user").get(async (req, res) => {
       }
       userQuestions.push({
         lesson: currLesson,
-        content: content,
+        content: currContent,
         question: currQa,
       });
       count++;
@@ -385,7 +386,7 @@ router.route("/user").get(async (req, res) => {
       let currContent;
       try {
         const qaId = validation.checkId(
-          user.progress.qaPlatform.answers[i].toString()
+          user.progress.qaPlatform.answers[i].postId.toString()
         );
         currQa = await qaData.getQa(qaId);
         currQa._id = currQa._id.toString();
@@ -783,7 +784,7 @@ router
   })
   .post(async (req, res) => {
     //code here for POST
-    let emailAddress = xss(req.user.emailAddress.trim());
+    let emailAddress = xss(req.session.user.emailAddress.trim());
     let currentPassword = xss(req.body.currentPasswordInput);
     let newPassword = xss(req.body.newPasswordInput);
     let confirmNewPassword = xss(req.body.confirmPasswordInput);

@@ -5,6 +5,10 @@
   box-sizing: inherit;
 }
 
+#misc-page{
+  text-align: center;
+}
+
 html {
     box-sizing: border-box;
   
@@ -707,12 +711,16 @@ margin-left: 50px;
   top: 36% !important;
 }
 
-#emailAddressInput{
+#login-page #emailAddressInput{
 top: 24%;
 position: absolute;
 }
 
-#passwordInput{ 
+#login-page #passwordInput{ 
   top: 45%;
   position: absolute;
 }
+
+#qas1 h3 {text-align: center}
+#qas2 h3 {text-align: center}
+#qas3 h3 {text-align: center}

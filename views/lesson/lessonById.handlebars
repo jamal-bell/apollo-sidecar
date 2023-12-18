@@ -1,15 +1,18 @@
+
+<div id="lessons-page">
 <section id="detail">
   {{#if alreadyTaken}}
 
   {{else}}
-    <form id="launch" method="POST">
-      <button id="launchButton" type="submit" action="/lesson/lessons/{{this.lessonId}}">Launch Lesson</button>
+    <form id="launch" method="POST" action="/lessons/lesson/{{this.lessonId}}">
+    <input id="lessonId" name="lessonId" hidden value="{{this.lessonId}}">
+      <button id="launchButton" type="submit">Launch Lesson</button>
     </form>
 
   {{/if}}
 
   <h2>{{this.lessonTitle}}</h2>
-    <h3>{{this.description}}</h3>
+    <p>{{this.description}}</p>
 
 
   <ul>
@@ -20,7 +23,7 @@
 
       <h5>Video Resource:</h5>
 
-        <iframe width="560" height="315" src="{{this.videoLink}}" frameborder="0" allowfullscreen></iframe>
+        <iframe width="560" height="315" src="{{this.videoLink}}" allowfullscreen></iframe>
 
         <h5>{{this.text}}</h5>
         {{!-- <button type="button" id="completeButton" onclick="location.href='/user/user'">Mark Complete!</button> --}}
@@ -30,10 +33,13 @@
 
 
   <div>
+    
+    {{#if isAdmin}}
     <button type="button" onclick="location.href='/lessons/addmodule/{{this.lessonId}}'">
       Add Modules
     </button>
       <button type="button" onclick="location.href='/lessons/remove/{{this.lessonId}}'">Delete this Lesson</button>
+      {{/if}}
   </div>
   <div>
     <a href="/qa/create/{{this.lessonId}}">
@@ -45,6 +51,7 @@
 
 
 </section>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
 <script src="/public/js/lesson.js"></script>

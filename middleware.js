@@ -154,7 +154,7 @@ const middleware = {
             next();
           } else {
             return res.status(400).render("error", {
-              error: "Don not have access deleting lessons.",
+              error: "Do not have access deleting lessons.",
             });
           }
         }

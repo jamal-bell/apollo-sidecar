@@ -6,7 +6,7 @@
                 <th>First Name</th>
                 <td id="firstName">{{{user.firstName}}}</td>
                 <td rowspan="7" class="photo-cell">
-                    <img id="userPhotoDisplay" src="{{{user.photo}}}" alt="User Photo" id="user-Photo">
+                    <img id="userPhotoDisplay" src="{{{user.photo}}}" alt="User Photo">
                 </td>
             </tr>
             <tr>
@@ -35,12 +35,12 @@
             </tr>
             <tr>
                 <th>Account Created</th>
-                <td id="accountCreatedAt">{{{user.createdAt}}}</td>
-                <td class="centered-cell"><input type="file" id="photoInput" accept="image/*" /></td>
+                <td>{{{user.createdAt}}}</td>
+                <td class="centered-cell"><input id="awsphoto" type="file" accept="image/*" /></td>
             </tr>
             <tr>
                 <th>Last Login</th>
-                <td id="lastLogin">{{{user.lastLogin}}}</td>
+                <td>{{{user.lastLogin}}}</td>
                 <td class="centered-cell"><button id="uploadPhotoButton">Upload</button></td>
             </tr>
         </table>
@@ -100,11 +100,10 @@
     </div>
 </section>
 
-
-<div class="lessons col">
-    <h2>Lessons Created</h2>
-    {{#if hasLessons}}
-        <div>
+<section>
+    <div class="lessons col">
+        <h2>Lessons Created</h2>
+        {{#if hasLessons}}
             <ul>
                 {{#each lessons}}
                     <li>
@@ -114,16 +113,17 @@
                     </li>
                 {{/each}}
             </ul>
-    {{else}}
-        <p>No lessons created yet, start creating one <a href="/lessons/newLesson">here</a>!</p>
-        </div>
-    {{/if}}
+        {{else}}
+            <p>No lessons created yet, start creating one <a href="/lessons/newLesson">here</a>!</p>
+
+        {{/if}}
+    </div>
 </section>
 
 
 
 <h2>Q&A Contributions</h2>
-<section id="qas">
+<section id="qas1">
     <p>
         Your total IQ Points: {{{user.progress.qaPlatform.iqPoints}}}!
     </p>
@@ -135,15 +135,16 @@
                     <p>Lesson Related: <span>{{this.lesson.lessonTitle}}, {{this.content.moduleTitle}}</span></p>
                     <p>Question date: <span>{{this.question.createdAt}}</span></p>
                     <p>Your have total {{this.question.answers.length}} answers, the top 3 voted answers are:</p>
-                        <ul>
-                            {{#each answers.answers}}
+                    <ul>
+                        {{#each answers.answers}}
                             <li>
                                 <h4>{{this.answerText}}</h4>
                                 <p>Upvotes: <span>{{this.answerVotes}}</span></p>
                             </li>
-                            {{/each}}
-                        </ul>
-                    <button type="button" onclick="location.href='/lesson/{{this.question._id}}'">Review question</button>
+                        {{/each}}
+                    </ul>
+                    <button type="button" onclick="location.href='/lesson/{{this.question._id}}'">Review
+                        question</button>
                 </li>
             {{/each}}
         </ul>
@@ -156,7 +157,7 @@
 
 {{#if hasQuestions}}
     <h2>Question Asked</h2>
-    <section id="qas">
+    <section id="qas2">
         <ul>
             {{#each questions}}
                 <li>
@@ -164,7 +165,8 @@
                     <p>Lesson Related: <span>{{this.lesson.lessonTitle}}, {{this.content.moduleTitle}}</span></p>
                     <p>Ans: <span>{{this.question.answers.length}}</span></p>
                     <p><span>{{this.question.createdAt}}</span></p>
-                    <button type="button" onclick="location.href='/lesson/{{this.question._id}}'">Review question</button>
+                    <button type="button" onclick="location.href='/lesson/{{this.question._id}}'">Review
+                        question</button>
                 </li>
             {{/each}}
         </ul>

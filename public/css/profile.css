@@ -1,4 +1,6 @@
-
+.lessons {
+    display: block !important
+}
 .row {
     background-color: #FFF;
 }

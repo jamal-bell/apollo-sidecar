@@ -6,7 +6,7 @@
                 <th>First Name</th>
                 <td id="firstName">{{{user.firstName}}}</td>
                 <td rowspan="7" class="photo-cell">
-                    <img id="userPhotoDisplay" src="{{{user.photo}}}" alt="User Photo" id="user-Photo">
+                    <img id="userPhotoDisplay" src="{{{user.photo}}}" alt="User Photo">
                 </td>
             </tr>
             <tr>
@@ -35,12 +35,12 @@
             </tr>
             <tr>
                 <th>Account Created</th>
-                <td id="accountCreatedAt">{{{user.createdAt}}}</td>
-                <td class="centered-cell"><input type="file" id="photoInput" accept="image/*" /></td>
+                <td>{{{user.createdAt}}}</td>
+                <td class="centered-cell"><input id="awsphoto" type="file" accept="image/*" /></td>
             </tr>
             <tr>
                 <th>Last Login</th>
-                <td id="lastLogin">{{{user.lastLogin}}}</td>
+                <td>{{{user.lastLogin}}}</td>
                 <td class="centered-cell"><button id="uploadPhotoButton">Upload</button></td>
             </tr>
         </table>
@@ -102,7 +102,6 @@
 
 <h2>My Lessons</h2>
 <section class="lessons">
-    <main>
         {{#if hasLessons}}
             <ul>
                 {{#each lessons}}
@@ -124,13 +123,11 @@
         {{else}}
             <p>Start learning <a href="/lessons/lessons">here</a>!</p>
         {{/if}}
-    </main>
 </section>
 
 
 {{#if createdLessons}}
-    <seciton class="lessons"></seciton>
-    <main>
+    <section class="lessons">
         <h2>Lesson Created</h2>
         <ul>
             {{#each lessonCreated}}
@@ -141,16 +138,12 @@
                 </li>
             {{/each}}
         </ul>
-    </main>
-    </seciton>
+    </section>
 {{/if}}
 
 
-<br />
-<br />
-
 <h2>Q&A Contributions</h2>
-<section id="qas">
+<section id="qas1">
     <p>
         Your total IQ Points: {{{user.progress.qaPlatform.iqPoints}}}!
     </p>
@@ -184,7 +177,7 @@
 
 {{#if hasQuestions}}
     <h2>Question Asked</h2>
-    <section id="qas">
+    <section id="qas2">
         <ul>
             {{#each questions}}
                 <li>

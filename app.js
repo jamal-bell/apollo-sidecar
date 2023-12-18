@@ -45,22 +45,25 @@ app.engine("handlebars", handlebarsInstance.engine);
 app.set("view engine", "handlebars");
 
 app.use((req, res, next) => {
-  res.header('X-Frame-Options', 'SAMEORIGIN');
+  res.header("X-Frame-Options", "SAMEORIGIN");
   next();
 });
 
 app.use((req, res, next) => {
-  res.header('Content-Security-Policy', "frame-ancestors 'self' https://youtube.com");
+  res.header(
+    "Content-Security-Policy",
+    "frame-ancestors 'self' https://youtube.com"
+  );
   next();
 });
 
 app.use((req, res, next) => {
-  res.header('Referrer-Policy', 'same-origin');
+  res.header("Referrer-Policy", "same-origin");
   next();
 });
 
 app.use((req, res, next) => {
-  res.header('Strict-Transport-Security', 'max-age=31536000');
+  res.header("Strict-Transport-Security", "max-age=31536000");
   next();
 });
 

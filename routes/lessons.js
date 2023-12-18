@@ -32,49 +32,53 @@ router
     } catch (e) {
       return res
         .status(400)
-        .render("/error", { error: "Unknown url id param", title: "Error" });
+        .render("error", { error: "Unknown url id param", title: "Error" });
     }
     const lessonFound = await lessonsData.getLessonById(req.params.id);
 
     const user = await usersData.getUserById(req.session.sessionId);
-console.log(user)
     let isLink;
 
     let alreadyTaken = false;
     user.progress.inProgressLessonId.forEach((lesson) => {
-      if (lesson.lessonId.toString() === req.params.id) {
+      if (lessonFound.lessonId.toString() === req.params.id) {
         alreadyTaken = true;
       }
     });
     let handle = req.session.user.handle;
+    let isAdmin = req.session.user.role === "admin" ? true : false;
+    if (lessonFound.creatorId.toString() === req.session.sessionId) {
+      isAdmin = true;
+    }
     return res.status(200).render("lesson/lessonById", {
       title: "Lesson Detail",
       handle: handle,
       alreadyTaken: alreadyTaken,
+      isAdmin: isAdmin,
       lessonId: req.params.id,
       lessonTitle: lessonFound.title,
       moduleTitle: lessonFound.moduleTitle,
       description: lessonFound.description,
       contents: lessonFound.contents,
       style_partial: "css_content",
-    leftmenu_partial: "html_lessonMenu",
+      leftmenu_partial: "html_lessonMenu",
     });
   })
   .post(async (req, res) => {
+    console.log("I'M HERE");
     //Launch lesson
     try {
       req.params.id = validation.checkId(req.params.id, "Id URL Param");
     } catch (e) {
       return res
         .status(400)
-        .render("/error", { error: "Unknown url id param", title: "Error" });
+        .render("error", { error: "Unknown url id param", title: "Error" });
     }
-    console.log("before addLesson()");
+
     const lessonFound = await lessonsData.getLessonById(req.params.id);
     let userId = req.session.sessionId;
     let lessonId = req.params.id;
     usersData.addLesson(userId, lessonId, "learned");
-    console.log("after addLesson()");
   });
 
 router
@@ -102,6 +106,7 @@ router
     let text = xss(req.body.text);
     let videoLink = xss(req.body.videoLink);
     let handle = xss(req.session.user.handle);
+    let userId = req.session.sessionId;
     // let moduleTitle = req.body.contents.moduleTitle;
     // let text = req.body.contents.text;
     // let videoLink = req.body.contents.videoLink;
@@ -117,7 +122,7 @@ router
         },
       ];
 
-      const lesson = await lessonsData.createLesson(
+      let lesson = await lessonsData.createLesson(
         lessonTitle,
         subject,
         description,
@@ -149,25 +154,19 @@ router
       );
       if (!addedToUser) throw "Could not add Lesson to user on create lesson.";
 
+      lesson = await lessonsData.getLessonById(lessonId);
+
       return res.status(200).render("lesson/publish", {
-        title: "Create Lesson",
-        subject,
-        hasErrors: false,
-        lessonTitle,
-        lessonId: lessonId.toString(),
-        description,
-        moduleTitle,
-        text,
-        videoLink,
+        title: "Publish Lesson",
         order: lesson.contents.length + 1,
-        subject: lesson.subject,
-        lesson: lesson,
+        lessonTitle,
+        lessonId,
+        subject,
+        lesson,
         style_partial: "css_content",
-        script_partial: "lesson",
         leftmenu_partial: "html_lessonMenu",
-        //createdBy: null,
-        //creatorId,
-        //author,
+        script_partial: "lesson",
+        title: "Create Lesson",
       });
     } catch (error) {
       //console.log(error);
@@ -203,7 +202,7 @@ router
     // }
     // res
     //   .status(500)
-    //   .render("/error", { error: "Internal Server Error", title: "Error" });
+    //   .render("error", { error: "Internal Server Error", title: "Error" });
   });
 
 router
@@ -299,7 +298,7 @@ router.route("published/:id").get(async (req, res) => {
     lesson,
     lessonId,
     style_partial: "css_content",
-      leftmenu_partial: "html_lessonMenu",
+    leftmenu_partial: "html_lessonMenu",
   });
 });
 // .post(async (req, res) => {
@@ -390,7 +389,7 @@ router.route("published/:id").get(async (req, res) => {
 //   }
 //   res
 //     .status(500)
-//     .render("/error", { error: "Internal Server Error", title: "Error" });
+//     .render("error", { error: "Internal Server Error", title: "Error" });
 // });
 
 router.route("/error").get(async (req, res) => {

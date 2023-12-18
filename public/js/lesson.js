@@ -9,10 +9,11 @@
       if (!ObjectId.isValid(id)) throw `Error: ${varName} invalid object ID`;
       return id;
     },
-  
+
     checkString(strVal, varName) {
       if (!strVal) throw `Error: You must supply a ${varName}!`;
-      if (typeof strVal !== "string") throw `Error: ${varName} must be a string!`;
+      if (typeof strVal !== "string")
+        throw `Error: ${varName} must be a string!`;
       strVal = strVal.trim();
       if (strVal.length === 0)
         throw `Error: ${varName} cannot be an empty string or string with just spaces`;
@@ -31,18 +32,20 @@
         throw `${varName} length should be between ${min} and ${max} characters.`;
       return strVal;
     },
-  
+
     checkIsPositiveNum(val, varName) {
       if (!val) throw `Error: You must supply a ${varName}!`;
       if (typeof val !== "number" || val < 0) {
-        throw `${varName || "provided variable"} needs to be a positive integer`;
+        throw `${
+          varName || "provided variable"
+        } needs to be a positive integer`;
       }
       if (isNaN(val)) {
         throw `${varName || "provided variable"} is NaN`;
       }
       return val;
     },
-  
+
     checkStringArray(arr, varName) {
       //We will allow an empty array for this,
       //if it's not empty, we will make sure all tags are strings
@@ -56,13 +59,13 @@
       }
       return arr;
     },
-  
+
     checkStringObject(obj, varName) {
       if (!obj) throw `You must provide an object of ${varName}`;
       if (typeof obj !== "object") throw `${varName} must be an object`;
       if (Array.isArray(obj))
         throw `${varName} must be an object, but an array was supplied`;
-  
+
       for (let k in obj) {
         if (typeof obj[k] !== "string" || obj[k].trim() === "") {
           throw `One or more elements in ${varName} object is not a string or is an empty string`;
@@ -71,13 +74,13 @@
       }
       return obj;
     },
-  
+
     checkArrayObject(obj, varName) {
       if (!obj) throw `You must provide an object of ${varName}`;
       if (typeof obj !== "object") throw `${varName} must be an object`;
       if (Array.isArray(obj))
         throw `${varName} must be an object, but an array was supplied`;
-  
+
       for (let k in obj) {
         if (!Array.isArray(obj)) {
           throw `One or more elements in ${varName} object is not an array`;
@@ -86,7 +89,7 @@
       return obj;
     },
   };
-  
+
   let lessonForm = document.getElementById("lesson-form");
   let moduleForm = document.getElementById("module-form");
 
@@ -308,11 +311,12 @@
     });
   } //end form
 
-  const launchButton = document.getElementById("launchButton");
-  launchButton.addEventListener("click", (e) => {
+  const launch = document.getElementById("launch");
+  launch.addEventListener("submit", (e) => {
     e.preventDefault();
     //launchButton.hide();
     $("#launchButton").hide();
+    launch.submit();
   });
 })(jQuery);
 // }
@@ -321,4 +325,3 @@
 //   launchButton.addEventListener("click", addLesson);
 //   const publishButton = document.getElementById("publishButton");
 //   launchButton.addEventListener("click", addLesson);
-
