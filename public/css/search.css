@@ -1,0 +1,39 @@
+main {
+    text-align: center;
+}
+
+.search-list {
+    text-align: left !important;
+}
+.search-item {
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    padding: 10px;
+}
+.search-item p span {
+    display: block;
+    
+} 
+
+.bold {
+    font-weight: 800;
+    display: inline !important;
+    margin-right: 10px;
+}
+
+.fc {
+    color: #050a58;
+    display: inline !important;
+}
+
+.desc {
+    margin-top: 20px;
+}
+
+#left-menu {
+    visibility: visible !important;
+    z-index: 10;
+    top: 120px;
+    left: 17%;
+    color: #000;
+    font-size: 1.5em;
+}
