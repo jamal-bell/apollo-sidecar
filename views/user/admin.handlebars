@@ -1,0 +1,174 @@
+<section id="profile">
+    <h2>Profile</h2>
+    <div id="userProfileContainer">
+        <table>
+            <tr>
+                <th>First Name</th>
+                <td id="firstName">{{{user.firstName}}}</td>
+                <td rowspan="7" class="photo-cell">
+                    <img id="userPhotoDisplay" src="{{{user.photo}}}" alt="User Photo">
+                </td>
+            </tr>
+            <tr>
+                <th>Last Name</th>
+                <td id="lastName">{{{user.lastName}}}</td>
+            </tr>
+            <tr>
+                <th>Email Address</th>
+                <td id="email">{{{user.emailAddress}}}</td>
+            </tr>
+            <tr>
+                <th>Handle</th>
+                <td id="handle">{{{user.handle}}}</td>
+            </tr>
+            <tr>
+                <th>Bio</th>
+                <td id="bio">{{{user.bio}}}</td>
+            </tr>
+            <tr>
+                <th>GitHub</th>
+                <td><a href="{{{user.github}}}" id="github">{{{user.github}}}</a></td>
+            </tr>
+            <tr>
+                <th>User Type</th>
+                <td id="role">{{{user.role}}}</td>
+            </tr>
+            <tr>
+                <th>Account Created</th>
+                <td>{{{user.createdAt}}}</td>
+                <td class="centered-cell"><input id="awsphoto" type="file" accept="image/*" /></td>
+            </tr>
+            <tr>
+                <th>Last Login</th>
+                <td>{{{user.lastLogin}}}</td>
+                <td class="centered-cell"><button id="uploadPhotoButton">Upload</button></td>
+            </tr>
+        </table>
+    </div>
+
+    <form id="profile-form">
+        <div>
+            <label for="firstNameInput">First Name:</label>
+            <input type="text" id="firstNameInput" name="firstNameInput" value="{{{user.firstName}}}">
+        </div>
+        <div>
+            <label for="lastNameInput">Last Name:</label>
+            <input type="text" id="lastNameInput" name="lastNameInput" value="{{{user.lastName}}}">
+        </div>
+        <div>
+            <label for="emailAddressInput">Email:</label>
+            <input type="email" id="emailAddressInput" name="emailAddressInput" value="{{{user.emailAddress}}}">
+        </div>
+        <div>
+            <label for="bioInput">Bio:</label>
+            <textarea id="bioInput" name="bioInput">{{{user.bio}}}</textarea>
+        </div>
+        <div>
+            <label for="githubInput">GitHub Link:</label>
+            <input type="url" id="githubInput" name="githubInput" value="{{{user.github}}}">
+        </div>
+        <div>
+            <label for="roleInput">User Type:</label>
+            <input type="text" id="roleInput" name="uroleInput" value="{{{user.role}}}" disabled>
+        </div>
+        <div>
+            <label for="createdAt">Account Created At:</label>
+            <input type="text" id="createdAt" name="createdAt" value="{{{user.createdAt}}}" disabled>
+        </div>
+        <div>
+            <label for="lastLogin">Last Login:</label>
+            <input type="text" id="lastLogin" name="lastLogin" value="{{{user.lastLogin}}}" disabled>
+        </div>
+    </form>
+    <p id="photoMessage"></p>
+    <div class="form-errors">
+        <ul id="errors" class="errors">
+            {{#if hasErrors}}
+                {{#each errors}}
+                    <li>
+                        {{this}}
+                    </li>
+                {{/each}}
+            {{/if}}
+        </ul>
+    </div>
+    <div id="editButtons" class="buttons">
+        <button type="button" id="saveProfileButton" hidden>Save Profile</button>
+        <button type="button" id="editProfileButton">Edit Profile</button>
+        <button type="button" onclick="location.href='/user/password'">Change Password</button>
+        <button type="button" id="cancelAccountButton">Cancel Account</button>
+    </div>
+</section>
+
+<section>
+    <div class="lessons col">
+        <h2>Lessons Created</h2>
+        {{#if hasLessons}}
+            <ul>
+                {{#each lessons}}
+                    <li>
+                        <h3>{{this.lessonTitle}}</h3>
+                        <button type="button" onclick="location.href='/lessons/lesson/{{{this._id}}}'">Edit
+                            Lesson</button>
+                    </li>
+                {{/each}}
+            </ul>
+        {{else}}
+            <p>No lessons created yet, start creating one <a href="/lessons/newLesson">here</a>!</p>
+
+        {{/if}}
+    </div>
+</section>
+
+
+
+<h2>Q&A Contributions</h2>
+<section id="qas1">
+    <p>
+        Your total IQ Points: {{{user.progress.qaPlatform.iqPoints}}}!
+    </p>
+    {{#if hasAnswers}}
+        <ul>
+            {{#each answers}}
+                <li>
+                    <h3>{{this.question.title}}</h3>
+                    <p>Lesson Related: <span>{{this.lesson.lessonTitle}}, {{this.content.moduleTitle}}</span></p>
+                    <p>Question date: <span>{{this.question.createdAt}}</span></p>
+                    <p>Your have total {{this.question.answers.length}} answers, the top 3 voted answers are:</p>
+                    <ul>
+                        {{#each answers.answers}}
+                            <li>
+                                <h4>{{this.answerText}}</h4>
+                                <p>Upvotes: <span>{{this.answerVotes}}</span></p>
+                            </li>
+                        {{/each}}
+                    </ul>
+                    <button type="button" onclick="location.href='/lesson/{{this.question._id}}'">Review
+                        question</button>
+                </li>
+            {{/each}}
+        </ul>
+    {{else}}
+        <div class="qa-posts">
+            <p>No contributions yet, help others and earn IQ points now <a href="/qa">here</a>.</p>
+        </div>
+    {{/if}}
+</section>
+
+{{#if hasQuestions}}
+    <h2>Question Asked</h2>
+    <section id="qas2">
+        <ul>
+            {{#each questions}}
+                <li>
+                    <h3>{{this.question.title}}</h3>
+                    <p>Lesson Related: <span>{{this.lesson.lessonTitle}}, {{this.content.moduleTitle}}</span></p>
+                    <p>Ans: <span>{{this.question.answers.length}}</span></p>
+                    <p><span>{{this.question.createdAt}}</span></p>
+                    <button type="button" onclick="location.href='/lesson/{{this.question._id}}'">Review
+                        question</button>
+                </li>
+            {{/each}}
+        </ul>
+    </section>
+{{/if}}

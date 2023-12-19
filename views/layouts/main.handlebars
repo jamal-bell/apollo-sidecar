@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">     
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/public/css/style.css">
+    {{!-- <link rel="stylesheet" href="/public/css/main.css"> --}}
+    {{#if (lookup . 'style_partial')}}
+        {{> (lookup . 'style_partial') }}
+    {{/if}}
+
+</head>
+<body>
+    <div class="row">  
+         <span id="open-left-nav" class="left-menu-btn hidden">&#9776; <span class="menu-action-text">open</span></span>
+         <span id="close-left-nav" class="left-menu-btn">&#9776; <span class="menu-action-text">close</span></span>
+        <div id="left-nav" class="sidenav left-side-nav col-s-2 menu">
+            
+            <img alt="space background" src="https://img.freepik.com/free-vector/space-monochrome-seamless-pattern-with-astronaut-cosmic-objects-manned-ships-satellite-starry-sky_1284-33842.jpg?w=740&t=st=1701995278~exp=1701995878~hmac=5e98635b88196ded8e495bf0723d97681e5624eca3229a18343bc454ba32829b" />
+                {{#if (lookup . 'leftmenu_partial')}}
+                    {{> (lookup . 'leftmenu_partial') }}
+                {{/if}}
+    </div>
+      
+        <div id="outer-main" class="all-open-main">
+            <header>
+                <div id="top-menu-block">
+                    <ul id="top-menu">
+                        <li><a class="top-menu-item" href="/">Home</a></li>
+                        <li><a class="top-menu-item" href="/lessons/lessons">Lessons</a></li>
+                        <li><a class="top-menu-item" href="/qa">Q&amp;A</a></li>
+                        <li><a class="top-menu-item" href="/user/login">Sign in</a></li>
+                    </ul>
+                </div>
+                <div id="header-block">
+                    <a href="/"><img id="logo" class="left-adj" alt="APOLLO SIDECAR" src="/public/assets/aslogo2.png" /></a>
+                    <h1>{{title}}</h1>
+                    <div class="search-bar">
+                            <div class="search">
+                                <form method="POST" action="/search/searchresults" id="search-form">
+                                {{!-- <label for="keywords">search</label> --}}
+                                <input type="text" class="min-search-input" name="keywords" placeholder="REST, Javascript, html, etc">
+                                <button type="submit" class="searchButton">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                                </form>
+                            </div>
+                    </div>
+                </div>
+                    
+            </header>
+            <main>
+                {{{body}}}
+            </main>
+        </div>
+                    <div id="right-nav" class="sidenav right-side-nav col-s-2 menu">
+                    <span id="open-right-nav" class="right-menu-btn hidden">&#9776; <span class="menu-action-text">open</span></span>
+                    <span id="close-right-nav" class="right-menu-btn">&#9776; <span class="menu-action-text">close</span></span>
+                        <div class="aside">
+                        <h2>What?</h2>
+                            <p>Chania is a city on the island of Crete.</p>
+                            <h2>Where?</h2>
+                            <p>Crete is a Greek island in the Mediterranean Sea.</p>
+                            <h2>How?</h2>
+                            <p>You can reach Chania airport from all over Europe.</p>
+                        </div>
+                    </div>
+                    
+            <footer> 
+                {{!-- <div class="row"> --}}
+                <h3>TOGETHER WE KNOW, TOGETHER WE GROW</h3> 
+                <div id="footer-content">
+                    STuff
+                </div>
+                {{!-- </div> --}}
+                <div class="base">2023 Apollo Sidecar </div>
+            </footer>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+    <script src="/public/js/function.js"></script>
+        {{#if (lookup . 'script_partial')}}
+            {{> (lookup . 'script_partial') }}
+        {{/if}}
+</body>
+</html>
+
+
+
+{{!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="/public/css/main.css">
+</head>
+<body>
+    <header>APOLLO SIDECAR</header>
+    {{{body}}}
+    <footer>TOGETHER WE KNOW, TOGETHER WE GROW</footer>
+    {{#if (lookup . 'script_partial')}}
+        {{> (lookup . 'script_partial') }}
+    {{/if}}
+</body>
+</html> --}}

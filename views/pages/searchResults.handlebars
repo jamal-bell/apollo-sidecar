@@ -1,0 +1,106 @@
+
+<divd id="search-page">
+
+  <!-- Pagination controls (assuming you have a pagination object with details) -->
+    {{!-- <div class="pagination">
+    <span>Page {{pagination.currentPage}} of {{pagination.totalPages}}</span>
+    <!-- Add buttons or links for navigating to different pages -->
+    </div> --}}
+
+    {{!-- <h3><div id="searched-for"<p>{{searchwords}}</p></h3> --}}
+
+    {{!-- <div class="lesson-list">
+    {{#each lessons}}
+        <div class="lesson-item">
+        <h4><a href="/lessons/lesson/{{{this._id}}}" target="_blank">{{this.title}}</a> </h4>
+        <p> <span class="subject">{{subject}}</span><span class="date-return">{{createdAt}}</span><span class="date-return">{{modifiedAt}}</span><span class="">{{author}}</span><span>{{description}}</span></p>
+        </div>
+    {{/each}}
+    </div> --}}
+
+
+    
+<h3><div id="searched-for"><p>{{searchwords}}</p></div></h3>
+<div class="search-list">
+  {{#each lessons}}
+    <div class="search-item">
+      <h4><a href="/lessons/lesson/{{{this._id}}}" target="_blank">{{this.lessonTitle}}</a></h4>
+      <p>
+        <span class="subject">{{subject}}</span>
+        <span class="date-return">{{createdAt}}</span>
+        <span class="date-return">{{modifiedAt}}</span>
+        <span class="">{{author}}</span>
+        <span>{{description}}</span>
+      </p>
+    </div>
+  {{/each}}
+</div>
+
+{{!-- <div>
+  {{#if pagination.hasPreviousPage}}
+    <a href="/searchresults?page={{pagination.currentPage - 1}}">Previous</a>
+  {{/if}}
+
+  Page {{pagination.currentPage}} of {{pagination.totalPages}}
+
+  {{#if pagination.hasNextPage}}
+    <a href="/searchresults?page={{pagination.currentPage + 1}}">Next</a>
+  {{/if}}
+</div> --}}
+
+
+<div>
+
+
+<!-- Pagination controls -->
+
+<!-- Update your pagination links -->
+{{!-- <div class="pagination">
+  {{#if pagination.hasPreviousPage}}
+    <a href="#" class="pagination-link" data-page="{{ pagination.currentPage - 1 }}">Previous</a>
+  {{/if}}
+
+  {{#if pagination.hasNextPage}}
+    <a href="#" class="pagination-link" data-page="{{ pagination.currentPage + 1 }}">Next</a>
+  {{/if}}
+</div>
+</divd>  --}}
+
+
+
+
+{{!-- <h1>Search Results</h1>
+
+<p>Showing results for: {{documentType}} | Sort Order: {{sortOrder}}</p>
+
+{{#each results}}
+  <!-- Render results based on the document type -->
+  {{#if (eq documentType "lessons")}}
+    <!-- Render Lessons result -->
+    <div>
+      <h2>{{lessonTitle}}</h2>
+      <p>{{description}}</p>
+    </div>
+  {{else if (eq documentType "qadata")}}
+    <!-- Render QA Data result -->
+    <div>
+      <h2>{{title}}</h2>
+      <p>{{text}}</p>
+    </div>
+  {{else}}
+    <!-- Render Both result -->
+    {{#if this.lessonTitle}}
+      <!-- Render Lessons result -->
+      <div>
+        <h2>{{lessonTitle}}</h2>
+        <p>{{description}}</p>
+      </div>
+    {{else}}
+      <!-- Render QA Data result -->
+      <div>
+        <h2>{{title}}</h2>
+        <p>{{text}}</p>
+      </div>
+    {{/if}}
+  {{/if}}
+{{/each}} --}}

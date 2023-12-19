@@ -1,0 +1,30 @@
+<div id="qa-page">
+<article id='qaMain'>
+  <h2>{{qaTarget.title}}</h2>
+  <p>{{qaTarget.text}}</p>
+  <p>by <a href='../../user/handle/{{qaTarget.author}}'>{{qaTarget.author}}</a> at {{qaTarget.timeStamp}}</p>
+  <div class='errorSpace' id='errorSpace'></div>
+  <form id="noLoginShowDeletedForm">
+        <button type="button" id="noLoginShowDeletedButton">Toggle Deleted Responses</button>
+    </form>
+    <div><a href="../../user/login">You need to login to reply!</a></div>
+   {{#if qaTarget.answers}}
+  <div id="answersContainer">
+    {{#each qaTarget.answers}}
+    <div class ="answer" data-locked="{{this.locked}}">
+      <div class="vote">
+        <div class="iqPoint">{{this.votes.value}}</div>
+      </div>
+      {{#if this.locked}}
+      <div>Deleted</div>
+      {{else}}
+      <div><a href='../../user/handle/{{this.author}}'>{{this.author}}</a> at {{this.timeStamp}}</div>
+      {{/if}}
+      <div>{{this.text}}</div>
+      </div>
+    {{/each}}
+  {{else}}
+    <p>No replies yet.</p>
+  {{/if}}
+</article>
+</div>

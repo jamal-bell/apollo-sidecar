@@ -1,0 +1,86 @@
+<div id="lessons-page">
+  <h2>Add Module to: {{this.lessonTitle}}</h2>
+  <h3 class="information">Create additional modules for this lesson. Click PUBLISH to make your lesson viewable to others.
+  </h3>
+  <section>
+    <div id="module-wrapper">
+      <form id="module-form" class="form">
+        <h1 hidden> lesson-id: {{this.lessonId}}</h1>
+        <input hidden class="hide-id" value={{this.lessonId}} name="lessonId" />
+        <div>
+          <input type="text" id="lessonId" name="lessonId" value={{this.lessonId}} hidden />
+        </div>
+        <div>
+          <label for="moduleTitleInput">Module Title:</label>
+          <input type="text" id="moduleTitleInput" name="moduleTitle" value="{{moduleTitle}}" required>
+        </div>
+        <div>
+          <label for="textInput">Module Content:</label>
+          <textarea id="textInput" name = "textInput" required>{{text}}</textarea>
+        </div>
+        <div>
+          <label for="videoLinkInput">Module Video Link:</label>
+          <input type="text" id="videoLinkInput" name="videoLink" value="{{videoLink}}">
+        </div>
+        <div>
+          <label for="orderInput">order of this module</label>
+          <input type="number" id="orderInput" name="order" value="{{order}}" min="1" required>
+        </div>
+        <div class="buttons">
+          <button type="submit" id="newModuleButton">Add a New Module</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="form-errors" id="errorsDiv">
+      <ul id="errors" class="errors">
+        {{#if hasErrors}}
+        {{#each errors}}
+        <li>
+          {{this}}
+        </li>
+        {{/each}}
+        {{/if}}
+
+        {{#if error}}
+        <li>{{error}} </li>
+        {{/if}}
+      </ul>
+    </div>
+  </section>
+
+  <section id="preview">
+    <h1>PREVIEW</h1>
+    {{!-- <h1>Lesson Title: {{this.lesson.lessonTitle}}</h1>
+    <h1>Modules</h1> --}}
+  </section>
+
+  {{!-- The section below is populated from lessonById.handlebars --}}
+  <section id="detail">
+    <h2>{{lesson.lessonTitle}}</h2>
+    <h2>{{lesson.description}}</h2>
+
+    <ul id="contentList">
+      {{#each contents}}
+      <li>
+        <h4>{{this.order}}: {{this.moduleTitle}}</h4>
+        <h5>Video Resource: {{this.videoLink}}</h5>
+        <h5>Content: {{this.text}}</h5>
+
+      </li>
+      {{/each}}
+    </ul>
+    {{!-- <button type="button" action="/lessons/lesson/:id">Publish Lesson</button> --}}
+  </section>
+</div>
+
+
+
+{{!-- not being used yet --}}
+<script>
+  function duplicateModuleForm() {
+    let formsContainer = document.getElementById("module-wrapper");
+    let initialForm = formsContainer[0];
+    let formClone = initialForm.cloneNode(true);
+    div.appendChild(formClone);
+  }</script>

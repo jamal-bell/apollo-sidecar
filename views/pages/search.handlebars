@@ -1,0 +1,105 @@
+<divd id="search-page">
+<h3>{{heading}}</h3>
+
+<p class="error">{{errorMessage}}</p>
+
+<form method="POST" action="/search/" id="advanced-search" >
+
+<label for="keywords" class="search-page-label" />
+<input type="text" id="advancedKeyword" class="search-input" name="keywords" required/>
+
+<label for="platform" class="search-page-label" />
+<select name="platform" id-"selectPart" class="select-input" form="search-page-form">
+    <option value="lessons">Lessons</option>
+    <option value="qa">QA</option>
+    <option value="all">All</option>
+</select>
+
+
+        <label for="doctype">
+            <span class="label-text">Doc Type</span>
+            <span id="doctype" class="error">{{roleError}}</span>
+            {{!-- <p id="roleErrorClient" class="client-side-validation roleErr"></p> --}}
+        </label>
+        <select name="doctype" id="doctype">
+            <option value="" selected disabled>Choose</option>
+            <option value="user">Lessons</option>
+            <option value="admin">QA</option>
+            <option value="admin">Both</option>
+        </select>
+
+        <label for="sortorder">
+            <span class="label-text">Sort</span>
+            <span id="roleError" class="error">{{roleError}}</span>
+            {{!-- <p id="roleErrorClient" class="client-side-validation roleErr"></p> --}}
+        </label>
+        <select name="sortorder" id="sortorder">
+            <option value="" selected disabled>Order</option>
+            <option value="user">asc</option>
+            <option value="admin">desc</option>
+        </select>
+
+
+        <label for="searchcount">
+            <span class="label-text">Result Count</span>
+            <span id="searchcount" class="error">{{roleError}}</span>
+            {{!-- <p id="roleErrorClient" class="client-side-validation roleErr"></p> --}}
+        </label>
+        <select name="searchcount" id="searchcount">
+            <option value="" selected disabled>Order</option>
+            <option value="user">10</option>
+            <option value="admin">20</option>
+            <option value="admin">30</option>
+        </select>
+
+        <div class="date-picker">
+          <label for="stardate">Start date:</label>
+          <input type="datetime-local" id="Test_DatetimeLocal" name="startdate"> 
+
+          
+          <label for="enddate">End date:</label>
+          <input type="datetime-local" id="Test_DatetimeLocal" name="enddate">
+        </div>
+
+        <button type="submit">Add Item</button>
+</form>
+
+
+    <h3><div id="searched-for">{{searchTerm}}</p></div></h3>
+
+<div class="search-list">
+  <p><span class="subject"><span class="bold">You searched for:</span> <span class="fc"></span>{{subject}}</span></p>
+  {{#each lessons}}
+    <div class="search-item">
+      <h4><a href="/lessons/lesson/{{{this._id}}}" target="_blank">{{this.title}}</a> </h4>
+      <p>
+        
+        <span class="date-return"><span class="bold">Created on:</span> <span class="fc">{{createdAt}}</span>   <span class="bold">Modified:</span> <span class="fc">{{modifiedAt}}</span></span>
+        <span class="hname"><span class="bold">By:</span> <span class="fc">{{handle}}</span></span>
+        <span class="desc">{{description}}</span>
+      </p>
+    </div>
+  {{/each}}
+</div>
+
+</divd>
+
+{{!-- <form method="POST" action="/search/searchresults">
+  <label for="keywords">Keywords:</label>
+  <input type="text" name="keywords" placeholder="Enter keywords">
+
+  <label for="documentType">Document Type:</label>
+  <select name="documentType">
+    <option value="lessons">Lessons</option>
+    <option value="qadata">QA Data</option>
+    <option value="both">Both</option>
+  </select>
+
+  <label for="sortOrder">Sort Order:</label>
+  <select name="sortOrder">
+    <option value="newest">Newest First</option>
+    <option value="oldest">Oldest First</option>
+  </select>
+
+  <button type="submit">Search</button>
+</form> --}}

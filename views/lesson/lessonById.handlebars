@@ -1,0 +1,57 @@
+
+<div id="lessons-page">
+<section id="detail">
+  {{#if alreadyTaken}}
+
+  {{else}}
+    <form id="launch" method="POST" action="/lessons/lesson/{{this.lessonId}}">
+    <input id="lessonId" name="lessonId" hidden value="{{this.lessonId}}">
+      <button id="launchButton" type="submit">Launch Lesson</button>
+    </form>
+
+  {{/if}}
+
+  <h2>{{this.lessonTitle}}</h2>
+    <p>{{this.description}}</p>
+
+
+  <ul>
+    {{#each contents}}
+      <li>
+        <h4>{{this.order}}: {{this.moduleTitle}}</h4>
+        <h5>Author: {{this.handle}}</h5>
+
+      <h5>Video Resource:</h5>
+
+        <iframe width="560" height="315" src="{{this.videoLink}}" allowfullscreen></iframe>
+
+        <h5>{{this.text}}</h5>
+        {{!-- <button type="button" id="completeButton" onclick="location.href='/user/user'">Mark Complete!</button> --}}
+      </li>
+    {{/each}}
+  </ul>
+
+
+  <div>
+    
+    {{#if isAdmin}}
+    <button type="button" onclick="location.href='/lessons/addmodule/{{this.lessonId}}'">
+      Add Modules
+    </button>
+      <button type="button" onclick="location.href='/lessons/remove/{{this.lessonId}}'">Delete this Lesson</button>
+      {{/if}}
+  </div>
+  <div>
+    <a href="/qa/create/{{this.lessonId}}">
+      Ask a question about this Lesson
+    </a>
+  </div>
+
+
+
+
+</section>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+<script src="/public/js/lesson.js"></script>

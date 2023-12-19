@@ -1,0 +1,28 @@
+{{!-- <h1>{{title}}</h1> Jamal --}}
+<div id="login-page">
+    <form id="login-form" method="POST" action="/user/login" class="form">
+        <div class="email-field">
+            <label class="email-login-label" for="emailAddressInput">Email Address:</label>
+            <input type="email" name="emailAddressInput" id="emailAddressInput" required>
+        </div>
+        <div class="password-field">
+            <label class="password-login-label" for="passwordInput">Password:</label>
+            <input type="password" name="passwordInput" id="passwordInput" required>
+        </div>
+        <div>
+            <button type="submit">Login</button>
+        </div>
+        <a class="form-footer" href="/user/register">Click here to register!</a>
+        <div class="form-errors">
+            <ul id="errors" class="errors">
+                {{#if hasErrors}}
+                    {{#each errors}}
+                        <li>
+                            {{this}}
+                        </li>
+                    {{/each}}
+                {{/if}}
+            </ul>
+        </div>
+    </form>
+</div>

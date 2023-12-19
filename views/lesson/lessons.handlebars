@@ -1,0 +1,18 @@
+<div id="lessons-page">
+  <h2>All Lessons - public</h2>
+  <section id="lessons">
+    <ul>
+      {{#each lessons}}
+      <li style="text-decoration: none">
+        <div>
+          <h3><a href="/lessons/lesson/{{this._id}}">Lesson Title: {{this.lessonTitle}}</a></h3>
+          <h4>Description: {{this.description}}</h4>
+          <h4 hidden>lessonId: {{this._id}}</h4>
+        </div>
+
+        {{!-- <button type="button" onclick="location.href='/lesson/{{id}}'">Go To Lesson</button> --}}
+      </li>
+      {{/each}}
+    </ul>
+  </section>
+</div>

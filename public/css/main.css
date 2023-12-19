@@ -1,0 +1,305 @@
+/* There are conflicts because of global css -- I'll just comment out some of them and we can figure out what's needed */
+
+
+.errors li,
+.errors,
+#error {
+  color: #ff0000;
+  text-align: center;
+}
+
+.hide-id {
+  display: none;
+}
+
+.form {
+  background: #fff;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+form div, #userProfileContainer, #editButtons {
+    margin-bottom: 10px;
+	justify-content: center;
+    display: flex; 
+    align-items: center;
+}
+
+.form-errors {
+  margin-bottom: 0px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+
+form label {
+  margin-right: 5px;
+}
+
+.lesson a, p, footer, h1, h2 { /* added lesson class so all links are not globally centered */
+	text-align: center;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.form-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-top: 5px;
+}
+
+#userPhotoDisplay{
+    text-align: center;
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+td img { /* I added the td reference so the image effects are not global */
+  border-radius: 50%; /* Makes the image circular */
+  object-fit: cover;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+#uploadPhotoButton {
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer; 
+    transition: all 0.3s;
+}
+#uploadPhotoButton:hover {
+    background-color: #45a049;
+}
+
+table td a {
+    display: block;
+    text-align: left;
+}
+
+.lessons, #qas {
+  text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+/* jamal added these */
+
+th {
+  text-align: left;
+}
+
+td {
+  padding-left: 20px
+}
+
+td button {
+  margin: 0 auto;
+}
+
+#qas main {
+  box-shadow: none;
+}
+
+/* login register */
+
+main, #outer-main, footer {
+  background-color: #FFF !important;
+  margin: 0 !important;
+  width: 100% !important;
+}
+
+/* footer {
+  position: absolute;
+  bottom: 0;
+} */
+
+#login-page {
+  position: absolute;
+  width: 100%;
+  background: #fff;
+  height: 80%;
+  background: cover;
+  padding-top: 30px;
+}
+#left-nav, #right-nav, #close-left-nav, #close-left-nav {
+  width: 0 !important;
+  visibility: hidden;
+}
+
+#login-form input[type="text"]
+{
+  background: transparent;
+}
+
+#login-form {
+  width: 40%;
+  margin: 5% auto 0 !important;
+  height: 500px;
+  padding: 150px 20px 20px 20px !important;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  position: relative;
+  background-color: #22313F !important;
+  border-radius: 5%;
+  letter-spacing: 2px;
+}
+
+#login-form input {
+  font-size: 1em;
+  text-align: center;
+  color: #e00e0e;
+  /* width: 250px; */
+  border-radius: 15px;
+  /* font-weight: 600; */
+  box-shadow: inset rgb(0 0 0 / 46%) -1px 2px 5px 1px;
+  padding: 5px;
+  border: 1px solid #FFF;
+  text-align: center;
+  letter-spacing: 2px;
+}
+
+#login-form label {
+  position: absolute;
+  color: #FFF;
+  font-size: 1.2em;
+  top: 5px;
+}
+
+#login-form .email-label {
+  top: 22%;
+}
+/* #login-form .email-input {
+  
+} */
+#login-form .password-label {
+  top: 42%;
+}
+#login-form .password-input {
+  position: absolute;
+  top: 50%;
+}
+
+#login-form button, #registration-form button {
+
+  top: 60%;
+  background-color: transparent;
+  width: 150px;
+  color: #FFF;
+  padding: 10px;
+  font-size: 1em;
+  letter-spacing: 2px;
+}
+
+#login-form button {
+  position: absolute;
+}
+
+#login-form a.form-footer {
+  position: absolute;
+  text-align: center;
+  width: 95%;
+  top: 90%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5px;
+  text-decoration: none;
+  color: #fff;
+  display: flex;
+}
+#login-form a.form-footer:hover {
+  color:#00B4CC;
+}
+
+#login-form .form-errors {
+  top: 5%;
+  position: absolute;
+}
+
+
+#registration-page {
+  height: 80%;
+  position: absolute;
+  width: 100%;
+  background: #fff;
+}
+
+#registration-form {
+  font-size: 1em;
+  text-align: center;
+  border-radius: 15px;
+  box-shadow: inset rgb(0 0 0 / 46%) -1px 2px 5px 1px;
+  padding: 5px;
+  border: 1px solid #FFF;
+  text-align: center;
+  letter-spacing: 2px;
+  padding: 25px;
+  background-color: #22313F;
+  width: 60%;
+  margin: 0 auto;
+}
+
+#registration-form div , #registration-form label{
+  display: block;
+}
+#registration-form div , #registration-form label{
+  display: block;
+}
+
+#registration-form label {
+  font-weight: 800;
+  margin-bottom: 5px;
+  color: #FFF;
+}
+#registration-form input{
+  width: 65%;
+  font-size: 1em;
+  text-align: center;
+  color: #2e3952;
+  border-radius: 15px;
+  box-shadow: inset rgb(0 0 0 / 46%) -1px 2px 5px 1px;
+  padding: 6.5px;
+  border: 1px solid #FFF;
+  text-align: center;
+  letter-spacing: 2px;
+}
+
+#registration-form button{
+  margin-top: 30px;
+}
+
+#registration-form .form-footer a {
+  text-decoration: none;
+  letter-spacing: 1px;
+  color: #FFF;
+}
+
+#registration-form .form-footer a:hover {
+  color: #00B4CC;
+}
+
+#registration-form .form-errors {
+  color: #c70000;
+}
+
+#registration-form .form-errors ul {
+  width: 100%;
+}

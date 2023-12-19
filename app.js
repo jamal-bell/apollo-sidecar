@@ -4,6 +4,7 @@ import configRoutes from "./routes/index.js";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import exphbs from "express-handlebars";
+import middleware from "./middleware.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -22,13 +23,55 @@ const rewriteUnsupportedBrowserMethods = (req, res, next) => {
   next();
 };
 
+const handlebarsInstance = exphbs.create({
+  defaultLayout: "main",
+  // Specify helpers which are only registered on this instance.
+  helpers: {
+    asJSON: (obj, spacing) => {
+      if (typeof spacing === "number")
+        return new Handlebars.SafeString(JSON.stringify(obj, null, spacing));
+      return new Handlebars.SafeString(JSON.stringify(obj));
+    },
+  },
+  partialsDir: ["views/partials/"],
+});
+
 app.use("/public", staticDir);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(rewriteUnsupportedBrowserMethods);
 
-app.engine("handlebars", exphbs.engine({ defaultLayout: "main" }));
+app.engine("handlebars", handlebarsInstance.engine);
 app.set("view engine", "handlebars");
+
+app.use((req, res, next) => {
+  res.header("X-Frame-Options", "SAMEORIGIN");
+  next();
+});
+
+app.use((req, res, next) => {
+  res.header(
+    "Content-Security-Policy",
+    "frame-ancestors 'self' https://youtube.com"
+  );
+  next();
+});
+
+app.use((req, res, next) => {
+  res.header("Referrer-Policy", "same-origin");
+  next();
+});
+
+app.use((req, res, next) => {
+  res.header("Strict-Transport-Security", "max-age=31536000");
+  next();
+});
+
+middleware.session(app);
+middleware.user(app);
+middleware.lessons(app);
+middleware.qa(app);
+// middleware.home(app);
 
 configRoutes(app);
 
