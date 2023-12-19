@@ -207,7 +207,6 @@ const exportedLessonsMethods = {
       _id: new ObjectId(id),
     });
     if (!deletionInfo) throw `Error: Could not delete lesson with id of ${id}`;
-    console.log("Lesson Removed");
     return { ...deletionInfo, deleted: true };
   },
 

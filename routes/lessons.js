@@ -65,7 +65,6 @@ router
     });
   })
   .post(async (req, res) => {
-    console.log("I'M HERE");
     //Launch lesson
     try {
       req.params.id = validation.checkId(req.params.id, "Id URL Param");
@@ -217,13 +216,21 @@ router
     }
     let subject = lesson.subject;
     let lessonTitle = lesson.lessonTitle;
+    let contents = lesson.contents;
+    let order;
+    if (contents) {
+      order = contents.length + 1;
+    } else {
+      order = 1;
+    }
 
     return res.status(200).render("lesson/publish", {
       title: "Publish Lesson",
-      order: lesson.contents.length + 1,
+      order: order,
       lessonTitle,
       lessonId,
       subject,
+      contents,
       lesson,
       style_partial: "css_content",
       leftmenu_partial: "html_lessonMenu",
@@ -251,7 +258,7 @@ router
       errors.push(e);
     }
 
-    order = "undefined" ? 1 : parseInt(order);
+    order = parseInt(order);
     try {
       const response = await lessonsData.createModule(
         lessonId,
@@ -263,6 +270,7 @@ router
       const lesson = await lessonsData.getLessonById(lessonId);
 
       //console.log("response: " + response);
+      const newOrder = lesson.contents.length + 1;
 
       return res.json({
         updated: true,
@@ -271,6 +279,7 @@ router
         lessonId: lessonId,
         text: text,
         order: order,
+        newOrder: newOrder,
         videoLink: videoLink,
         style_partial: "css_content",
         leftmenu_partial: "html_lessonMenu",
@@ -279,6 +288,7 @@ router
       return res.status(400).json({
         title: "Edit Lesson",
         errors: error,
+        order: order,
         hasErrors: true,
         moduleTitle: "",
         text: "",

@@ -183,7 +183,7 @@
 
     newModuleButton.addEventListener("click", (e) => {
       e.preventDefault();
-      let order = orderInput.value?.trim();
+      let order = orderInput.value.trim();
       let moduleTitle = moduleTitleInput.value?.trim();
       let text = textInput.value?.trim();
       let videoLink = videoLinkInput.value?.trim();
@@ -223,6 +223,7 @@
         errorContainer.innerHTML = errorList;
         errorContainer.hidden = false;
         moduleForm.reset();
+        return;
       } else {
         errorContainer.hidden = true;
       }
@@ -243,6 +244,7 @@
       $.ajax(requestConfig)
         .then(function (response) {
           if (response.hasErrors) {
+            orderInput.value = response.order;
             errorContainer.html(response.errors);
             errorContainer.show();
           } else if (response.updated) {
@@ -293,7 +295,7 @@
             //   // Append the list item to the contentList
             //   contentsList.appendChild(li);
 
-            orderInput.value = "";
+            orderInput.value = response.newOrder;
             moduleTitleInput.value = "";
             textInput.value = "";
             videoLinkInput.value = "";
