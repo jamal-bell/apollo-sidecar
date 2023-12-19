@@ -24,7 +24,7 @@ const middleware = {
           if (req.session.user.role === "admin") {
             return res.redirect("/user/admin");
           } else if (req.session.user.role === "user") {
-            return res.redirect("/user/account");
+            return res.redirect("/user/user");
           }
         } else {
           return res.redirect("/user/login");
@@ -60,6 +60,29 @@ const middleware = {
     //profile
     app.use("/user/profile", async (req, res, next) => {
       if (req.method == "GET") {
+        if (!req.session.authenticated) {
+          return res.redirect("/user/login");
+        } else {
+          return res.redirect("/user");
+        }
+      }
+      next();
+    });
+
+    //s3
+    app.use("/user/s3Url", async (req, res, next) => {
+      if (req.method == "GET") {
+        if (!req.session.authenticated) {
+          return res.redirect("/user/login");
+        } else {
+          return res.redirect("/user");
+        }
+      }
+      next();
+    });
+
+    app.use("/user/s3", async (req, res, next) => {
+      if (req.method == "POST") {
         if (!req.session.authenticated) {
           return res.redirect("/user/login");
         } else {

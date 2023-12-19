@@ -41,7 +41,7 @@ router
 
     let alreadyTaken = false;
     user.progress.inProgressLessonId.forEach((lesson) => {
-      if (lessonFound.lessonId.toString() === req.params.id) {
+      if (lessonFound._id.toString() === req.params.id) {
         alreadyTaken = true;
       }
     });

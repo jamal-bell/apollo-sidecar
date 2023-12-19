@@ -992,61 +992,61 @@ router.route("/s3").post(async (req, res) => {
   });
 });
 
-router.get("/*", (req, res) => {
+// router.get("/*", (req, res) => {
+//   res.status(404).render("user/error", {
+//     error: "Page Not Found",
+//     title: "No Such Page Exists.",
+//   });
+// });
+
+router.get("/user/*", (req, res) => {
   res.status(404).render("user/error", {
     error: "Page Not Found",
     title: "No Such Page Exists.",
   });
 });
 
-// router.get("/user/*", (req, res) => {
-//   res.status(404).render("user/error", {
-//     error: "Page Not Found",
-//     title: "No Such Page Exists.",
-//   });
-// });
+router.get("/public/*", (req, res) => {
+  res.status(404).render("user/error", {
+    error: "Page Not Found",
+    title: "No Such Page Exists.",
+  });
+});
 
-// router.get("/public/*", (req, res) => {
-//   res.status(404).render("user/error", {
-//     error: "Page Not Found",
-//     title: "No Such Page Exists.",
-//   });
-// });
+router.get("/admin/*", (req, res) => {
+  res.status(404).render("user/error", {
+    error: "Page Not Found",
+    title: "No Such Page Exists.",
+  });
+});
 
-// router.get("/admin/*", (req, res) => {
-//   res.status(404).render("user/error", {
-//     error: "Page Not Found",
-//     title: "No Such Page Exists.",
-//   });
-// });
+router.get("/password/*", (req, res) => {
+  res.status(404).render("user/error", {
+    error: "Page Not Found",
+    title: "No Such Page Exists.",
+  });
+});
 
-// router.get("/password/*", (req, res) => {
-//   res.status(404).render("user/error", {
-//     error: "Page Not Found",
-//     title: "No Such Page Exists.",
-//   });
-// });
+router.get("/cancel/*", (req, res) => {
+  res.status(404).render("user/error", {
+    error: "Page Not Found",
+    title: "No Such Page Exists.",
+  });
+});
 
-// router.get("/cancel/*", (req, res) => {
-//   res.status(404).render("user/error", {
-//     error: "Page Not Found",
-//     title: "No Such Page Exists.",
-//   });
-// });
+router.get("/register/*", (req, res) => {
+  res.status(404).render("user/error", {
+    error: "Page Not Found",
+    title: "No Such Page Exists.",
+  });
+});
 
-// router.get("/register/*", (req, res) => {
-//   res.status(404).render("user/error", {
-//     error: "Page Not Found",
-//     title: "No Such Page Exists.",
-//   });
-// });
-
-// router.get("/login/*", (req, res) => {
-//   res.status(404).render("user/error", {
-//     error: "Page Not Found",
-//     title: "No Such Page Exists.",
-//   });
-// });
+router.get("/login/*", (req, res) => {
+  res.status(404).render("user/error", {
+    error: "Page Not Found",
+    title: "No Such Page Exists.",
+  });
+});
 
 // router.get("/cancel/*", (req, res) => {
 //   res.status(404).render("user/error", {

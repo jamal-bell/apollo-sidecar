@@ -724,3 +724,8 @@ position: absolute;
 #qas1 h3 {text-align: center}
 #qas2 h3 {text-align: center}
 #qas3 h3 {text-align: center}
+
+.class-progress {
+  margin-left: auto;
+    margin-right: auto;
+}
